@@ -10,6 +10,9 @@ import { BusyStateComponent } from './busy-state.component';
 import { BusyStateService } from './busy-state.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { PinCodeComponent } from './pin-code/pin-code.component';
+/*
+ * pedro-arruda-moreira: for some reason, build was failing because of this.
+ */
 import { LOCAL_STORAGE, Vaultage, VAULTAGE, WINDOW } from './providers';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
@@ -37,6 +40,10 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
         BusyStateService,
         ErrorHandlingService,
         { provide: LOCAL_STORAGE, useValue: localStorage },
+        /*
+         * pedro-arruda-moreira: for some reason, build was
+         * failing because of this.
+         */
         { provide: VAULTAGE, useValue: Vaultage },
         { provide: WINDOW, useValue: window },
     ],

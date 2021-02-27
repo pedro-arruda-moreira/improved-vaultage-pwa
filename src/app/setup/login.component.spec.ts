@@ -1,9 +1,15 @@
 import { fakeAsync } from '@angular/core/testing';
 import { FormsModule, NgModel } from '@angular/forms';
 import { getMock, getShallow } from 'ng-vacuum';
+/*
+ * pedro-arruda-moreira: adjusted unit tests.
+ */
 import { anyString, when, anyObject } from 'omnimock';
 
 import { AppModule } from '../app.module';
+/*
+ * pedro-arruda-moreira: adjusted unit tests.
+ */
 import { LoginConfig } from '../auth.service';
 import { LOCAL_STORAGE } from '../platform/providers';
 import { BasePage } from '../test/base-page';
@@ -83,7 +89,9 @@ describe('LoginComponent', () => {
         })).return().once();
         page.loginButton.click();
     }));
-
+	/*
+	 * pedro-arruda-moreira: adjusted unit tests.
+	 */
 
     it('blocks basic if it is set to force basic', fakeAsync(async () => {
         // TODO: Would be nice to have an omnimock matcher for json
@@ -151,7 +159,9 @@ describe('LoginComponent', () => {
         page.loginButton.click();
     }));
 });
-
+/*
+ * pedro-arruda-moreira: adjusted unit tests.
+ */
 async function createPage(storage?: any, self_contained?: string, use_basic?: string) {
     when(getMock(LOCAL_STORAGE).getItem(anyString())).call((id) => {
         if (id == 'creds') {

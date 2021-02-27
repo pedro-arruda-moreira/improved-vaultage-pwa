@@ -33,6 +33,9 @@ describe('AuthService', () => {
 
     it('testCredentials logs in to test the credentials', async () => {
         const config = fakeLoginConfig();
+        /*
+		 * pedro-arruda-moreira: adjusted unit tests.
+		 */
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
                 .resolve(mockInstance('vault'))
                 .once();
@@ -57,6 +60,9 @@ describe('AuthService', () => {
     it('logIn logs in and redirects, logOut logs out', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        /*
+		 * pedro-arruda-moreira: adjusted unit tests.
+		 */
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
             .resolve(fakeVault);
         when(getMock(PinLockService).setSecret('1234', anyString()))
@@ -83,6 +89,9 @@ describe('AuthService', () => {
     it('logIn redirects to next URL', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        /*
+		 * pedro-arruda-moreira: adjusted unit tests.
+		 */
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}}))
             .resolve(fakeVault);

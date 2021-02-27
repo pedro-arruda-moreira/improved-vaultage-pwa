@@ -10,7 +10,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f384f">
-
+  <!--
+    - pedro-arruda-moreira: self host resources.
+   -->
   <!-- https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap -->
   <link href="assets/fonts/roboto/stylesheet.css" rel="stylesheet">
   <!-- https://fonts.googleapis.com/icon?family=Material+Icons -->
@@ -94,6 +96,10 @@
       }
     }
 </style>
+<!--
+  - pedro-arruda-moreira: self-contained mode
+  - and force basic mode
+ -->
 <script type="text/javascript">
   const href = document.location.href;
   if(href && href.indexOf('self_contained=true') > -1) {

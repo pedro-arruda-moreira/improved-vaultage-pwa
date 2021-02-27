@@ -1,4 +1,8 @@
 import { InjectionToken } from '@angular/core';
+/*
+ * pedro-arruda-moreira: for some reason, build was failing
+ * because of this.
+ */
 import * as vt from 'vaultage-client';
 
 export class Vaultage {

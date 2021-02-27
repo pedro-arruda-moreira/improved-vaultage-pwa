@@ -87,14 +87,22 @@ export class LoginComponent implements OnInit {
     public useBasic: boolean = false;
     public basicUsername: string = '';
     public basicPassword: string = '';
-
+	/*
+	 * pedro-arruda-moreira: self-contained mode
+	 */
     public hostLocked: boolean = false;
+    /*
+	 * pedro-arruda-moreira: force basic mode
+	 */
     public basicLocked: boolean = false;
 
     constructor(
         @Inject(LOCAL_STORAGE) private readonly ls: Storage,
         private readonly setupService: SetupService) {}
-
+	/*
+	 * pedro-arruda-moreira: self-contained mode and
+	 * force basic mode
+	 */
     private configureSelfContained() {
         if((window as any).__self_contained || this.ls.getItem('self_contained') == 'true') {
             this.hostLocked = true;
@@ -109,6 +117,10 @@ export class LoginComponent implements OnInit {
     }
 
     public ngOnInit() {
+    	/*
+		 * pedro-arruda-moreira: self-contained mode and
+		 * force basic mode
+		 */
         this.configureSelfContained();
         const item = this.ls.getItem('creds');
         if (item != null) {

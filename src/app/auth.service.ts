@@ -2,8 +2,14 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+/*
+ * pedro-arruda-moreira: for some reason, build was failing because of this.
+ */
 import { Vault } from 'vaultage-client';
 import { PinLockService } from './pin-lock.service';
+/*
+ * pedro-arruda-moreira: for some reason, build was failing because of this.
+ */
 import { Vaultage, VAULTAGE } from './platform/providers';
 
 
@@ -64,6 +70,9 @@ export class AuthService {
     }
 
     private doLogin(config: LoginConfig): Promise<Vault> {
+	    /*
+		 * pedro-arruda-moreira: for some reason, build was failing because of this.
+		 */
         let control = this.vaultage.control;
         if(!control) {
             control = Vaultage.staticControl;
