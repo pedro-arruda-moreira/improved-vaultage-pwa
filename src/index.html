@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>VaultagePwa</title>
-  <base href="/pwa/">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -101,6 +101,11 @@
   - and force basic mode
  -->
 <script type="text/javascript">
+  // workaround for sjcl
+  function define(ignored, sjcl) {
+    window.sjcl = sjcl();
+  }
+  // self hosted mode / use basic mode
   const href = document.location.href;
   if(href && href.indexOf('self_contained=true') > -1) {
       window.__self_contained=true;
@@ -109,6 +114,7 @@
       window.__use_basic=true;
   }
 </script>
+<script type="text/javascript" src="./assets/sjcl.js"></script>
 </head>
 <body class="mat-typography">
   <app-root>

@@ -12,20 +12,17 @@ decrypted mock data:
     "pin": "1234",
     "data": "53cr37"
 }
--------
-encrypted mock data:
-[
-    '7534e92f7cff82815e997e2b2e8d65421f8f0482344b18d44c50f4745d7ee7f85f3fca088e7dfdcb6bbca5582a1869d1e597cea27e19e1b3e124ccf5d2fd81b5',
-    '7d80a5a2b8b1ba326fdf5feeacfd00b52e4ca9cd8e831d41d823dcbfebbd1ccd'
-]
-
-*/
+encrypted mock data:*/
+const CT = `{ "iv": "QBGp5xXcIzdSMqykVub9wg==", "v": 1, "iter": 10000, "ks": 128, "ts": 64, "mode": "ccm",
+"adata": "", "cipher": "aes", "salt": "ajhKpL/K8dA=",
+"ct": "D7HQz3xvRAbnnbEXjjWhKl/XAKAcQtc8aTy9YBSglAewu4OTD90="
+}`;
 
 
-describe('PinLockServiceTest', () => {
-
+describe('PinLockServiceTest', () => {;
     let lsMock: Mock<Storage>;
     let service: PinLockService;
+    (window as any).sjcl = require('./../assets/sjcl.js');
 
     beforeEach(() => {
         lsMock = getMock(LOCAL_STORAGE);
@@ -38,10 +35,9 @@ describe('PinLockServiceTest', () => {
             /*
 			 * pedro-arruda-moreira: local storage encryption
 			 */
-            expect(JSON.parse(datum)).toEqual([
-                "7534e92f7cff82815e997e2b2e8d65421f8f0482344b18d44c50f4745d7ee7f85f3fca088e7dfdcb6bbca5582a1869d1e597cea27e19e1b3e124ccf5d2fd81b5",
-                "7d80a5a2b8b1ba326fdf5feeacfd00b52e4ca9cd8e831d41d823dcbfebbd1ccd"
-            ]);
+            let obj = JSON.parse(datum);
+            expect(obj.iter).toEqual(10000);
+            expect(obj.mode).toEqual('ccm');
         }).once();
         service.setSecret('1234', '53cr37');
     });
@@ -52,10 +48,7 @@ describe('PinLockServiceTest', () => {
             /*
 			 * pedro-arruda-moreira: local storage encryption
 			 */
-            return `[
-                "7534e92f7cff82815e997e2b2e8d65421f8f0482344b18d44c50f4745d7ee7f85f3fca088e7dfdcb6bbca5582a1869d1e597cea27e19e1b3e124ccf5d2fd81b5",
-                "7d80a5a2b8b1ba326fdf5feeacfd00b52e4ca9cd8e831d41d823dcbfebbd1ccd"
-            ]`;
+            return CT;
         });
         expect(service.getSecret('1234')).toBe('53cr37');
     });
@@ -66,10 +59,7 @@ describe('PinLockServiceTest', () => {
             /*
 			 * pedro-arruda-moreira: local storage encryption
 			 */
-            return `[
-                "7534e92f7cff82815e997e2b2e8d65421f8f0482344b18d44c50f4745d7ee7f85f3fca088e7dfdcb6bbca5582a1869d1e597cea27e19e1b3e124ccf5d2fd81b5",
-                "7d80a5a2b8b1ba326fdf5feeacfd00b52e4ca9cd8e831d41d823dcbfebbd1ccd"
-            ]`;
+            return CT;
         });
         expect(service.getSecret('4321')).toBe(undefined);
     });
