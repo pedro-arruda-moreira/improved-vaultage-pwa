@@ -1,10 +1,20 @@
 {
     "/config": {
         "target": "http://localhost:8080",
-        "secure": false
+        "secure": false,
+        "logLevel": "debug"
     },
     "/teste/*": {
         "target": "http://localhost:8080",
-        "secure": false
+        "secure": false,
+        "logLevel": "debug"
+    },
+    "/api/crypto": {
+        "target": "http://localhost:8080",
+        "secure": false,
+        "pathRewrite": {
+            "^/api/crypto": "/pwa/api/crypto"
+        },
+        "logLevel": "debug"
     }
 }

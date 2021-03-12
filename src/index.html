@@ -97,8 +97,8 @@
     }
 </style>
 <!--
-  - pedro-arruda-moreira: self-contained mode
-  - and force basic mode
+  - pedro-arruda-moreira: self-contained mode, force basic mode
+  - and crypto type
  -->
 <script type="text/javascript">
   // workaround for sjcl
@@ -112,6 +112,14 @@
   }
   if(href && href.indexOf('use_basic=true') > -1) {
       window.__use_basic=true;
+  }
+  // online crypto support
+  if(localStorage.getItem('crypto_type') == null) {
+    if(href && href.indexOf('crypto_type=online') > -1) {
+        localStorage.setItem('crypto_type', 'online');
+    } else {
+        localStorage.setItem('crypto_type', 'offline');
+    }
   }
 </script>
 <script type="text/javascript" src="./assets/sjcl.js"></script>
