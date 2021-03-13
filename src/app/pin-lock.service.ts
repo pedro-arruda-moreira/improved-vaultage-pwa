@@ -1,28 +1,38 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE } from './platform/providers';
+import { OnlineCrypto } from './crypto/online/OnlineCrypto';
+import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
+import { CryptoImpl } from './crypto/internal/CryptoImpl';
 
-const STORAGE_KEY = 'vaultage_locked';
+export const STORAGE_KEY = 'vaultage_locked';
 
 @Injectable()
 export class PinLockService {
-
+    private cryptoImpl: CryptoImpl;
+    // pedro-arruda-moreira: online pin lock crypto mode
     constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage) {
+        const cryptoImpl = ls.getItem('crypto_type');
+        if(cryptoImpl == 'online') {
+            this.cryptoImpl = new OnlineCrypto();
+        } else {
+            this.cryptoImpl = new OfflineCrypto();
+        }
     }
 
     public get hasSecret(): boolean {
         return this.getStorage() != null;
     }
 
-    public setSecret(pin: string, data: string): void {
+    public setSecret(pin: string, data: string) {
 	    /*
 		 * pedro-arruda-moreira: local storage encryption
+         * and online pin lock crypto mode
 		 */
-        this.ls.setItem(STORAGE_KEY, this.encrypt(JSON.stringify({pin, data}), pin));
-    }
-
-
-    private encrypt(data: string, pin: string): string {
-        return (window as any).sjcl.encrypt(pin, data);
+        const value = this.cryptoImpl.encrypt(JSON.stringify({pin, data}), pin);
+        if(value == '') {
+            return;
+        }
+        this.ls.setItem(STORAGE_KEY, value);
     }
 
     public getSecret(userPin: string): string | undefined {
@@ -43,8 +53,9 @@ export class PinLockService {
             return pinStorage.data;
         }
     }
+    // pedro-arruda-moreira: online pin lock crypto mode
     private checkDecryption(storage: string, userPin: string): PinStorage {
-        const data = (window as any).sjcl.decrypt(userPin, storage);
+        const data = this.cryptoImpl.decrypt(storage, userPin);
         return JSON.parse(data);
     }
 

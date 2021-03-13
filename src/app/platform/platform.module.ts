@@ -12,6 +12,7 @@ import { ErrorHandlingService } from './error-handling.service';
 import { PinCodeComponent } from './pin-code/pin-code.component';
 /*
  * pedro-arruda-moreira: for some reason, build was failing because of this.
+ * online pin lock crypto mode
  */
 import { LOCAL_STORAGE, Vaultage, VAULTAGE, WINDOW } from './providers';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -45,7 +46,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
          * failing because of this.
          */
         { provide: VAULTAGE, useValue: Vaultage },
-        { provide: WINDOW, useValue: window },
+        { provide: WINDOW, useValue: window }
     ],
 })
 export class PlatformModule { }
