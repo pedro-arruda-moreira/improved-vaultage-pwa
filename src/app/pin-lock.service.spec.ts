@@ -1,7 +1,7 @@
 import { getMock, getService } from 'ng-vacuum';
-import { anyString, Mock, reset, when } from 'omnimock';
+import { anyString, Mock, reset, when, same } from 'omnimock';
 
-import { PinLockService } from './pin-lock.service';
+import { PinLockService, STORAGE_KEY } from './pin-lock.service';
 import { LOCAL_STORAGE } from './platform/providers';
 /*
  * pedro-arruda-moreira: local storage encryption
@@ -19,13 +19,15 @@ const CT = `{ "iv": "QBGp5xXcIzdSMqykVub9wg==", "v": 1, "iter": 10000, "ks": 128
 }`;
 
 
-describe('PinLockServiceTest', () => {;
+describe('PinLockServiceTest', () => {
     let lsMock: Mock<Storage>;
     let service: PinLockService;
     (window as any).sjcl = require('./../assets/sjcl.js');
 
     beforeEach(() => {
         lsMock = getMock(LOCAL_STORAGE);
+        //pedro-arruda-moreira: local storage encryption
+        when(lsMock.getItem(same('crypto_type'))).return('offline');
         service = getService(PinLockService);
     });
 
@@ -43,7 +45,8 @@ describe('PinLockServiceTest', () => {;
     });
 
     it('getSecret with good pin returns the secret', () => {
-        when(lsMock.getItem(anyString())).call(key => {
+        //pedro-arruda-moreira: changed to constant
+        when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
             expect(key).toBe('vaultage_locked');
             /*
 			 * pedro-arruda-moreira: local storage encryption
@@ -54,7 +57,8 @@ describe('PinLockServiceTest', () => {;
     });
 
     it('getSecret with bad pin returns undefined', () => {
-        when(lsMock.getItem(anyString())).call(key => {
+        //pedro-arruda-moreira: changed to constant
+        when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
             expect(key).toBe('vaultage_locked');
             /*
 			 * pedro-arruda-moreira: local storage encryption
@@ -65,7 +69,8 @@ describe('PinLockServiceTest', () => {;
     });
 
     it('getSecret with no storage', () => {
-        when(lsMock.getItem(anyString())).call(key => {
+        //pedro-arruda-moreira: changed to constant
+        when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
             expect(key).toBe('vaultage_locked');
             return null;
         });
@@ -73,14 +78,13 @@ describe('PinLockServiceTest', () => {;
     });
 
     it('hasSecret returns true iff there is a secret', () => {
-        when(lsMock.getItem(anyString())).return(null);
+        //pedro-arruda-moreira: changed to constant
+        when(lsMock.getItem(same(STORAGE_KEY))).return(null);
         expect(service.hasSecret).toBe(false);
 
         reset(lsMock);
-        when(lsMock.getItem(anyString())).return(`{
-            "pin": "1234",
-            "data": "53cr37"
-        }`);
+        //pedro-arruda-moreira: changed to constant
+        when(lsMock.getItem(same(STORAGE_KEY))).return(CT);
         expect(service.hasSecret).toBe(true);
     });
 

@@ -1,15 +1,23 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE } from './platform/providers';
-import { CryptoFacade } from './crypto/CryptoFacade';
+import { OnlineCrypto } from './crypto/online/OnlineCrypto';
+import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
+import { CryptoImpl } from './crypto/internal/CryptoImpl';
 
-const STORAGE_KEY = 'vaultage_locked';
+export const STORAGE_KEY = 'vaultage_locked';
 
 @Injectable()
 export class PinLockService {
-
+    private cryptoImpl: CryptoImpl;
     // pedro-arruda-moreira: online pin lock crypto mode
-    constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage,
-    private cryptoImpl: CryptoFacade) {}
+    constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage) {
+        const cryptoImpl = ls.getItem('crypto_type');
+        if(cryptoImpl == 'online') {
+            this.cryptoImpl = new OnlineCrypto();
+        } else {
+            this.cryptoImpl = new OfflineCrypto();
+        }
+    }
 
     public get hasSecret(): boolean {
         return this.getStorage() != null;

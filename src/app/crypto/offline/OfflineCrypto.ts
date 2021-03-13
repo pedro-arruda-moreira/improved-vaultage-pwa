@@ -1,8 +1,5 @@
 import { CryptoImpl } from '../internal/CryptoImpl';
-import { Injectable } from '@angular/core';
-@Injectable({
-    providedIn: 'root'
-})
+
 export class OfflineCrypto implements CryptoImpl {
     
     encrypt(data: string, pin: string): string {

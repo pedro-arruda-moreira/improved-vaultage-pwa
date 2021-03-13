@@ -13,5 +13,3 @@ export class Vaultage {
 export const LOCAL_STORAGE = new InjectionToken<Storage>('LocalStorage');
 export const VAULTAGE = new InjectionToken<Vaultage>('Vaultage');
 export const WINDOW = new InjectionToken<Window>('Window');
-// pedro-arruda-moreira: online pin lock crypto mode
-export const CRYPTO_IMPL = new InjectionToken<string>('Crypto');

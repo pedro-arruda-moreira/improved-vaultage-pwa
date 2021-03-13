@@ -1,29 +1,40 @@
-import { HttpClient } from '@angular/common/http';
 import { CryptoImpl } from '../internal/CryptoImpl';
-import { Injectable } from '@angular/core';
-@Injectable({
-    providedIn: 'root'
-})
+
+type XMLHttpRequestBuilder = () => XMLHttpRequest;
+type Randomizer = () => string;
+type ResponseExtractor = (ajax: XMLHttpRequest) => string;
+
 export class OnlineCrypto implements CryptoImpl {
 
+    constructor(
+        private ajaxBuilder: XMLHttpRequestBuilder = () => new XMLHttpRequest(),
+        private randomizer: Randomizer = () => {
+            let genKey = "" + Math.random();
+            for(let i = 0; i < 10; i++) {
+                genKey += Math.random();
+            }
+            return genKey;
+        },
+        private responseExtractor: ResponseExtractor = (ajax) => {
+            return ajax.responseText;
+        }
+    ) {};
+
     private doSynchronousHttpRequest(verb: string, path: string, body?: string): string {
-        const xh = new XMLHttpRequest();
+        const xh = this.ajaxBuilder();
         xh.open(verb, path, false);
         xh.send(body);
-        return xh.responseText;
+        return this.responseExtractor(xh);
     }
 
     encrypt(data: string, pin: string): string {
-        let genKey = "" + Math.random();
-        for(let i = 0; i < 10; i++) {
-            genKey += Math.random();
-        }
+        const genKey = this.randomizer();
         let code = this.doSynchronousHttpRequest('POST', './api/crypto',JSON.stringify({
             pin,
             genKey
         }));
         try{
-            if(code == "204") {
+            if(code === "204") {
                 return "";
             }
             return (window as any).sjcl.encrypt(genKey, data);

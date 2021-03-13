@@ -14,11 +14,8 @@ import { PinCodeComponent } from './pin-code/pin-code.component';
  * pedro-arruda-moreira: for some reason, build was failing because of this.
  * online pin lock crypto mode
  */
-import { LOCAL_STORAGE, Vaultage, VAULTAGE, WINDOW, CRYPTO_IMPL } from './providers';
+import { LOCAL_STORAGE, Vaultage, VAULTAGE, WINDOW } from './providers';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { CryptoFacade } from '../crypto/CryptoFacade';
-import { OfflineCrypto } from '../crypto/offline/OfflineCrypto';
-import { OnlineCrypto } from '../crypto/online/OnlineCrypto';
 
 
 @NgModule({
@@ -49,9 +46,7 @@ import { OnlineCrypto } from '../crypto/online/OnlineCrypto';
          * failing because of this.
          */
         { provide: VAULTAGE, useValue: Vaultage },
-        { provide: WINDOW, useValue: window },
-        // pedro-arruda-moreira: online pin lock crypto mode
-        { provide: CRYPTO_IMPL, useValue: localStorage.getItem('crypto_type') }
+        { provide: WINDOW, useValue: window }
     ],
 })
 export class PlatformModule { }
