@@ -1,6 +1,6 @@
 {
     "name": "improved-vaultage-pwa",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
@@ -56,5 +56,8 @@
         "tslint": "~5.18.0",
         "typescript": "~3.7.5",
         "zone.js": "~0.10.2"
+    },
+    "dependencies": {
+        "improved-vaultage-client": "^1.0.0"
     }
 }
