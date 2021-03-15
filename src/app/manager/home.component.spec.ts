@@ -4,7 +4,6 @@ import { createMock, getMock, renderComponent } from 'ng-vacuum';
 import { instance, mockInstance, when } from 'omnimock';
 import { Subject } from 'rxjs';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
-import { IVaultDBEntry, Vault } from 'vaultage-client';
 
 import { AppModule } from '../app.module';
 import { AuthService } from '../auth.service';
@@ -13,6 +12,7 @@ import { typeValue } from '../test/test-utils';
 import { HomeNavigationService, HomeViewMode } from './home-navigation.service';
 import { HomeComponent } from './home.component';
 import { PasswordListComponent } from './password-list.component';
+import { IVaultDBEntryImproved, Vault } from 'improved-vaultage-client';
 
 describe('HomeComponent', () => {
 
@@ -22,21 +22,23 @@ describe('HomeComponent', () => {
     let viewMode: HomeViewMode;
     let searchValue: string;
 
-    function fakeEntries(): IVaultDBEntry[] {
+    function fakeEntries(): IVaultDBEntryImproved[] {
         return [
-            mockInstance<IVaultDBEntry>('entry1', {
-                url: 'http://url',
+            mockInstance<IVaultDBEntryImproved>('entry1', {
+                itemUrl: 'http://url',
                 id: '1',
                 title: 'Yolo',
                 login: 'swag',
-                password: '5W4G'
+                password: '5W4G',
+                secureNoteText: 'secure note 1'
             }),
-            mockInstance<IVaultDBEntry>('entry2', {
-                url: '',
+            mockInstance<IVaultDBEntryImproved>('entry2', {
+                itemUrl: '',
                 id: '2',
                 title: 'GitHub',
                 login: 'hmil',
-                password: 'iluvcake'
+                password: 'iluvcake',
+                secureNoteText: 'secure note 2'
             }),
         ];
     }

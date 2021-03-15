@@ -31,7 +31,8 @@ describe('EditPasswordComponent', () => {
             login: 'Alan',
             password: '7ur1n6',
             title: 'Enigma',
-            url: 'http://turingtest'
+            itemUrl: 'http://turingtest',
+            secureNoteText: 'msn'
         };
         createMock(ActivatedRoute, {
             data: routeDataSubject
@@ -58,7 +59,8 @@ describe('EditPasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
-            url: 'http://foo.bar'
+            itemUrl: 'http://foo.bar',
+            secureNoteText: 'my secure note'
         }))).return(mockInstance('result')).once();
         when(fakeVault.save()).return(saveSubject.pipe(first()).toPromise()).once();
         submitFakeForm();
@@ -85,7 +87,8 @@ describe('EditPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
-            url: 'http://iambatm.an'
+            itemUrl: 'http://iambatm.an',
+            secureNoteText: 'msn2'
         };
         routeDataSubject.next({entry: { ...mockEntry} });
         fixture.detectChanges();
@@ -98,7 +101,8 @@ describe('EditPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
-            url: 'http://iambatm.an'
+            itemUrl: 'http://iambatm.an',
+            secureNoteText: 'msn2'
         };
         when(getMock(ErrorHandlingService).onError(matching(/Router did not/))).return().once();
 
@@ -118,7 +122,8 @@ describe('EditPasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
-            url: 'http://foo.bar'
+            itemUrl: 'http://foo.bar',
+            secureNoteText: 'my secure note'
         });
     }
 });

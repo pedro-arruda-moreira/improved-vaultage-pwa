@@ -43,7 +43,8 @@ describe('PasswordFormComponent', () => {
             login: 'hello',
             password: 'world',
             title: 'The World',
-            url: 'http://the-world.com'
+            itemUrl: 'http://the-world.com',
+            secureNoteText: 'msn3'
         };
         fixture.detectChanges();
         await fixture.whenStable();
@@ -58,6 +59,7 @@ describe('PasswordFormComponent', () => {
         typeValue(page.usernameInput, 'Fox');
         typeValue(page.passwordInput, 'qu1ck');
         typeValue(page.urlInput, 'http://quickbrownfox.com');
+        typeValue(page.secureNoteInput, 'msn4');
 
         page.saveButton.click();
         expect(await confirm).toEqual({
@@ -65,7 +67,8 @@ describe('PasswordFormComponent', () => {
             login: 'Fox',
             password: 'qu1ck',
             title: 'The fox',
-            url: 'http://quickbrownfox.com'
+            itemUrl: 'http://quickbrownfox.com',
+            secureNoteText: 'msn4'
         });
     });
 
@@ -91,6 +94,9 @@ class Page {
     }
     get urlInput() {
         return (this.rendering.find('[test-id=entry-form-url]').nativeElement as HTMLInputElement);
+    }
+    get secureNoteInput() {
+        return (this.rendering.find('[test-id=secure-notes]').nativeElement as HTMLInputElement);
     }
     get usernameInput() {
         return (this.rendering.find('[test-id=entry-form-username]').nativeElement as HTMLInputElement);

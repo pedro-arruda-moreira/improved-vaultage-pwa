@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
 import { anyString, mockInstance, when } from 'omnimock';
-import { Vault } from 'vaultage-client';
+import { Vault } from 'improved-vaultage-client';
 
 import { AuthService, LoginConfig } from './auth.service';
 import { PinLockService } from './pin-lock.service';
