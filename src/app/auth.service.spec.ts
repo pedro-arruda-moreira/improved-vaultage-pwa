@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
 import { anyString, mockInstance, when } from 'omnimock';
+// pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AuthService, LoginConfig } from './auth.service';

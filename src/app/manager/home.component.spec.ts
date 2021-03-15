@@ -12,6 +12,7 @@ import { typeValue } from '../test/test-utils';
 import { HomeNavigationService, HomeViewMode } from './home-navigation.service';
 import { HomeComponent } from './home.component';
 import { PasswordListComponent } from './password-list.component';
+// pedro-arruda-moreira: changed client
 import { IVaultDBEntryImproved, Vault } from 'improved-vaultage-client';
 
 describe('HomeComponent', () => {
@@ -21,7 +22,7 @@ describe('HomeComponent', () => {
     let page: Page;
     let viewMode: HomeViewMode;
     let searchValue: string;
-
+	// pedro-arruda-moreira: changed client
     function fakeEntries(): IVaultDBEntryImproved[] {
         return [
             mockInstance<IVaultDBEntryImproved>('entry1', {

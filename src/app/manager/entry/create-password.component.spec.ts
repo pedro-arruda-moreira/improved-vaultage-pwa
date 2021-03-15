@@ -5,6 +5,7 @@ import { anything, instance, matching, mock, mockInstance, objectEq, when } from
 import { Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
+// pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AppModule } from '../../app.module';
@@ -37,6 +38,7 @@ describe('CreatePasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://foo.bar',
             secureNoteText: 'my secure note'
         }))).return('1').once();
@@ -65,6 +67,7 @@ describe('CreatePasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://foo.bar',
             secureNoteText: 'my secure note'
         });

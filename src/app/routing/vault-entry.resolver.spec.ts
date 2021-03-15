@@ -1,7 +1,8 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
 import { instance, mock, mockInstance, when } from 'omnimock';
-import { IVaultDBEntry, IVaultDBEntryImproved } from 'improved-vaultage-client';
+// pedro-arruda-moreira: changed client
+import { IVaultDBEntryImproved } from 'improved-vaultage-client';
 
 import { AuthService } from '../auth.service';
 import { VaultEntryResolver } from './vault-entry.resolver';
@@ -15,6 +16,7 @@ describe('VaultEntryResolver', () => {
     });
 
     it('resolves a vault entry', async () => {
+    	// pedro-arruda-moreira: changed client
         const fakeEntry = mockInstance<IVaultDBEntryImproved>('fakeEntry');
         when(getMock(AuthService).getVault().getEntry('12')).return(fakeEntry).once();
         const mockRoute = mock(ActivatedRouteSnapshot);

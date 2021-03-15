@@ -6,6 +6,7 @@ import { anything, instance, matching, mock, mockInstance, objectEq, when } from
 import { Observable, Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
+// pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AppModule } from '../../app.module';
@@ -31,6 +32,7 @@ describe('EditPasswordComponent', () => {
             login: 'Alan',
             password: '7ur1n6',
             title: 'Enigma',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://turingtest',
             secureNoteText: 'msn'
         };
@@ -59,6 +61,7 @@ describe('EditPasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://foo.bar',
             secureNoteText: 'my secure note'
         }))).return(mockInstance('result')).once();
@@ -87,6 +90,7 @@ describe('EditPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://iambatm.an',
             secureNoteText: 'msn2'
         };
@@ -101,6 +105,7 @@ describe('EditPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://iambatm.an',
             secureNoteText: 'msn2'
         };
@@ -122,6 +127,7 @@ describe('EditPasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://foo.bar',
             secureNoteText: 'my secure note'
         });

@@ -18,7 +18,7 @@ export class PasswordFormComponent {
     public url: string = '';
 
     public title: string = '';
-
+	// pedro-arruda-moreira: secure notes
     public secureNotes: string = '';
 
     public passwordInputType: PasswordInputType = 'password';
@@ -31,8 +31,10 @@ export class PasswordFormComponent {
         this.id = e.id;
         this.username = e.login;
         this.password = e.password;
+        // pedro-arruda-moreira: changed client
         this.url = e.itemUrl;
         this.title = e.title;
+        // pedro-arruda-moreira: secure notes
         this.secureNotes = e.secureNoteText
     }
 
@@ -42,6 +44,7 @@ export class PasswordFormComponent {
             login: this.username,
             password: this.password,
             title: this.title,
+            // pedro-arruda-moreira: changed client/secure notes
             itemUrl: this.url,
             secureNoteText: this.secureNotes
         });

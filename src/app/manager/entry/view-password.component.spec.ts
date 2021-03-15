@@ -27,6 +27,7 @@ describe('ViewPasswordComponent', () => {
             login: 'Alan',
             password: '7ur1n6',
             title: 'Enigma',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://turingtest',
             secureNoteText: 'msn'
         };
@@ -53,6 +54,7 @@ describe('ViewPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://iambatm.an',
             secureNoteText: 'msn2'
         };
@@ -71,6 +73,7 @@ describe('ViewPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
+            // pedro-arruda-moreira: secure notes
             itemUrl: 'http://iambatm.an',
             secureNoteText: 'msn2'
         };

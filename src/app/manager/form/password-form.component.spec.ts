@@ -43,6 +43,7 @@ describe('PasswordFormComponent', () => {
             login: 'hello',
             password: 'world',
             title: 'The World',
+            // pedro-arruda-moreira: changed client/secure notes
             itemUrl: 'http://the-world.com',
             secureNoteText: 'msn3'
         };
@@ -59,6 +60,7 @@ describe('PasswordFormComponent', () => {
         typeValue(page.usernameInput, 'Fox');
         typeValue(page.passwordInput, 'qu1ck');
         typeValue(page.urlInput, 'http://quickbrownfox.com');
+        // pedro-arruda-moreira: secure notes
         typeValue(page.secureNoteInput, 'msn4');
 
         page.saveButton.click();
@@ -67,6 +69,7 @@ describe('PasswordFormComponent', () => {
             login: 'Fox',
             password: 'qu1ck',
             title: 'The fox',
+            // pedro-arruda-moreira: changed client/secure notes
             itemUrl: 'http://quickbrownfox.com',
             secureNoteText: 'msn4'
         });
@@ -95,6 +98,7 @@ class Page {
     get urlInput() {
         return (this.rendering.find('[test-id=entry-form-url]').nativeElement as HTMLInputElement);
     }
+    // pedro-arruda-moreira: secure notes
     get secureNoteInput() {
         return (this.rendering.find('[test-id=secure-notes]').nativeElement as HTMLInputElement);
     }
