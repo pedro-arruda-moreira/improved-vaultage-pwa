@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
-import { IVaultDBEntry } from 'vaultage-client';
+import { IVaultDBEntry, IVaultDBEntryImproved } from 'improved-vaultage-client';
 
 import { AuthService } from '../../auth.service';
 import { ErrorHandlingService } from '../../platform/error-handling.service';
@@ -49,7 +49,7 @@ export class ViewPasswordComponent implements OnInit {
 
     public _subscribeToRouteData() {
         return this.route.data.pipe(
-            tap((data: { entry?: IVaultDBEntry }) => {
+            tap((data: { entry?: IVaultDBEntryImproved }) => {
                 if (data.entry == null) {
                     throw new Error('Router did not provide mandatory "entry" parameter');
                 }

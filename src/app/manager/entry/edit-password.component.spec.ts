@@ -6,7 +6,7 @@ import { anything, instance, matching, mock, mockInstance, objectEq, when } from
 import { Observable, Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
-import { Vault } from 'vaultage-client';
+import { Vault } from 'improved-vaultage-client';
 
 import { AppModule } from '../../app.module';
 import { AuthService } from '../../auth.service';

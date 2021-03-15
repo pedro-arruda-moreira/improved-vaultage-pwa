@@ -19,6 +19,8 @@ export class PasswordFormComponent {
 
     public title: string = '';
 
+    public secureNotes: string = '';
+
     public passwordInputType: PasswordInputType = 'password';
 
     @Output()
@@ -29,8 +31,9 @@ export class PasswordFormComponent {
         this.id = e.id;
         this.username = e.login;
         this.password = e.password;
-        this.url = e.url;
+        this.url = e.itemUrl;
         this.title = e.title;
+        this.secureNotes = e.secureNoteText
     }
 
     public onSubmit() {
@@ -39,7 +42,8 @@ export class PasswordFormComponent {
             login: this.username,
             password: this.password,
             title: this.title,
-            url: this.url
+            itemUrl: this.url,
+            secureNoteText: this.secureNotes
         });
     }
 

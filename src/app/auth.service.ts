@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 /*
  * pedro-arruda-moreira: for some reason, build was failing because of this.
  */
-import { Vault } from 'vaultage-client';
+import { Vault } from 'improved-vaultage-client';
 import { PinLockService } from './pin-lock.service';
 /*
  * pedro-arruda-moreira: for some reason, build was failing because of this.
