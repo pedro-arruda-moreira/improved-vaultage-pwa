@@ -2,7 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
-import { IVaultDBEntry } from 'vaultage-client';
+// pedro-arruda-moreira: changed client
+import { IVaultDBEntryImproved } from 'improved-vaultage-client';
 
 import { AuthService } from '../../auth.service';
 import { BusyStateService } from '../../platform/busy-state.service';
@@ -42,7 +43,8 @@ export class EditPasswordComponent implements OnInit {
 
     public _subscribeToRouteData() {
         return this.route.data.pipe(
-            tap((data: { entry?: IVaultDBEntry }) => {
+        	// pedro-arruda-moreira: changed client
+            tap((data: { entry?: IVaultDBEntryImproved }) => {
                 if (data.entry == null) {
                     throw new Error('Router did not provide mandatory "entry" parameter');
                 }

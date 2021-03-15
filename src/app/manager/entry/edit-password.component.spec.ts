@@ -6,7 +6,8 @@ import { anything, instance, matching, mock, mockInstance, objectEq, when } from
 import { Observable, Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
-import { Vault } from 'vaultage-client';
+// pedro-arruda-moreira: changed client
+import { Vault } from 'improved-vaultage-client';
 
 import { AppModule } from '../../app.module';
 import { AuthService } from '../../auth.service';
@@ -31,7 +32,9 @@ describe('EditPasswordComponent', () => {
             login: 'Alan',
             password: '7ur1n6',
             title: 'Enigma',
-            url: 'http://turingtest'
+            // pedro-arruda-moreira: secure notes
+            itemUrl: 'http://turingtest',
+            secureNoteText: 'msn'
         };
         createMock(ActivatedRoute, {
             data: routeDataSubject
@@ -58,7 +61,9 @@ describe('EditPasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
-            url: 'http://foo.bar'
+            // pedro-arruda-moreira: secure notes
+            itemUrl: 'http://foo.bar',
+            secureNoteText: 'my secure note'
         }))).return(mockInstance('result')).once();
         when(fakeVault.save()).return(saveSubject.pipe(first()).toPromise()).once();
         submitFakeForm();
@@ -85,7 +90,9 @@ describe('EditPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
-            url: 'http://iambatm.an'
+            // pedro-arruda-moreira: secure notes
+            itemUrl: 'http://iambatm.an',
+            secureNoteText: 'msn2'
         };
         routeDataSubject.next({entry: { ...mockEntry} });
         fixture.detectChanges();
@@ -98,7 +105,9 @@ describe('EditPasswordComponent', () => {
             login: 'Bruce',
             password: 'W1ll15',
             title: 'Batman',
-            url: 'http://iambatm.an'
+            // pedro-arruda-moreira: secure notes
+            itemUrl: 'http://iambatm.an',
+            secureNoteText: 'msn2'
         };
         when(getMock(ErrorHandlingService).onError(matching(/Router did not/))).return().once();
 
@@ -118,7 +127,9 @@ describe('EditPasswordComponent', () => {
             login: 'John',
             password: '53cr3t',
             title: 'Foo',
-            url: 'http://foo.bar'
+            // pedro-arruda-moreira: secure notes
+            itemUrl: 'http://foo.bar',
+            secureNoteText: 'my secure note'
         });
     }
 });

@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-import { IVaultDBEntry } from 'vaultage-client';
+// pedro-arruda-moreira: changed client
+import { IVaultDBEntryImproved } from 'improved-vaultage-client';
 
 import { AuthService } from '../auth.service';
 
-
+// pedro-arruda-moreira: changed client
 @Injectable()
-export class VaultEntryResolver implements Resolve<IVaultDBEntry> {
+export class VaultEntryResolver implements Resolve<IVaultDBEntryImproved> {
 
     constructor(
             private readonly authService: AuthService,
             private readonly router: Router) { }
-
-    async resolve(route: ActivatedRouteSnapshot): Promise<IVaultDBEntry> {
+	// pedro-arruda-moreira: changed client
+    async resolve(route: ActivatedRouteSnapshot): Promise<IVaultDBEntryImproved> {
         const id = route.paramMap.get('id');
         if (id == null) {
             throw new Error('No id parameter provided');

@@ -3,7 +3,7 @@ import { InjectionToken } from '@angular/core';
  * pedro-arruda-moreira: for some reason, build was failing
  * because of this.
  */
-import * as vt from 'vaultage-client';
+import * as vt from 'improved-vaultage-client';
 
 export class Vaultage {
     static staticControl = vt;

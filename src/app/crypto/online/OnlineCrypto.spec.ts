@@ -11,7 +11,7 @@ const crypto =`{"iv":"63fznGsDKRJplIj3Y82geg==",
 
 let theAjaxReturn = "";
 
-describe('PinLockServiceTest', () => {
+describe('OnlineCryptoTest', () => {
     let ajaxMock: Mock<XMLHttpRequest>;
     let service: OnlineCrypto;
     (window as any).sjcl = require('./../../../assets/sjcl.js');

@@ -3,9 +3,9 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 /*
- * pedro-arruda-moreira: for some reason, build was failing because of this.
+ * pedro-arruda-moreira: changed client
  */
-import { Vault } from 'vaultage-client';
+import { Vault } from 'improved-vaultage-client';
 import { PinLockService } from './pin-lock.service';
 /*
  * pedro-arruda-moreira: for some reason, build was failing because of this.

@@ -72,7 +72,8 @@ export class HomeComponent {
     public get listItems(): IPasswordListEntry[] {
         const vault = this.authService.getVault();
         return vault.findEntries(this.searchValue).map(e => ({
-            host: this.getHost(e.url),
+        	// pedro-arruda-moreira: changed client
+            host: this.getHost(e.itemUrl),
             id: e.id,
             title: e.title,
             user: e.login,
