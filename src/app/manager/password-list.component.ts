@@ -5,7 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ErrorHandlingService } from '../platform/error-handling.service';
 import { WINDOW, LOCAL_STORAGE } from '../platform/providers';
-
+/**
+ * pedro-arruda-moreira: desktop mode
+ */
 @Component({
     selector: 'app-password-list',
     templateUrl: 'password-list.component.html',
