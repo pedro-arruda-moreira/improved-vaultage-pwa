@@ -39,8 +39,8 @@ export class PasswordListComponent {
         this.window.history.back();
     }
 
-    public get desktop(): boolean {
-        return this.ls.getItem('desktop') != null;
+    public get mobile(): boolean {
+        return this.ls.getItem('desktop') == 'false';
     }
 }
 

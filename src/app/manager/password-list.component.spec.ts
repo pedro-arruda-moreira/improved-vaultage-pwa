@@ -1,7 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { fakeAsync } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { getMock, getShallow } from 'ng-vacuum';
 import { instanceOf, mockInstance, when } from 'omnimock';
@@ -9,11 +8,13 @@ import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
 import { AppModule } from '../app.module';
 import { ErrorHandlingService } from '../platform/error-handling.service';
-import { WINDOW } from '../platform/providers';
+import { WINDOW, LOCAL_STORAGE } from '../platform/providers';
 import { IPasswordListEntry, PasswordListComponent } from './password-list.component';
 
-describe('PasswordListComponent', () => {
 
+describe('PasswordListComponent', () => {
+    
+    let desktopMode = 'false';
     let component: Rendering<PasswordListComponent, { items: IPasswordListEntry[] }>;
     let page: Page;
 
@@ -34,6 +35,8 @@ describe('PasswordListComponent', () => {
     }
 
     beforeEach(async () => {
+        desktopMode = 'false';
+        when(getMock(LOCAL_STORAGE).getItem('desktop')).call(key => desktopMode);
         component = await getShallow(PasswordListComponent, AppModule)
             .render({
                 bind: {
@@ -43,7 +46,7 @@ describe('PasswordListComponent', () => {
         page = new Page(component);
     });
 
-    it('shows the list of passwords', () => {
+    it('shows the list of passwords - mobile', () => {
         expect(page.entries.length).toBe(2);
         expect(page.entries[0].text).toMatch(/GitHub\s+hmil@github.com\s+/);
         expect(page.entries[1].text).toMatch(/FB\s+Zuck@facebook.com\s+/);
@@ -76,10 +79,10 @@ class Page {
     constructor(private readonly rendering: Rendering<PasswordListComponent, { items: IPasswordListEntry[] }>) { }
 
     public get entries() {
-        return this.rendering.find('.item-container').map(t => ({
+        return this.rendering.find('.item-container').map(t => {console.dir(t.nativeElement.fi);return ({
             element: (t.nativeElement as HTMLDivElement),
             text: (t.nativeElement as HTMLDivElement).innerText,
-            copy: (t.query(By.css('[test-id="copy-action"]')).nativeElement as HTMLDivElement)
-        }));
+            copy: (t.nativeElement.querySelector('[test-id="copy-action"]') as HTMLDivElement)
+        })});
     }
 }
