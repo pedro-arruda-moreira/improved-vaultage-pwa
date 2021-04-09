@@ -54,7 +54,11 @@ export class UnlockScreenComponent {
             throw new Error('Invalid pin');
         }
 
-        const nextURL = this.route.snapshot.queryParamMap.get('next') ?? undefined;
+        let nextURL = this.route.snapshot.queryParamMap.get('next') ?? undefined;
+        const unlockPart = '/unlock?next=';
+        while(nextURL && nextURL.startsWith(unlockPart)) {
+            nextURL = unescape(nextURL.substr(unlockPart.length));
+        }
         await this.authService.logIn(JSON.parse(data), pin, nextURL);
     }
 }

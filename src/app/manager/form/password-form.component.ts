@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, Inject } from '@angular/core';
 
 import { PasswordEntry } from '../domain/PasswordEntry';
+import { WINDOW } from 'src/app/platform/providers';
 
 @Component({
     selector: 'app-password-form',
@@ -8,6 +9,8 @@ import { PasswordEntry } from '../domain/PasswordEntry';
     styleUrls: [ 'password-form.component.scss' ]
 })
 export class PasswordFormComponent {
+
+    constructor(@Inject(WINDOW) private window: Window) {}
 
     private id: string = '';
 
@@ -38,6 +41,9 @@ export class PasswordFormComponent {
         this.secureNotes = e.secureNoteText
     }
 
+    @Input()
+    public showDelete: boolean = false;
+
     public onSubmit() {
         this.confirm.emit({
             id: this.id,
@@ -48,6 +54,20 @@ export class PasswordFormComponent {
             itemUrl: this.url,
             secureNoteText: this.secureNotes
         });
+    }
+    public onDelete() {
+        if(this.window.confirm('Are you sure you want to delete this entry?')) {
+            this.confirm.emit({
+                id: this.id,
+                login: this.username,
+                password: this.password,
+                title: this.title,
+                // pedro-arruda-moreira: changed client/secure notes
+                itemUrl: this.url,
+                secureNoteText: this.secureNotes,
+                isDelete: true
+            });
+        }
     }
 
     public togglePasswordVisibility() {

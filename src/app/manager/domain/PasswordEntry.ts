@@ -12,6 +12,7 @@ export interface PasswordEntry {
     password: string;
     // pedro-arruda-moreira: secure notes
     secureNoteText: string;
+    isDelete?: boolean;
 }
 // pedro-arruda-moreira: changed client
 export function toVaultageEntry(pwEntry: PasswordEntry): IVaultDBEntryAttrsImproved {

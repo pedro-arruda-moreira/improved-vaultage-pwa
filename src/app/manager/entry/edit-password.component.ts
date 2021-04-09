@@ -59,11 +59,27 @@ export class EditPasswordComponent implements OnInit {
 
     public onSave(entry: PasswordEntry) {
         this.busy.setBusy(true);
-        this.doSave(entry)
-            .finally(() => this.busy.setBusy(false))
-            .catch(e => this.snackBar.open(e.message, undefined, {
-                panelClass: 'error'
-            }));
+        if(entry.isDelete) {
+            this.doDelete(entry)
+                .finally(() => this.busy.setBusy(false))
+                .catch(e => this.snackBar.open(e.message, undefined, {
+                    panelClass: 'error'
+                }));
+        } else {
+            this.doSave(entry)
+                .finally(() => this.busy.setBusy(false))
+                .catch(e => this.snackBar.open(e.message, undefined, {
+                    panelClass: 'error'
+                }));
+        }
+    }
+
+    private async doDelete(entry: PasswordEntry) {
+        const vault = this.authService.getVault();
+        vault.removeEntry(entry.id);
+        await vault.save();
+        this.snackBar.open("Entry deleted successfully.");
+        this.onExit();
     }
 
     private async doSave(entry: PasswordEntry) {
