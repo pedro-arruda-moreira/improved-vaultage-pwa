@@ -14,7 +14,7 @@ let theAjaxReturn = "";
 describe('OnlineCryptoTest', () => {
     let ajaxMock: Mock<XMLHttpRequest>;
     let service: OnlineCrypto;
-    (window as any).sjcl = require('./../../../assets/sjcl.js');
+    (window as any).sjcl = require('./../../../assets/js/sjcl.js');
 
     beforeEach(() => {
         ajaxMock = getMock(XMLHttpRequest);

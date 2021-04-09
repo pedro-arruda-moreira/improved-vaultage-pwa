@@ -22,7 +22,7 @@ const CT = `{ "iv": "QBGp5xXcIzdSMqykVub9wg==", "v": 1, "iter": 10000, "ks": 128
 describe('PinLockServiceTest', () => {
     let lsMock: Mock<Storage>;
     let service: PinLockService;
-    (window as any).sjcl = require('./../assets/sjcl.js');
+    (window as any).sjcl = require('./../assets/js/sjcl.js');
 
     beforeEach(() => {
         lsMock = getMock(LOCAL_STORAGE);

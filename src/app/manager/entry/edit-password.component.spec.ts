@@ -73,6 +73,23 @@ describe('EditPasswordComponent', () => {
         saveSubject.next();
     }));
 
+    it('let user delete an entry', fakeAsync(() => {
+        const saveSubject = new Subject<void>();
+        const fakeVault = mock(Vault);
+        expect(page.form.entry).toEqual(mockEntry);
+
+        when(getMock(BusyStateService).setBusy(true)).return().once();
+        when(getMock(AuthService).getVault()).return(instance(fakeVault)).once();
+        when(fakeVault.removeEntry('1')).return(mockInstance('result')).once();
+        when(fakeVault.save()).return(saveSubject.pipe(first()).toPromise()).once();
+        when(getMock(MatSnackBar).open('Entry deleted successfully.')).return(mockInstance('snack')).once();
+        submitFakeForm(true);
+
+        when(getMock(WINDOW).history.back()).return().once();
+        when(getMock(BusyStateService).setBusy(false)).return().once();
+        saveSubject.next();
+    }));
+
     it('shows errors in a snack', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(AuthService).getVault()).throw(new Error('Not authenticated')).once();
@@ -121,8 +138,8 @@ describe('EditPasswordComponent', () => {
         expect(hasReSubscribed).toBe(true);
     }));
 
-    function submitFakeForm() {
-            page.form.confirm.next({
+    function submitFakeForm(isDelete?: boolean) {
+        let data = {
             id: '1',
             login: 'John',
             password: '53cr3t',
@@ -130,7 +147,11 @@ describe('EditPasswordComponent', () => {
             // pedro-arruda-moreira: secure notes
             itemUrl: 'http://foo.bar',
             secureNoteText: 'my secure note'
-        });
+        } as PasswordEntry;
+        if(isDelete) {
+            data.isDelete = true;
+        }
+        page.form.confirm.next(data);
     }
 });
 
