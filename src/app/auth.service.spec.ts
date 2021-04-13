@@ -1,12 +1,13 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
-import { anyString, mockInstance, when, equals } from 'omnimock';
+import { anyString, mockInstance, when, equals, anyObject } from 'omnimock';
 // pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AuthService, LoginConfig } from './auth.service';
 import { PinLockService } from './pin-lock.service';
 import { VAULTAGE, LOCAL_STORAGE } from './platform/providers';
+import { PasswordPromptService } from './password-prompt.service';
 
 describe('AuthService', () => {
 
@@ -58,7 +59,37 @@ describe('AuthService', () => {
         expect(changeEvents[0]).toBe(false);
     });
 
-    it('logIn logs in and redirects, logOut logs out - mobile', async () => {
+    it('logIn only asks for master password once per session - desktop', async () => {
+        const config = fakeLoginConfig();
+        const fakeVault = mockInstance<Vault>('vault');
+        when(getMock(PasswordPromptService).passwordPrompt(anyObject())).return(
+            Promise.resolve('Tr4v0lt4')).once();
+        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('true');
+        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
+            .resolve(fakeVault);
+        when(getMock(PinLockService).setSecret('1234', anyString()))
+            .call((pin, secret) => {
+                expect(JSON.parse(secret)).toEqual(config);
+            })
+            .times(2);
+        when(getMock(Router).navigateByUrl('/manager', { replaceUrl: true })).resolve(true).times(2);
+        await service.logIn(config, '1234');
+
+        expect(service.isAuthenticated).toBe(true);
+        expect(service.getVault()).toBe(fakeVault);
+        expect(changeEvents.length).toBe(2);
+        expect(changeEvents[1]).toBe(true);
+
+        service.logOut();
+
+        expect(service.isAuthenticated).toBe(false);
+        expect(() => service.getVault()).toThrowError(/not authenticated/i);
+        expect(changeEvents.length).toBe(3);
+        expect(changeEvents[2]).toBe(false);
+        await service.logIn(config, '1234');
+    });
+
+    it('logIn logs in and redirects, logOut logs out', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
@@ -88,7 +119,7 @@ describe('AuthService', () => {
         expect(changeEvents[2]).toBe(false);
     });
 
-    it('logIn redirects to next URL - mobile', async () => {
+    it('logIn redirects to next URL', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
