@@ -1,12 +1,12 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
-import { anyString, mockInstance, when } from 'omnimock';
+import { anyString, mockInstance, when, equals } from 'omnimock';
 // pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AuthService, LoginConfig } from './auth.service';
 import { PinLockService } from './pin-lock.service';
-import { VAULTAGE } from './platform/providers';
+import { VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 
 describe('AuthService', () => {
 
@@ -58,9 +58,10 @@ describe('AuthService', () => {
         expect(changeEvents[0]).toBe(false);
     });
 
-    it('logIn logs in and redirects, logOut logs out', async () => {
+    it('logIn logs in and redirects, logOut logs out - mobile', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
@@ -87,9 +88,10 @@ describe('AuthService', () => {
         expect(changeEvents[2]).toBe(false);
     });
 
-    it('logIn redirects to next URL', async () => {
+    it('logIn redirects to next URL - mobile', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */

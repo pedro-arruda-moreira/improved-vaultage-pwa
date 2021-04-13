@@ -24,6 +24,7 @@ describe('UnlockScreenComponent', () => {
 
     it('alternative action is log out and redirect', () => {
         when(getMock(PinLockService).reset()).return().once();
+        when(getMock(AuthService).reset()).return().once();
         when(getMock(RedirectService).redirectToAuthZone('foo/bar')).return().once();
         when(getMock(ActivatedRoute).snapshot.url).useValue([new UrlSegment('foo', {}), new UrlSegment('bar', {})]).once();
         page.pinCode.altAction.next();

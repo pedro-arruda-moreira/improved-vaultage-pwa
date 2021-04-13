@@ -45,9 +45,6 @@ describe('SetupService', () => {
 
         // Step 3: Notify pin
         when(busy.setBusy(true)).return().once();
-        when(getMock(PinLockService).setSecret('1234', anyString())).call((_pin, data) => {
-            expect(JSON.parse(data)).toEqual(loginConfig);
-        }).once();
         when(busy.setBusy(false)).return().once();
         when(getMock(AuthService).logIn(loginConfig, '1234')).resolve().once();
         service.notifyPin('1234');
@@ -77,9 +74,6 @@ describe('SetupService', () => {
 
         // Step 3: Notify pin
         when(busy.setBusy(true)).return().once();
-        when(getMock(PinLockService).setSecret('1234', anyString())).call((_pin, data) => {
-            expect(JSON.parse(data)).toEqual(loginConfig);
-        }).once();
         when(busy.setBusy(false)).return().once();
         when(getMock(AuthService).logIn(loginConfig, '1234')).reject(new Error('Cant log in')).once();
         when(getMock(ErrorHandlingService).onError(matching(/Cant log in/))).return().once();
