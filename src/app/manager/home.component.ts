@@ -111,6 +111,7 @@ export class HomeComponent {
     public logOut() {
         this.pinLockService.reset();
         this.authService.logOut();
+        this.authService.reset();
     }
 
     private getHost(url: string): string {

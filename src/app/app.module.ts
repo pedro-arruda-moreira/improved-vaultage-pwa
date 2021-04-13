@@ -41,6 +41,7 @@ import { LoginComponent } from './setup/login.component';
 import { PinSetupComponent } from './setup/pin-setup.component';
 import { SetupComponent } from './setup/setup.component';
 import { SetupService } from './setup/setup.service';
+import { PasswordPromptService } from './password-prompt.service';
 
 @NgModule({
     declarations: [
@@ -89,6 +90,7 @@ import { SetupService } from './setup/setup.service';
         SetupService,
         UnauthGuard,
         VaultEntryResolver,
+        PasswordPromptService
     ],
     bootstrap: [AppComponent],
 })

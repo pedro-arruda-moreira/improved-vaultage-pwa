@@ -47,7 +47,6 @@ export class SetupService {
 
         this.busyService.setBusy(true);
         try {
-            this.pinService.setSecret(pin, JSON.stringify(credentials));
             await this.authService.logIn(credentials, pin);
         } finally {
             this.busyService.setBusy(false);

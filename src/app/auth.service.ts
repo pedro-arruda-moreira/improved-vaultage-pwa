@@ -10,7 +10,8 @@ import { PinLockService } from './pin-lock.service';
 /*
  * pedro-arruda-moreira: for some reason, build was failing because of this.
  */
-import { Vaultage, VAULTAGE } from './platform/providers';
+import { Vaultage, VAULTAGE, LOCAL_STORAGE } from './platform/providers';
+import { PasswordPromptService } from './password-prompt.service';
 
 
 /**
@@ -21,11 +22,14 @@ export class AuthService {
 
     private readonly vaultSubject = new BehaviorSubject<Vault | null>(null);
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
+    private masterPassword: string = '';
 
     constructor(
             private readonly pinLockService: PinLockService,
             private readonly router: Router,
-            @Inject(VAULTAGE) private readonly vaultage: Vaultage) {
+            @Inject(VAULTAGE) private readonly vaultage: Vaultage,
+            private readonly pwPrompt: PasswordPromptService,
+            @Inject(LOCAL_STORAGE) private readonly ls: Storage) {
     }
 
     public get isAuthenticated(): boolean {
@@ -40,11 +44,39 @@ export class AuthService {
         await this.doLogin(config);
     }
 
+    private get desktop(): boolean {
+        return this.ls.getItem('desktop') == 'true';
+    }
+
     /**
      * Saves authentication settings
      */
     public async logIn(data: LoginConfig, pin: string, nextURL?: string) {
-        this.vaultSubject.next(await this.doLogin(data));
+        if(this.desktop) {
+            let masterPass = '';
+            if(this.masterPassword == '') {
+                masterPass = await this.pwPrompt.passwordPrompt({
+                    cancelButtonText: 'Cancel',
+                    promptText: 'Please confirm your master password',
+                    submitButtonText: 'Ok',
+                    cancelMessage: 'Master password prompt cancelled by user.'
+                });
+            } else {
+                masterPass = this.masterPassword;
+            }
+            this.vaultSubject.next(await this.doLogin({
+                password: masterPass,
+                url: data.url,
+                username: data.username,
+                basic: data.basic
+            }));
+            this.masterPassword = masterPass;
+        } else {
+            this.vaultSubject.next(await this.doLogin(data));
+        }
+        if(this.desktop) {
+            data.password = '';
+        }
         this.pinLockService.setSecret(pin, JSON.stringify(data));
 
         await this.router.navigateByUrl(nextURL ?? '/manager', { replaceUrl: true });
@@ -55,6 +87,10 @@ export class AuthService {
      */
     public logOut() {
         this.vaultSubject.next(null);
+    }
+
+    public reset() {
+        this.masterPassword = '';
     }
 
     /**

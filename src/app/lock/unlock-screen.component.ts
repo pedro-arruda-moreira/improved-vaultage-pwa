@@ -41,6 +41,7 @@ export class UnlockScreenComponent {
 
     public onLogOut() {
         this.pinLockService.reset();
+        this.authService.reset();
         this.redirectService.redirectToAuthZone(this.route.snapshot.url.join('/'));
     }
 
