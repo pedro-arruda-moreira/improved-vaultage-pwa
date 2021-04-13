@@ -74,3 +74,44 @@
       box-shadow: 0 2.5em 0 0;
     }
   }
+
+  /* tooltip */
+  .csstooltip:before {
+    content: attr(data-tooltip-title);
+    background-color: #000;
+    color: #FFF;
+    font-size: 13px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: "Roboto";
+    position: absolute;
+    left: 30px;
+    bottom: -50px;
+    width: 250px;
+    opacity: 0;
+    transition: all .4s ease;
+    display: none;
+    visibility: hidden;
+  }
+  .csstooltip:after {
+    content: "";
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    left: 30px;
+    margin-left: 5px;
+    bottom: -16px;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #000 transparent;
+    transition: all .4s ease;
+    display: none;
+    visibility: hidden;
+  }
+  .csstooltip:hover:after,
+  .csstooltip:hover:before {
+    opacity: 1;
+    display: block;
+    visibility: visible;
+  }

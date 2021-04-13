@@ -73,6 +73,10 @@ export class PasswordFormComponent {
     public togglePasswordVisibility() {
         this.passwordInputType = this.passwordInputType === 'text' ? 'password' : 'text';
     }
+
+    public openGenerate() {
+        // TODO
+    }
 }
 
 type PasswordInputType = 'text' | 'password';
