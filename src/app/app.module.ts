@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,6 +43,7 @@ import { LoginComponent } from './setup/login.component';
 import { PinSetupComponent } from './setup/pin-setup.component';
 import { SetupComponent } from './setup/setup.component';
 import { SetupService } from './setup/setup.service';
+import { PasswordGeneratorComponent } from './manager/form/password-generator/password.generator.component';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 
 @NgModule({
@@ -58,6 +60,7 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
         SetupComponent,
         UnlockScreenComponent,
         ViewPasswordComponent,
+        PasswordGeneratorComponent,
         PasswordPromptComponent
     ],
     imports: [
@@ -74,6 +77,7 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
         MatIconModule,
         MatInputModule,
         MatListModule,
+        MatRadioModule,
         MatSnackBarModule,
         MatProgressSpinnerModule,
         PlatformModule,
@@ -96,7 +100,8 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
     ],
     bootstrap: [AppComponent],
     entryComponents: [
-        PasswordPromptComponent
+        PasswordPromptComponent,
+        PasswordGeneratorComponent
     ]
 })
 export class AppModule { }

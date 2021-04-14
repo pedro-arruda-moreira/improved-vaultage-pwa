@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output, Inject } from '@angular/core';
 
 import { PasswordEntry } from '../domain/PasswordEntry';
 import { WINDOW } from 'src/app/platform/providers';
+import { MatDialog } from '@angular/material/dialog';
+import { PasswordGeneratorComponent } from './password-generator/password.generator.component';
 
 @Component({
     selector: 'app-password-form',
@@ -10,7 +12,8 @@ import { WINDOW } from 'src/app/platform/providers';
 })
 export class PasswordFormComponent {
 
-    constructor(@Inject(WINDOW) private window: Window) {}
+    constructor(@Inject(WINDOW) private readonly window: Window,
+    private readonly dialog: MatDialog) {}
 
     private id: string = '';
 
@@ -74,8 +77,13 @@ export class PasswordFormComponent {
         this.passwordInputType = this.passwordInputType === 'text' ? 'password' : 'text';
     }
 
-    public openGenerate() {
-        // TODO
+    public async openGenerate() {
+        this.dialog.open(
+            PasswordGeneratorComponent,
+            {
+                disableClose: true
+            }
+        );
     }
 }
 
