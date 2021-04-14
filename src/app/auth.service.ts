@@ -88,6 +88,7 @@ export class AuthService {
      */
     public logOut() {
         this.vaultSubject.next(null);
+        this.dialog.closeAll();
     }
 
     public reset() {

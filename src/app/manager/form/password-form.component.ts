@@ -78,12 +78,12 @@ export class PasswordFormComponent {
     }
 
     public async openGenerate() {
-        this.dialog.open(
+        this.password = await this.dialog.open(
             PasswordGeneratorComponent,
             {
                 disableClose: true
             }
-        );
+        ).componentInstance.generatedPassword;
     }
 }
 

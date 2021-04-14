@@ -13,12 +13,16 @@ if(href && href.indexOf('use_basic=true') > -1) {
 // online crypto support
 if(localStorage.getItem('crypto_type') == null) {
   if(href && href.indexOf('crypto_type=online') > -1) {
-      localStorage.setItem('crypto_type', 'online');
+    localStorage.setItem('crypto_type', 'online');
   } else {
-      localStorage.setItem('crypto_type', 'offline');
+    localStorage.setItem('crypto_type', 'offline');
   }
 }
 // desktop mode
-if(href && href.indexOf('desktop=true') > -1) {
+if(localStorage.getItem('desktop') == null) {
+  if(href && href.indexOf('desktop=true') > -1) {
     localStorage.setItem('desktop', 'true');
+  } else {
+    localStorage.setItem('desktop', 'false');
+  }
 }
