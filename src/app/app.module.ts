@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -41,7 +42,7 @@ import { LoginComponent } from './setup/login.component';
 import { PinSetupComponent } from './setup/pin-setup.component';
 import { SetupComponent } from './setup/setup.component';
 import { SetupService } from './setup/setup.service';
-import { PasswordPromptService } from './password-prompt.service';
+import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import { PasswordPromptService } from './password-prompt.service';
         SetupComponent,
         UnlockScreenComponent,
         ViewPasswordComponent,
+        PasswordPromptComponent
     ],
     imports: [
         AppRoutingModule,
@@ -66,6 +68,7 @@ import { PasswordPromptService } from './password-prompt.service';
         FormsModule,
         MatButtonModule,
         MatCheckboxModule,
+        MatDialogModule,
         MatDividerModule,
         MatFormFieldModule,
         MatIconModule,
@@ -89,9 +92,11 @@ import { PasswordPromptService } from './password-prompt.service';
         RedirectService,
         SetupService,
         UnauthGuard,
-        VaultEntryResolver,
-        PasswordPromptService
+        VaultEntryResolver
     ],
     bootstrap: [AppComponent],
+    entryComponents: [
+        PasswordPromptComponent
+    ]
 })
 export class AppModule { }

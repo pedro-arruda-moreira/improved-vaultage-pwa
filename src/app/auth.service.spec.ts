@@ -1,13 +1,14 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
-import { anyString, mockInstance, when, equals, anyObject } from 'omnimock';
+import { anyString, mockInstance, when, equals, anyObject, anything, mock } from 'omnimock';
 // pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AuthService, LoginConfig } from './auth.service';
 import { PinLockService } from './pin-lock.service';
 import { VAULTAGE, LOCAL_STORAGE } from './platform/providers';
-import { PasswordPromptService } from './password-prompt.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 
 describe('AuthService', () => {
 
@@ -62,8 +63,13 @@ describe('AuthService', () => {
     it('logIn only asks for master password once per session - desktop', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
-        when(getMock(PasswordPromptService).passwordPrompt(anyObject())).return(
-            Promise.resolve('Tr4v0lt4')).once();
+        const mockPasswordPrompt = {
+            password: Promise.resolve('Tr4v0lt4')
+        } as PasswordPromptComponent;
+        when(getMock(MatDialog).open(anything(), anything())).return(
+            {
+                componentInstance: (mockPasswordPrompt as unknown) as PasswordPromptComponent
+            } as MatDialogRef<PasswordPromptComponent, any>).once();
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('true');
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
             .resolve(fakeVault);
