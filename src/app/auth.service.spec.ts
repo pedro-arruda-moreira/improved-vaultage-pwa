@@ -63,6 +63,7 @@ describe('AuthService', () => {
     it('logIn only asks for master password once per session - desktop', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        when(getMock(MatDialog).closeAll()).return().once();
         const mockPasswordPrompt = {
             password: Promise.resolve('Tr4v0lt4')
         } as PasswordPromptComponent;
@@ -98,7 +99,8 @@ describe('AuthService', () => {
     it('logIn logs in and redirects, logOut logs out', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
-        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
+        when(getMock(MatDialog).closeAll()).return().once();
+        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false').times(2);
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
