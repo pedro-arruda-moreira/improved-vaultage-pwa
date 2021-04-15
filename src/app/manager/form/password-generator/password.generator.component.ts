@@ -36,6 +36,10 @@ export class PasswordGeneratorComponent implements OnInit {
         this.password = (this.window as any).generatePassword(this.length, false, /.*/);
         break;
       }
+      case PasswordType.NUMBERS_ONLY: {
+        this.password = (this.window as any).generatePassword(this.length, false, /[0-9]/);
+        break;
+      }
     }
   }
   public ngOnInit(): void {
@@ -57,5 +61,6 @@ export class PasswordGeneratorComponent implements OnInit {
 export enum PasswordType {
   STANDARD = "1",
   MEMORABLE = "2",
-  ALL_CHARS = "3"
+  ALL_CHARS = "3",
+  NUMBERS_ONLY = "4"
 }

@@ -11,9 +11,6 @@ describe('PasswordPromptComponent', () => {
 
     let page: Page;
     let fixture: ComponentFixture<PasswordPromptComponent>;
-    let bindings: {
-        password: Promise<string>
-    };
     let component: PasswordPromptComponent;
 
     beforeEach(async () => {
@@ -21,7 +18,6 @@ describe('PasswordPromptComponent', () => {
         });
         component = renderer.instance;
         fixture = renderer.fixture;
-        bindings = (renderer.bindings as unknown) as { password: Promise<string>; };
         page = new Page(renderer);
     });
     it('toggles visibility', fakeAsync(() => {
@@ -75,16 +71,16 @@ class Page {
     constructor(private readonly renderer: Rendering<PasswordPromptComponent, any>) { }
 
     public get passwordInput(): HTMLInputElement {
-        return this.renderer.find(`[test-id=password-input`).nativeElement;
+        return this.renderer.find(`[test-id=password-input]`).nativeElement;
     }
     public get toggleVisibility(): HTMLElement {
-        return this.renderer.find(`[test-id=toggle-password`).nativeElement;
+        return this.renderer.find(`[test-id=toggle-password]`).nativeElement;
     }
     public get okBtn(): HTMLElement {
-        return this.renderer.find(`[test-id=btn-ok`).nativeElement;
+        return this.renderer.find(`[test-id=btn-ok]`).nativeElement;
     }
     public get cancelBtn(): HTMLElement {
-        return this.renderer.find(`[test-id=btn-cancel`).nativeElement;
+        return this.renderer.find(`[test-id=btn-cancel]`).nativeElement;
     }
     get passwordInputType() {
         return this.passwordInput.getAttribute('ng-reflect-type');
