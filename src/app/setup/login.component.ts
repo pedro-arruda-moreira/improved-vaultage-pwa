@@ -104,12 +104,12 @@ export class LoginComponent implements OnInit {
 	 * force basic mode
 	 */
     private configureSelfContained() {
-        if((window as any).__self_contained || this.ls.getItem('self_contained') == 'true') {
+        if(this.ls.getItem('self_contained') == 'true') {
             this.hostLocked = true;
             this.url = document.location.origin + '/';
             this.ls.setItem('self_contained', 'true');
         }
-        if((window as any).__use_basic || this.ls.getItem('use_basic') == 'true') {
+        if(this.ls.getItem('use_basic') == 'true') {
             this.basicLocked = true;
             this.useBasic = true;
             this.ls.setItem('use_basic', 'true');

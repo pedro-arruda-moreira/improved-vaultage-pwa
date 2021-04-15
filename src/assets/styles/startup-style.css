@@ -1,5 +1,5 @@
   body {
-    background-image: url('assets/background-sd.jpg');
+    background-image: url('../background-sd.jpg');
     background-size: cover;
     background-position: center;
     height: 100vh;
