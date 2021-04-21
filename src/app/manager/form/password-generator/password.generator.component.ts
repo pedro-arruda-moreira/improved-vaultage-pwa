@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { WINDOW } from 'src/app/platform/providers';
+import { Promiser } from '../../../util/Promiser';
 
 @Component({
   selector: 'app-password-generator',
@@ -9,12 +9,9 @@ import { WINDOW } from 'src/app/platform/providers';
 })
 export class PasswordGeneratorComponent implements OnInit {
   constructor(@Inject(WINDOW) private readonly window: Window) {
-    this.resolver = () => {};
-    this.reject = () => {};
   }
-  
-  private resolver: (value?: string | PromiseLike<string> | undefined) => void;
-  public reject: () => void;
+
+  public promiser = new Promiser<string>();
 
   public password: string = '';
 
@@ -47,14 +44,7 @@ export class PasswordGeneratorComponent implements OnInit {
   }
 
   public get generatedPassword(): Promise<string> {
-    return new Promise((res, rej) => {
-      this.resolver = res;
-      this.reject = rej;
-    });
-  }
-
-  public resolve() {
-    this.resolver(this.password);
+    return this.promiser.promise;
   }
 }
 

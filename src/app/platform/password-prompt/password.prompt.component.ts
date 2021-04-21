@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Promiser } from 'src/app/util/Promiser';
 
 @Component({
   selector: 'app-password-prompt',
@@ -10,33 +11,27 @@ export class PasswordPromptComponent {
 
   public passwordInputType: PasswordInputType = 'password';
 
-  public resolve: (value?: string | PromiseLike<string> | undefined) => void;
-  public reject: () => void;
+  public promiser = new Promiser<string>();
 
-  constructor(
-    private readonly dialog: MatDialog) {
-    this.resolve = () => {};
-    this.reject = () => {};
-  }
+  constructor(private readonly dialog: MatDialog) {}
 
   public togglePasswordVisibility() {
       this.passwordInputType = this.passwordInputType === 'text' ? 'password' : 'text';
   }
 
   public get password(): Promise<string> {
-    return new Promise((res, rej) => {
-      this.reject = () => {
-        rej(new Error('Password prompt cancelled by user.'));
-      };
-      this.resolve = res;
-    });
+    return this.promiser.promise;
   }
 
   public onKeyUp(pass: string, keyCode: number) {
     if(keyCode == 13) {
-      this.resolve(pass);
+      this.promiser.resolve(pass);
       this.dialog.closeAll();
     }
+  }
+
+  public reject() {
+    this.promiser.reject(new Error('Password prompt cancelled by user.'));
   }
 
 }
