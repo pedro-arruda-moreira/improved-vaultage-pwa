@@ -19,7 +19,8 @@ export class PasswordGeneratorComponent implements OnInit {
 
   public type: PasswordType = PasswordType.STANDARD;
 
-  public generatePassword() {
+  public generatePassword(newType: string = this.type as string) {
+    this.type = newType as PasswordType;
     switch(this.type) {
       case PasswordType.STANDARD: {
         this.password = (this.window as any).generatePassword(this.length, false);

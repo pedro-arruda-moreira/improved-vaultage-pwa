@@ -34,15 +34,10 @@ export class PasswordListComponent {
                 });
     }
 
-    public onUsePassword(event: MouseEvent, password: string) {
+    public sendToClipboard(event: MouseEvent, value: string, type: string) {
         event.stopPropagation();
-        this.clipboard.copy(password);
-        this.snackBar.open('Password copied to clipboard!');
-        this.window.history.back();
-    }
-
-    public get mobile(): boolean {
-        return this.ls.getItem('desktop') == 'false';
+        this.clipboard.copy(value);
+        this.snackBar.open(`${type} copied to clipboard!`);
     }
 }
 
