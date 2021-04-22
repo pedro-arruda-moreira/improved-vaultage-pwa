@@ -34,7 +34,7 @@ describe('UnlockScreenComponent', () => {
     it('logs in on submit', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
-        when(getMock(PinLockService).getSecret('1234')).return('"secret"').once();
+        when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve('"secret"')).once();
         when(getMock(ActivatedRoute).snapshot.queryParamMap.get('next')).return('next_url').once();
         when(getMock(AuthService).logIn('secret' as any, '1234', 'next_url')).resolve().once();
         when(getMock(BusyStateService).setBusy(false)).return().once();
@@ -46,7 +46,7 @@ describe('UnlockScreenComponent', () => {
     it('logs in on submit (no next url)', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
-        when(getMock(PinLockService).getSecret('1234')).return('"secret"').once();
+        when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve('"secret"')).once();
         when(getMock(ActivatedRoute).snapshot.queryParamMap.get('next')).return(null).once();
         when(getMock(AuthService).logIn('secret' as any, '1234', undefined)).resolve().once();
         when(getMock(BusyStateService).setBusy(false)).return().once();
@@ -58,7 +58,7 @@ describe('UnlockScreenComponent', () => {
     it('fails on invalid pin', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
-        when(getMock(PinLockService).getSecret('1234')).return(undefined).once();
+        when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve(undefined)).once();
         when(getMock(BusyStateService).setBusy(false)).return().once();
         when(getMock(ErrorHandlingService).onError(anything())).call(err => {
             expect(err).toMatch(/Invalid pin/);

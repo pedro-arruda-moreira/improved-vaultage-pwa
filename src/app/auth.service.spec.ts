@@ -77,6 +77,7 @@ describe('AuthService', () => {
         when(getMock(PinLockService).setSecret('1234', anyString()))
             .call((pin, secret) => {
                 expect(JSON.parse(secret)).toEqual(config);
+                return Promise.resolve();
             })
             .times(2);
         when(getMock(Router).navigateByUrl('/manager', { replaceUrl: true })).resolve(true).times(2);
@@ -109,6 +110,7 @@ describe('AuthService', () => {
         when(getMock(PinLockService).setSecret('1234', anyString()))
             .call((pin, secret) => {
                 expect(JSON.parse(secret)).toEqual(config);
+                return Promise.resolve();
             })
             .once();
         when(getMock(Router).navigateByUrl('/manager', { replaceUrl: true })).resolve(true).once();
@@ -137,7 +139,7 @@ describe('AuthService', () => {
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}}))
             .resolve(fakeVault);
-        when(getMock(PinLockService).setSecret('1234', anyString())).return().once();
+        when(getMock(PinLockService).setSecret('1234', anyString())).return(Promise.resolve()).once();
         when(getMock(Router).navigateByUrl(anyString(), { replaceUrl: true })).call(url => {
             expect(url).toBe('/next');
             return Promise.resolve(true);

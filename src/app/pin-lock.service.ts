@@ -23,19 +23,19 @@ export class PinLockService {
         return this.getStorage() != null;
     }
 
-    public setSecret(pin: string, data: string) {
+    public async setSecret(pin: string, data: string) {
 	    /*
 		 * pedro-arruda-moreira: local storage encryption
          * and online pin lock crypto mode
 		 */
-        const value = this.cryptoImpl.encrypt(JSON.stringify({pin, data}), pin);
+        const value = await this.cryptoImpl.encrypt(JSON.stringify({pin, data}), pin);
         if(value == '') {
             return;
         }
         this.ls.setItem(STORAGE_KEY, value);
     }
 
-    public getSecret(userPin: string): string | undefined {
+    public async getSecret(userPin: string): Promise<string | undefined> {
         const storage = this.getStorage();
 	    /*
 		 * pedro-arruda-moreira: local storage encryption
@@ -43,7 +43,7 @@ export class PinLockService {
         if (storage != null) {
             let pinStorage;
             try {
-                pinStorage = this.checkDecryption(storage, userPin);
+                pinStorage = await this.checkDecryption(storage, userPin);
             } catch(e) {
                 return undefined;
             }
@@ -54,8 +54,8 @@ export class PinLockService {
         }
     }
     // pedro-arruda-moreira: online pin lock crypto mode
-    private checkDecryption(storage: string, userPin: string): PinStorage {
-        const data = this.cryptoImpl.decrypt(storage, userPin);
+    private async checkDecryption(storage: string, userPin: string): Promise<PinStorage> {
+        const data = await this.cryptoImpl.decrypt(storage, userPin);
         return JSON.parse(data);
     }
 

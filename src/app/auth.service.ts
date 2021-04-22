@@ -78,7 +78,7 @@ export class AuthService {
         if(this.desktop) {
             data.password = '';
         }
-        this.pinLockService.setSecret(pin, JSON.stringify(data));
+        await this.pinLockService.setSecret(pin, JSON.stringify(data));
 
         await this.router.navigateByUrl(nextURL ?? '/manager', { replaceUrl: true });
     }

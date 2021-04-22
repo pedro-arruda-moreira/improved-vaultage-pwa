@@ -50,7 +50,7 @@ export class UnlockScreenComponent {
             this.redirectService.redirectToAuthZone(this.route.snapshot.url.join('/'));
             return;
         }
-        const data = this.pinLockService.getSecret(pin);
+        const data = await this.pinLockService.getSecret(pin);
         if (data == null) {
             throw new Error('Invalid pin');
         }

@@ -31,7 +31,7 @@ describe('PinLockServiceTest', () => {
         service = getService(PinLockService);
     });
 
-    it('setSecret sets the secret', () => {
+    it('setSecret sets the secret', async () => {
         when(lsMock.setItem(anyString(), anyString())).call((key, datum) => {
             expect(key).toBe('vaultage_locked');
             /*
@@ -41,10 +41,10 @@ describe('PinLockServiceTest', () => {
             expect(obj.iter).toEqual(10000);
             expect(obj.mode).toEqual('ccm');
         }).once();
-        service.setSecret('1234', '53cr37');
+        await service.setSecret('1234', '53cr37');
     });
 
-    it('getSecret with good pin returns the secret', () => {
+    it('getSecret with good pin returns the secret', async () => {
         //pedro-arruda-moreira: changed to constant
         when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
             expect(key).toBe('vaultage_locked');
@@ -53,10 +53,10 @@ describe('PinLockServiceTest', () => {
 			 */
             return CT;
         });
-        expect(service.getSecret('1234')).toBe('53cr37');
+        expect(await service.getSecret('1234')).toBe('53cr37');
     });
 
-    it('getSecret with bad pin returns undefined', () => {
+    it('getSecret with bad pin returns undefined', async () => {
         //pedro-arruda-moreira: changed to constant
         when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
             expect(key).toBe('vaultage_locked');
@@ -65,16 +65,16 @@ describe('PinLockServiceTest', () => {
 			 */
             return CT;
         });
-        expect(service.getSecret('4321')).toBe(undefined);
+        expect(await service.getSecret('4321')).toBe(undefined);
     });
 
-    it('getSecret with no storage', () => {
+    it('getSecret with no storage', async () => {
         //pedro-arruda-moreira: changed to constant
         when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
             expect(key).toBe('vaultage_locked');
             return null;
         });
-        expect(service.getSecret('4321')).toBe(undefined);
+        expect(await service.getSecret('4321')).toBe(undefined);
     });
 
     it('hasSecret returns true iff there is a secret', () => {
