@@ -10,6 +10,7 @@ import { PinLockService } from './pin-lock.service';
 /*
  * pedro-arruda-moreira: for some reason, build was failing because of this.
  */
+// pedro-arruda-moreira: desktop mode
 import { Vaultage, VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
@@ -23,11 +24,13 @@ export class AuthService {
 
     private readonly vaultSubject = new BehaviorSubject<Vault | null>(null);
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
+    // pedro-arruda-moreira: desktop mode
     private masterPassword: string = '';
 
     constructor(
             private readonly pinLockService: PinLockService,
             private readonly router: Router,
+            // pedro-arruda-moreira: desktop mode
             @Inject(VAULTAGE) private readonly vaultage: Vaultage,
             private readonly dialog: MatDialog,
             @Inject(LOCAL_STORAGE) private readonly ls: Storage) {
@@ -44,7 +47,7 @@ export class AuthService {
     public async testCredentials(config: LoginConfig) {
         await this.doLogin(config);
     }
-
+	// pedro-arruda-moreira: desktop mode
     private get desktop(): boolean {
         return this.ls.getItem('desktop') == 'true';
     }
@@ -53,6 +56,7 @@ export class AuthService {
      * Saves authentication settings
      */
     public async logIn(data: LoginConfig, pin: string, nextURL?: string) {
+    	// pedro-arruda-moreira: desktop mode
         if(this.desktop) {
             let masterPass = '';
             if(this.masterPassword == '') {
@@ -88,9 +92,10 @@ export class AuthService {
      */
     public logOut() {
         this.vaultSubject.next(null);
+        // pedro-arruda-moreira: desktop mode
         this.dialog.closeAll();
     }
-
+	// pedro-arruda-moreira: desktop mode
     public reset() {
         this.masterPassword = '';
     }

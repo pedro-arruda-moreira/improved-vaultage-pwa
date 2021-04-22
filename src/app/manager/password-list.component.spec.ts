@@ -34,7 +34,7 @@ describe('PasswordListComponent', () => {
             title: 'FB'
         }];
     }
-    beforeEach(async() => {
+    beforeEach(async () => {
         component = await getShallow(PasswordListComponent, AppModule)
             .render({
                 bind: {
@@ -42,7 +42,7 @@ describe('PasswordListComponent', () => {
                 }
             });
         page = new Page(component);
-    })
+    });
 
     it('shows the list of passwords', async () => {
         const entries = page.getEntries();

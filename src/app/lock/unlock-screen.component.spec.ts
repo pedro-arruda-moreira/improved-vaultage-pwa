@@ -24,6 +24,9 @@ describe('UnlockScreenComponent', () => {
 
     it('alternative action is log out and redirect', () => {
         when(getMock(PinLockService).reset()).return().once();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         when(getMock(AuthService).reset()).return().once();
         when(getMock(RedirectService).redirectToAuthZone('foo/bar')).return().once();
         when(getMock(ActivatedRoute).snapshot.url).useValue([new UrlSegment('foo', {}), new UrlSegment('bar', {})]).once();
@@ -34,6 +37,9 @@ describe('UnlockScreenComponent', () => {
     it('logs in on submit', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve('"secret"')).once();
         when(getMock(ActivatedRoute).snapshot.queryParamMap.get('next')).return('next_url').once();
         when(getMock(AuthService).logIn('secret' as any, '1234', 'next_url')).resolve().once();
@@ -46,6 +52,9 @@ describe('UnlockScreenComponent', () => {
     it('logs in on submit (no next url)', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve('"secret"')).once();
         when(getMock(ActivatedRoute).snapshot.queryParamMap.get('next')).return(null).once();
         when(getMock(AuthService).logIn('secret' as any, '1234', undefined)).resolve().once();
@@ -58,6 +67,9 @@ describe('UnlockScreenComponent', () => {
     it('fails on invalid pin', fakeAsync(() => {
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve(undefined)).once();
         when(getMock(BusyStateService).setBusy(false)).return().once();
         when(getMock(ErrorHandlingService).onError(anything())).call(err => {

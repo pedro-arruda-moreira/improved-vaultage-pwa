@@ -12,6 +12,9 @@ export interface PasswordEntry {
     password: string;
     // pedro-arruda-moreira: secure notes
     secureNoteText: string;
+    /*
+     * pedro-arruda-moreira: adding delete entry.
+     */
     isDelete?: boolean;
 }
 // pedro-arruda-moreira: changed client

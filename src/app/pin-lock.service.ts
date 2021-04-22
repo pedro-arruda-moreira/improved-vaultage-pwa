@@ -22,7 +22,7 @@ export class PinLockService {
     public get hasSecret(): boolean {
         return this.getStorage() != null;
     }
-
+	// pedro-arruda-moreira: desktop mode
     public async setSecret(pin: string, data: string) {
 	    /*
 		 * pedro-arruda-moreira: local storage encryption
@@ -34,7 +34,7 @@ export class PinLockService {
         }
         this.ls.setItem(STORAGE_KEY, value);
     }
-
+	// pedro-arruda-moreira: desktop mode
     public async getSecret(userPin: string): Promise<string | undefined> {
         const storage = this.getStorage();
 	    /*

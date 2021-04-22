@@ -30,7 +30,7 @@ describe('PinLockServiceTest', () => {
         when(lsMock.getItem(same('crypto_type'))).return('offline');
         service = getService(PinLockService);
     });
-
+	// pedro-arruda-moreira: desktop mode
     it('setSecret sets the secret', async () => {
         when(lsMock.setItem(anyString(), anyString())).call((key, datum) => {
             expect(key).toBe('vaultage_locked');
@@ -43,7 +43,7 @@ describe('PinLockServiceTest', () => {
         }).once();
         await service.setSecret('1234', '53cr37');
     });
-
+	// pedro-arruda-moreira: desktop mode
     it('getSecret with good pin returns the secret', async () => {
         //pedro-arruda-moreira: changed to constant
         when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
@@ -55,7 +55,7 @@ describe('PinLockServiceTest', () => {
         });
         expect(await service.getSecret('1234')).toBe('53cr37');
     });
-
+	// pedro-arruda-moreira: desktop mode
     it('getSecret with bad pin returns undefined', async () => {
         //pedro-arruda-moreira: changed to constant
         when(lsMock.getItem(same(STORAGE_KEY))).call(key => {
@@ -67,7 +67,7 @@ describe('PinLockServiceTest', () => {
         });
         expect(await service.getSecret('4321')).toBe(undefined);
     });
-
+	// pedro-arruda-moreira: desktop mode
     it('getSecret with no storage', async () => {
         //pedro-arruda-moreira: changed to constant
         when(lsMock.getItem(same(STORAGE_KEY))).call(key => {

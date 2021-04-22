@@ -123,6 +123,9 @@ describe('HomeComponent', () => {
     it('can log out', async () => {
         when(getMock(PinLockService).reset()).return().once();
         when(getMock(AuthService).logOut()).return().once();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         when(getMock(AuthService).reset()).return().once();
         page.logOutButton.click();
 

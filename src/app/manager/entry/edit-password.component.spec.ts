@@ -72,7 +72,9 @@ describe('EditPasswordComponent', () => {
         when(getMock(BusyStateService).setBusy(false)).return().once();
         saveSubject.next();
     }));
-
+    /*
+     * pedro-arruda-moreira: adding delete entry.
+     */
     it('let user delete an entry', fakeAsync(() => {
         const saveSubject = new Subject<void>();
         const fakeVault = mock(Vault);
@@ -137,7 +139,9 @@ describe('EditPasswordComponent', () => {
         flush();
         expect(hasReSubscribed).toBe(true);
     }));
-
+    /*
+     * pedro-arruda-moreira: adding delete entry.
+     */
     function submitFakeForm(isDelete?: boolean) {
         let data = {
             id: '1',

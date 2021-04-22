@@ -56,7 +56,9 @@ export class EditPasswordComponent implements OnInit {
     public onExit() {
         this.window.history.back();
     }
-
+    /*
+     * pedro-arruda-moreira: adding delete entry.
+     */
     public onSave(entry: PasswordEntry) {
         this.busy.setBusy(true);
         if(entry.isDelete) {
@@ -73,7 +75,9 @@ export class EditPasswordComponent implements OnInit {
                 }));
         }
     }
-
+    /*
+     * pedro-arruda-moreira: adding delete entry.
+     */
     private async doDelete(entry: PasswordEntry) {
         const vault = this.authService.getVault();
         vault.removeEntry(entry.id);

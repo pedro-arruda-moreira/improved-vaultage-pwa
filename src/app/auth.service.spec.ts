@@ -1,11 +1,13 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
+// pedro-arruda-moreira: desktop mode
 import { anyString, mockInstance, when, equals, anyObject, anything, mock } from 'omnimock';
 // pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
 import { AuthService, LoginConfig } from './auth.service';
 import { PinLockService } from './pin-lock.service';
+// pedro-arruda-moreira: desktop mode
 import { VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
@@ -59,7 +61,7 @@ describe('AuthService', () => {
         expect(changeEvents.length).toBe(1);
         expect(changeEvents[0]).toBe(false);
     });
-
+	// pedro-arruda-moreira: desktop mode
     it('logIn only asks for master password once per session - desktop', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
@@ -100,6 +102,7 @@ describe('AuthService', () => {
     it('logIn logs in and redirects, logOut logs out', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        // pedro-arruda-moreira: desktop mode
         when(getMock(MatDialog).closeAll()).return().once();
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false').times(2);
         /*
@@ -132,6 +135,7 @@ describe('AuthService', () => {
     it('logIn redirects to next URL', async () => {
         const config = fakeLoginConfig();
         const fakeVault = mockInstance<Vault>('vault');
+        // pedro-arruda-moreira: desktop mode
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
@@ -139,6 +143,7 @@ describe('AuthService', () => {
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}}))
             .resolve(fakeVault);
+        // pedro-arruda-moreira: desktop mode
         when(getMock(PinLockService).setSecret('1234', anyString())).return(Promise.resolve()).once();
         when(getMock(Router).navigateByUrl(anyString(), { replaceUrl: true })).call(url => {
             expect(url).toBe('/next');

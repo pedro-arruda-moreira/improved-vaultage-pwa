@@ -111,6 +111,9 @@ export class HomeComponent {
     public logOut() {
         this.pinLockService.reset();
         this.authService.logOut();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         this.authService.reset();
     }
 

@@ -47,6 +47,9 @@ export class SetupService {
 
         this.busyService.setBusy(true);
         try {
+			/*
+			 * pedro-arruda-moreira: removed duplicated pin set.
+			 */
             await this.authService.logIn(credentials, pin);
         } finally {
             this.busyService.setBusy(false);

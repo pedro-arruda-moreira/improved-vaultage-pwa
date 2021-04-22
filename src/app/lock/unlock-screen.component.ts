@@ -41,6 +41,9 @@ export class UnlockScreenComponent {
 
     public onLogOut() {
         this.pinLockService.reset();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         this.authService.reset();
         this.redirectService.redirectToAuthZone(this.route.snapshot.url.join('/'));
     }
@@ -50,11 +53,17 @@ export class UnlockScreenComponent {
             this.redirectService.redirectToAuthZone(this.route.snapshot.url.join('/'));
             return;
         }
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
         const data = await this.pinLockService.getSecret(pin);
         if (data == null) {
             throw new Error('Invalid pin');
         }
 
+        /*
+         * pedro-arruda-moreira: fixed bug.
+         */
         let nextURL = this.route.snapshot.queryParamMap.get('next') ?? undefined;
         const unlockPart = '/unlock?next=';
         while(nextURL && nextURL.startsWith(unlockPart)) {

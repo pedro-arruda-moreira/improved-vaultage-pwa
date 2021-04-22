@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+// pedro-arruda-moreira: desktop mode
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -9,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+// pedro-arruda-moreira: desktop mode
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -43,6 +45,7 @@ import { LoginComponent } from './setup/login.component';
 import { PinSetupComponent } from './setup/pin-setup.component';
 import { SetupComponent } from './setup/setup.component';
 import { SetupService } from './setup/setup.service';
+// pedro-arruda-moreira: password generator
 import { PasswordGeneratorComponent } from './manager/form/password-generator/password.generator.component';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 
@@ -60,6 +63,7 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
         SetupComponent,
         UnlockScreenComponent,
         ViewPasswordComponent,
+		// pedro-arruda-moreira: password generator
         PasswordGeneratorComponent,
         PasswordPromptComponent
     ],
@@ -71,12 +75,14 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
         FormsModule,
         MatButtonModule,
         MatCheckboxModule,
+        // pedro-arruda-moreira: desktop mode
         MatDialogModule,
         MatDividerModule,
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
         MatListModule,
+        // pedro-arruda-moreira: desktop mode
         MatRadioModule,
         MatSnackBarModule,
         MatProgressSpinnerModule,
@@ -99,6 +105,7 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
         VaultEntryResolver
     ],
     bootstrap: [AppComponent],
+    // pedro-arruda-moreira: desktop mode
     entryComponents: [
         PasswordPromptComponent,
         PasswordGeneratorComponent
