@@ -5,6 +5,11 @@ type XMLHttpRequestBuilder = () => XMLHttpRequest;
 type Randomizer = () => string;
 type ResponseExtractor = (ajax: XMLHttpRequest) => string;
 type CallbackDefiner = (ajax: XMLHttpRequest, cb: () => void) => void;
+interface AjaxResult {
+    status: number;
+    readyState: number;
+}
+type ResultExtractor = (ajax: XMLHttpRequest) => AjaxResult;
 
 export class OnlineCrypto implements CryptoImpl {
 
@@ -22,6 +27,12 @@ export class OnlineCrypto implements CryptoImpl {
         },
         private callbackDefiner: CallbackDefiner = (ajax, cb) => {
             ajax.onreadystatechange = cb;
+        },
+        private resultExtractor: ResultExtractor = (ajax) => {
+            return {
+                readyState: ajax.readyState,
+                status: ajax.status
+            }
         }
     ) {};
 
@@ -30,8 +41,9 @@ export class OnlineCrypto implements CryptoImpl {
         const promiser = new Promiser<string>();
         xh.open(verb, path, true);
         this.callbackDefiner(xh, () => {
-            if(xh.readyState == XMLHttpRequest.DONE) {
-                if(xh.status >= 200 && xh.status <= 299) {
+            const result = this.resultExtractor(xh);
+            if(result.readyState == XMLHttpRequest.DONE) {
+                if(result.status >= 200 && result.status <= 299) {
                     promiser.resolve(this.responseExtractor(xh));
                 } else {
                     promiser.reject(new Error(this.responseExtractor(xh)));
