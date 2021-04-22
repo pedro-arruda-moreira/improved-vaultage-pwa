@@ -52,7 +52,6 @@ describe('PasswordGeneratorComponent', () => {
     it('generates a new password when changing type - changing length', fakeAsync(() => {
         typeValue(page.passwordLengthField, '8');
         page.passwordLengthField.dispatchEvent(createNewEvent('keyup'));
-        page.passwordLengthField.dispatchEvent(createNewEvent('change'));
         fixture.detectChanges();
         flush();
         const firtPass = changeType(undefined, 8);
