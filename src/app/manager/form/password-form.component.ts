@@ -1,22 +1,27 @@
-import { Component, EventEmitter, Input, Output, Inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
 
 import { PasswordEntry } from '../domain/PasswordEntry';
 /*
  * pedro-arruda-moreira: password generator/desktop mode.
  */
-import { WINDOW } from 'src/app/platform/providers';
+import { WINDOW, LOCAL_STORAGE } from 'src/app/platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordGeneratorComponent } from './password-generator/password.generator.component';
+import { TextareaResizer } from 'src/app/util/TextareaResizer';
+
 
 @Component({
     selector: 'app-password-form',
     templateUrl: 'password-form.component.html',
     styleUrls: [ 'password-form.component.scss' ]
 })
-export class PasswordFormComponent {
+// pedro-arruda-moreira: textarea auto sizing.
+export class PasswordFormComponent implements OnInit {
 
-    constructor(@Inject(WINDOW) private readonly window: Window,
-    private readonly dialog: MatDialog) {}
+    // pedro-arruda-moreira: textarea auto sizing.
+    constructor(@Inject(WINDOW) private readonly window: Window, 
+    private readonly dialog: MatDialog,
+    private readonly resizer: TextareaResizer) {}
 
     private id: string = '';
 
@@ -87,6 +92,10 @@ export class PasswordFormComponent {
                 disableClose: true
             }
         ).componentInstance.generatedPassword;
+    }
+    // pedro-arruda-moreira: textarea auto sizing.
+    ngOnInit() {
+        this.resizer.doResizeTextareas();
     }
 }
 

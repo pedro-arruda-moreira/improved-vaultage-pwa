@@ -12,6 +12,8 @@ import { ErrorHandlingService } from '../../platform/error-handling.service';
 import { ToolbarComponent } from '../../platform/toolbar/toolbar.component';
 import { PasswordEntry } from '../domain/PasswordEntry';
 import { ViewPasswordComponent } from './view-password.component';
+// pedro-arruda-moreira: textarea auto sizing.
+import { TextareaResizer } from 'src/app/util/TextareaResizer';
 
 describe('ViewPasswordComponent', () => {
 
@@ -36,6 +38,8 @@ describe('ViewPasswordComponent', () => {
         });
         when(getMock(ActivatedRoute).snapshot.data.entry).return({...mockEntry}).once();
 
+        // pedro-arruda-moreira: textarea auto sizing.
+        when(getMock(TextareaResizer).doResizeTextareas()).return().once();
         const rendering = await renderComponent(ViewPasswordComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);

@@ -1,13 +1,15 @@
-import { EventEmitter } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
-import { getShallow } from 'ng-vacuum';
+import { getShallow, getMock } from 'ng-vacuum';
 import { first } from 'rxjs/operators';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
-import { createNewEvent, typeValue } from '../../test/test-utils';
+import { typeValue } from '../../test/test-utils';
 
 import { AppModule } from '../../app.module';
 import { PasswordEntry } from '../domain/PasswordEntry';
 import { PasswordFormComponent } from './password-form.component';
+// pedro-arruda-moreira: textarea auto sizing.
+import { when } from 'omnimock';
+import { TextareaResizer } from 'src/app/util/TextareaResizer';
 
 describe('PasswordFormComponent', () => {
 
@@ -19,6 +21,8 @@ describe('PasswordFormComponent', () => {
     let confirm: Promise<PasswordEntry>;
 
     beforeEach(async () => {
+        // pedro-arruda-moreira: textarea auto sizing.
+        when(getMock(TextareaResizer).doResizeTextareas()).return().once();
         const rendering = await getShallow(PasswordFormComponent, AppModule)
             .render({
                 bind: {
