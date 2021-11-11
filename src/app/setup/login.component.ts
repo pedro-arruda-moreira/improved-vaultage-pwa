@@ -107,13 +107,16 @@ export class LoginComponent implements OnInit {
         if(this.ls.getItem('self_contained') == 'true') {
             this.hostLocked = true;
             this.url = document.location.origin + '/';
-            this.ls.setItem('self_contained', 'true');
         }
-        if(this.ls.getItem('use_basic') == 'true') {
-            this.basicLocked = true;
-            this.useBasic = true;
-            this.ls.setItem('use_basic', 'true');
+    }
+
+    private configureBasic() {
+        const useBasicVal = this.ls.getItem('use_basic');
+        if(useBasicVal == 'null') {
+            return;
         }
+        this.basicLocked = true;
+        this.useBasic = useBasicVal == 'true';
     }
 
     public ngOnInit() {
@@ -122,6 +125,7 @@ export class LoginComponent implements OnInit {
 		 * force basic mode
 		 */
         this.configureSelfContained();
+        this.configureBasic();
         const item = this.ls.getItem('creds');
         if (item != null) {
             // TODO: sanitize input
