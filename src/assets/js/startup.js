@@ -16,7 +16,7 @@ function define(ignored, sjcl) {
   // self hosted mode
   detectFeature('self_contained', 'false');
   // use basic mode
-  detectFeature('use_basic', 'false');
+  detectFeature('use_basic', 'null');
   // online crypto support
   detectFeature('crypto_type', 'offline');
   // desktop mode

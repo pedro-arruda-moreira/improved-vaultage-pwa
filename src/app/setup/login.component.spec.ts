@@ -17,7 +17,6 @@ import { typeValue } from '../test/test-utils';
 import { LoginComponent } from './login.component';
 import { SetupService } from './setup.service';
 
-
 describe('LoginComponent', () => {
 
     it('loads stored credentials', fakeAsync(async () => {
@@ -92,21 +91,14 @@ describe('LoginComponent', () => {
 	/*
 	 * pedro-arruda-moreira: adjusted unit tests.
 	 */
-
-    it('blocks basic if it is set to force basic', fakeAsync(async () => {
+    it('blocks basic if it is set to force basic true', fakeAsync(async () => {
         // TODO: Would be nice to have an omnimock matcher for json
-        when(getMock(LOCAL_STORAGE).setItem(anyString(), anyString())).call((id, value) => {
-            if (id == 'creds') {
-                expect(JSON.parse(value)).toEqual({
-                    url: 'http://diehardfan',
-                    username: 'Bruce'
-                });
-            } else if (id == 'use_basic') {
-                expect(value).toEqual('true');
-            } else {
-                throw new Error('not expected: ' + id);
-            }
-        }).times(2);
+        when(getMock(LOCAL_STORAGE).setItem('creds', anyString())).call((id, value) => {
+            expect(JSON.parse(value)).toEqual({
+                url: 'http://diehardfan',
+                username: 'Bruce'
+            });
+        }).times(1);
         const page = await createPage(undefined, undefined, 'true');
 
         page.startButton.click();
@@ -126,23 +118,44 @@ describe('LoginComponent', () => {
         })).return().once();
         page.loginButton.click();
     }));
+	/*
+	 * pedro-arruda-moreira: adjusted unit tests.
+	 */
+    it('blocks basic if it is set to force basic false', fakeAsync(async () => {
+        // TODO: Would be nice to have an omnimock matcher for json
+        when(getMock(LOCAL_STORAGE).setItem('creds', anyString())).call((id, value) => {
+            expect(JSON.parse(value)).toEqual({
+                url: 'http://diehardfan',
+                username: 'Bruce'
+            });
+        }).times(1);
+        const page = await createPage(undefined, undefined, 'false');
+
+        page.startButton.click();
+        page.detectChanges();
+        typeValue(page.usernameInput, 'Bruce');
+        typeValue(page.passwordInput, 'Willis');
+        typeValue(page.hostInput, 'http://diehardfan');
+
+        when(getMock(SetupService).notifyCredentials({
+            username: 'Bruce',
+            password: 'Willis',
+            url: 'http://diehardfan',
+            basic: undefined
+        })).return().once();
+        page.loginButton.click();
+    }));
 
 
     it('blocks host if it is set to self contained', fakeAsync(async () => {
         // TODO: Would be nice to have an omnimock matcher for json
-        when(getMock(LOCAL_STORAGE).setItem(anyString(), anyString())).call((id, value) => {
-            if (id == 'creds') {
-                const obj = JSON.parse(value);
-                expect(obj.username).toEqual('Bruce');
-                expect(obj.url).toContain('http');
-                expect(obj.url).toContain('localhost');
-                expect(obj.basic).toEqual(undefined);
-            } else if (id == 'self_contained') {
-                expect(value).toEqual('true');
-            } else {
-                throw new Error('not expected: ' + id);
-            }
-        }).times(2);
+        when(getMock(LOCAL_STORAGE).setItem('creds', anyString())).call((id, value) => {
+            const obj = JSON.parse(value);
+            expect(obj.username).toEqual('Bruce');
+            expect(obj.url).toContain('http');
+            expect(obj.url).toContain('localhost');
+            expect(obj.basic).toEqual(undefined);
+        }).times(1);
         const page = await createPage(undefined, 'true', undefined);
 
         page.startButton.click();
@@ -173,7 +186,7 @@ async function createPage(storage?: any, self_contained?: string, use_basic?: st
             return self_contained;
         } else if (id == 'use_basic') {
             if (!use_basic) {
-                return 'false';
+                return 'null';
             }
             return use_basic;
         } else {
