@@ -3,19 +3,19 @@
   "index": "/index.html",
   "assetGroups": [
     {
-      "name": "app",
-      "installMode": "lazy",
+      "name": "all",
+      "installMode": "prefetch",
       "resources": {
         "files": [
-          "*.ico",
-          "*.woff2",
-          "*.json",
-          "*.css",
-          "*.js",
-          "*.png",
-          "*.gif",
-          "*.jpg",
-          "*.jpeg"
+          "/**/**.ico",
+          "/**/**.woff2",
+          "/**/**.json",
+          "/**/**.css",
+          "/**/**.js",
+          "/**/**.png",
+          "/**/**.gif",
+          "/**/**.jpg",
+          "/**/**.jpeg"
         ]
       }
     }
