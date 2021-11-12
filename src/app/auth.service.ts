@@ -52,6 +52,19 @@ export class AuthService {
         return this.ls.getItem('desktop') == 'true';
     }
 
+    public getPasswordFromDialog(promptText?: string): Promise<string> {
+        const instance = this.dialog.open(
+            PasswordPromptComponent,
+            {
+                disableClose: true
+            }
+        ).componentInstance;
+        if(promptText) {
+            instance.text = promptText;
+        }
+        return instance.password;
+    }
+
     /**
      * Saves authentication settings
      */
@@ -60,12 +73,7 @@ export class AuthService {
         if(this.desktop) {
             let masterPass = '';
             if(this.masterPassword == '') {
-                masterPass = await this.dialog.open(
-                    PasswordPromptComponent,
-                    {
-                        disableClose: true
-                    }
-                ).componentInstance.password;
+                masterPass = await this.getPasswordFromDialog();
             } else {
                 masterPass = this.masterPassword;
             }
@@ -78,6 +86,7 @@ export class AuthService {
             this.masterPassword = masterPass;
         } else {
             this.vaultSubject.next(await this.doLogin(data));
+            this.masterPassword = data.password;
         }
         if(this.desktop) {
             data.password = '';
@@ -85,6 +94,13 @@ export class AuthService {
         await this.pinLockService.setSecret(pin, JSON.stringify(data));
 
         await this.router.navigateByUrl(nextURL ?? '/manager', { replaceUrl: true });
+    }
+
+    public async confirmMasterPassword() {
+        const typedPassword = await this.getPasswordFromDialog();
+        if(typedPassword != this.masterPassword) {
+            throw new Error('Password does not match. Try again.');
+        }
     }
 
     /**

@@ -1,12 +1,11 @@
 import { animate, group, query, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 import { AuthService } from '../auth.service';
 import { PinLockService } from '../pin-lock.service';
-import { ErrorHandlingService } from '../platform/error-handling.service';
 import { HomeNavigationService } from './home-navigation.service';
 import { IPasswordListEntry } from './password-list.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-home',
@@ -59,7 +58,8 @@ export class HomeComponent {
     constructor(
             private readonly pinLockService: PinLockService,
             private readonly authService: AuthService,
-            private readonly navigation: HomeNavigationService) { }
+            private readonly navigation: HomeNavigationService,
+            private readonly snackBar: MatSnackBar) { }
 
     // public ngOnInit() {
     //     this.navigation.activate();
@@ -123,5 +123,18 @@ export class HomeComponent {
             return match[1];
         }
         return url;
+    }
+
+    public async changeMasterPassword() {
+        try {
+            await this.authService.confirmMasterPassword();
+            const vault = this.authService.getVault();
+            const newPass = await this.authService.getPasswordFromDialog("Now type the new password");
+            await vault.updateMasterPassword(newPass);
+            this.snackBar.open('Master password changed successfully.');
+        } catch(e) {
+            const error = e as Error;
+            this.snackBar.open(error.message);
+        }
     }
 }
