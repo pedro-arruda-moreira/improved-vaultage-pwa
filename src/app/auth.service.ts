@@ -14,6 +14,7 @@ import { PinLockService } from './pin-lock.service';
 import { Vaultage, VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
+import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
 
 
 /**
@@ -33,7 +34,9 @@ export class AuthService {
             // pedro-arruda-moreira: desktop mode
             @Inject(VAULTAGE) private readonly vaultage: Vaultage,
             private readonly dialog: MatDialog,
-            @Inject(LOCAL_STORAGE) private readonly ls: Storage) {
+            @Inject(LOCAL_STORAGE) private readonly ls: Storage,
+            // pedro-arruda-moreira: config cache
+            private readonly configCache: LocalStorageConfigCache) {
     }
 
     public get isAuthenticated(): boolean {
@@ -122,7 +125,9 @@ export class AuthService {
         }
         return control.login(config.url, config.username, config.password, {
             auth: config.basic
-        });
+        },
+        // pedro-arruda-moreira: config cache
+        this.configCache);
     }
 }
 
