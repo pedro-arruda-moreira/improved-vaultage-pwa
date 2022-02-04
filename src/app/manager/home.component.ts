@@ -1,12 +1,11 @@
 import { animate, group, query, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, OnDestroy, ViewChild, Inject, OnInit } from '@angular/core';
 
 import { AuthService } from '../auth.service';
 import { PinLockService } from '../pin-lock.service';
-import { ErrorHandlingService } from '../platform/error-handling.service';
 import { HomeNavigationService } from './home-navigation.service';
 import { IPasswordListEntry } from './password-list.component';
+import { WINDOW } from '../platform/providers';
 
 @Component({
     selector: 'app-home',
@@ -52,22 +51,17 @@ import { IPasswordListEntry } from './password-list.component';
         ]),
     ]
 })
-export class HomeComponent {
+export class HomeComponent implements OnDestroy, OnInit {
 
     @ViewChild('search') searchElement?: ElementRef<HTMLInputElement>;
+
 
     constructor(
             private readonly pinLockService: PinLockService,
             private readonly authService: AuthService,
-            private readonly navigation: HomeNavigationService) { }
-
-    // public ngOnInit() {
-    //     this.navigation.activate();
-    // }
-
-    // public ngOnDestroy() {
-    //     this.navigation.deactivate();
-    // }
+            private readonly navigation: HomeNavigationService,
+            @Inject(WINDOW)
+            private readonly window: Window) { }
 
     public get listItems(): IPasswordListEntry[] {
         const vault = this.authService.getVault();
@@ -123,5 +117,22 @@ export class HomeComponent {
             return match[1];
         }
         return url;
+    }
+    private handler: (e: HashChangeEvent) => void = (e) => {
+        this.onHashChange(e);
+    };
+    ngOnDestroy(): void {
+        this.window.removeEventListener('hashchange', this.handler)
+    }
+    ngOnInit(): void {
+        this.window.addEventListener('hashchange', this.handler);
+    }
+    onHashChange(e: HashChangeEvent) {
+        const hashValue = e.newURL.split('#')[1];
+        if(hashValue == '/manager') {
+            console.log('back to beginning');
+            this.searchElement?.nativeElement.blur();
+            this.exitSearchMode();
+        }
     }
 }

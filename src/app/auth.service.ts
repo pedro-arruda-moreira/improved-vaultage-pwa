@@ -27,6 +27,8 @@ export class AuthService {
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
     // pedro-arruda-moreira: desktop mode
     private masterPassword: string = '';
+    // pedro-arruda-moreira: config cache
+    private url: string = '';
 
     constructor(
             private readonly pinLockService: PinLockService,
@@ -101,6 +103,9 @@ export class AuthService {
 	// pedro-arruda-moreira: desktop mode
     public reset() {
         this.masterPassword = '';
+        // pedro-arruda-moreira: config cache
+        this.configCache.remove(this.url);
+        this.url = '';
     }
 
     /**
@@ -123,11 +128,20 @@ export class AuthService {
         if(!control) {
             control = Vaultage.staticControl;
         }
-        return control.login(config.url, config.username, config.password, {
-            auth: config.basic
-        },
         // pedro-arruda-moreira: config cache
-        this.configCache);
+        try {
+            return control.login(
+                config.url,
+                config.username,
+                config.password,
+                {
+                    auth: config.basic
+                },
+                this.configCache
+            );
+        } finally {
+            this.url = config.url;
+        }
     }
 }
 
