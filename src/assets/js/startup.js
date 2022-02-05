@@ -3,7 +3,7 @@ function define(ignored, sjcl) {
   window.sjcl = sjcl();
 }
 (function() {
-  params = new URLSearchParams(window.location.search);
+  var params = new URLSearchParams(window.location.search);
   function detectFeature(name, defaultValue) {
     if(localStorage.getItem(name) == null) {
       if(params.get(name)) {
@@ -21,4 +21,19 @@ function define(ignored, sjcl) {
   detectFeature('crypto_type', 'offline');
   // desktop mode
   detectFeature('desktop', 'false');
+  // disable text selection
+  window.document.addEventListener('selectstart', function(e) {
+    function isAllowedTag(e) {
+      if(!e.tagName) {
+        return false;
+      }
+      var tagName = e.tagName.toLowerCase();
+      return tagName == 'input' || tagName == 'textarea';
+    }
+    var elem = e.srcElement;
+    if(!isAllowedTag(elem)) {
+      e.preventDefault();
+      return false;
+    }
+  })
 }());

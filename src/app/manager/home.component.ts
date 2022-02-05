@@ -130,7 +130,6 @@ export class HomeComponent implements OnDestroy, OnInit {
     onHashChange(e: HashChangeEvent) {
         const hashValue = e.newURL.split('#')[1];
         if(hashValue == '/manager') {
-            console.log('back to beginning');
             this.searchElement?.nativeElement.blur();
             this.exitSearchMode();
         }
