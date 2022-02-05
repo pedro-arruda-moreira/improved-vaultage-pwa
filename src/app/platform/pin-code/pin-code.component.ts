@@ -1,6 +1,7 @@
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
+import { version as packageVersion } from '../../../../package.json';
 
 @Component({
     selector: 'app-pin-code',
@@ -72,6 +73,10 @@ export class PinCodeComponent {
 
     public get canAccept() {
         return this.digits.length >= this.minDigits;
+    }
+
+    public get version() {
+        return packageVersion;
     }
 
     public addDigit(t: number) {

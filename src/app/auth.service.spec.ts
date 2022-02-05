@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
 // pedro-arruda-moreira: desktop mode
-import { anyString, mockInstance, when, equals, anyObject, anything, mock } from 'omnimock';
+import { anyString, mockInstance, when, equals, anything, instance } from 'omnimock';
 // pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
@@ -11,6 +11,7 @@ import { PinLockService } from './pin-lock.service';
 import { VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
+import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
 
 describe('AuthService', () => {
 
@@ -41,7 +42,9 @@ describe('AuthService', () => {
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
+        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
+            // pedro-arruda-moreira: config cache
+            instance(getMock(LocalStorageConfigCache))))
                 .resolve(mockInstance('vault'))
                 .once();
         await service.testCredentials(config);
@@ -74,7 +77,9 @@ describe('AuthService', () => {
                 componentInstance: (mockPasswordPrompt as unknown) as PasswordPromptComponent
             } as MatDialogRef<PasswordPromptComponent, any>).once();
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('true');
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
+        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
+        // pedro-arruda-moreira: config cache
+        instance(getMock(LocalStorageConfigCache))))
             .resolve(fakeVault);
         when(getMock(PinLockService).setSecret('1234', anyString()))
             .call((pin, secret) => {
@@ -108,7 +113,9 @@ describe('AuthService', () => {
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}}))
+        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
+        // pedro-arruda-moreira: config cache
+        instance(getMock(LocalStorageConfigCache))))
             .resolve(fakeVault);
         when(getMock(PinLockService).setSecret('1234', anyString()))
             .call((pin, secret) => {
@@ -141,7 +148,9 @@ describe('AuthService', () => {
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
         when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
-        { auth: { username: 'Quentin', password: 'Tarantino'}}))
+        { auth: { username: 'Quentin', password: 'Tarantino'}},
+        // pedro-arruda-moreira: config cache
+        instance(getMock(LocalStorageConfigCache))))
             .resolve(fakeVault);
         // pedro-arruda-moreira: desktop mode
         when(getMock(PinLockService).setSecret('1234', anyString())).return(Promise.resolve()).once();

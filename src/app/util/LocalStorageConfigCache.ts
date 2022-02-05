@@ -12,7 +12,8 @@ export class LocalStorageConfigCache implements IConfigCache {
     ) {}
 
     private getLocalStorageKey(url: string) {
-        return `config_cache_${btoa(url)}`;
+        return `config_cache_${btoa(url.split('/').join('').trim())}`
+            .split('=').join('').trim();
     }
 
     saveConfig(url: string, config: IVaultageConfig): void {
@@ -24,5 +25,8 @@ export class LocalStorageConfigCache implements IConfigCache {
             return null;
         }
         return JSON.parse(strVal) as IVaultageConfig;
+    }
+    remove(url: string) {
+        this.localStorage.removeItem(this.getLocalStorageKey(url));
     }
 }

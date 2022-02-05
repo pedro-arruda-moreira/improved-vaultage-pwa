@@ -1,7 +1,7 @@
 import { ComponentFixture } from '@angular/core/testing';
 import { ParamMap } from '@angular/router';
 import { createMock, getMock, renderComponent } from 'ng-vacuum';
-import { instance, mockInstance, when } from 'omnimock';
+import { instance, mockInstance, when, anyOf, anyFunction } from 'omnimock';
 import { Subject } from 'rxjs';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
@@ -14,6 +14,7 @@ import { HomeComponent } from './home.component';
 import { PasswordListComponent } from './password-list.component';
 // pedro-arruda-moreira: changed client
 import { IVaultDBEntryImproved, Vault } from 'improved-vaultage-client';
+import { WINDOW } from '../platform/providers';
 
 describe('HomeComponent', () => {
 
@@ -22,6 +23,7 @@ describe('HomeComponent', () => {
     let page: Page;
     let viewMode: HomeViewMode;
     let searchValue: string;
+    let selectStartHandler: EventListenerOrEventListenerObject | null = null;
 	// pedro-arruda-moreira: changed client
     function fakeEntries(): IVaultDBEntryImproved[] {
         return [
@@ -46,8 +48,16 @@ describe('HomeComponent', () => {
 
 
     beforeEach(async () => {
+        selectStartHandler = null;
         queryParamsMap = new Subject();
         when(getMock(AuthService).getVault()).return(instance(getMock(Vault)));
+        when(getMock(WINDOW).addEventListener('hashchange', anyFunction())).call((_, f) => {
+            selectStartHandler = f;
+        }).once();
+        when(getMock(WINDOW).removeEventListener('hashchange', anyFunction())).call((_, f) => {
+            expect(f).toBe(selectStartHandler!);
+        }).atMostOnce();
+
         createMock(HomeNavigationService, {
             get viewMode() { return viewMode; },
             set viewMode(m: HomeViewMode) { viewMode = m; },
@@ -146,6 +156,42 @@ describe('HomeComponent', () => {
         page.clearSearchButton.click();
 
         expect(spy).toHaveBeenCalled();
+    });
+
+    it('blurs search on hash change to #/manager', async () => {
+        viewMode = 'search';
+        when(getMock(Vault).findEntries('')).return(fakeEntries());
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+
+        const spy = spyOn(page.input, 'blur');
+        page.exitSearchModeButton.click();
+        ((selectStartHandler) as any)(mockInstance<HashChangeEvent>('eventMock', {
+            newURL: "http://test/#/manager",
+        }));
+        expect(viewMode).toBe('initial');
+        expect(searchValue).toBe('');
+
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('does not blur search on hash change to #/nopenope', async () => {
+        viewMode = 'search';
+        when(getMock(Vault).findEntries('')).return(fakeEntries());
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+
+        const spy = spyOn(page.input, 'blur');
+        page.exitSearchModeButton.click();
+        ((selectStartHandler) as any)(mockInstance<HashChangeEvent>('eventMock', {
+            newURL: "http://test/#/nopenope",
+        }));
+        expect(viewMode).toBe('initial');
+        expect(searchValue).toBe('');
+
+        expect(spy).toHaveBeenCalledTimes(0);
     });
 
 });
