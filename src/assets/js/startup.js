@@ -21,13 +21,17 @@ function define(ignored, sjcl) {
   detectFeature('crypto_type', 'offline');
   // desktop mode
   detectFeature('desktop', 'false');
+  // config cache
+  detectFeature('config_cache', 'false');
+  // auto create new vault
+  detectFeature('auto_create', 'false');
   // disable text selection
   window.document.addEventListener('selectstart', function(e) {
-    function isAllowedTag(e) {
-      if(!e.tagName) {
+    function isAllowedTag(el) {
+      if(!el.tagName) {
         return false;
       }
-      var tagName = e.tagName.toLowerCase();
+      var tagName = el.tagName.toLowerCase();
       return tagName == 'input' || tagName == 'textarea';
     }
     var elem = e.srcElement;

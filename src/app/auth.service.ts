@@ -56,6 +56,12 @@ export class AuthService {
     private get desktop(): boolean {
         return this.ls.getItem('desktop') == 'true';
     }
+    private get configCacheEnabled(): boolean {
+        return this.ls.getItem('config_cache') == 'true';
+    }
+    private get autoCreateVault(): boolean {
+        return this.ls.getItem('auto_create') == 'true';
+    }
 
     /**
      * Saves authentication settings
@@ -137,8 +143,13 @@ export class AuthService {
                 {
                     auth: config.basic
                 },
-                this.configCache
-            );
+                (this.configCacheEnabled ? this.configCache : undefined)
+            ).then(async (v): Promise<Vault> => {
+                if(v.getDBRevision() == 0 && this.autoCreateVault) {
+                    await v.save();
+                }
+                return v;
+            });
         } finally {
             this.url = config.url;
         }
