@@ -27,6 +27,8 @@ export class AuthService {
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
     // pedro-arruda-moreira: desktop mode
     private masterPassword: string = '';
+    // pedro-arruda-moreira: config cache
+    private url: string = '';
 
     constructor(
             private readonly pinLockService: PinLockService,
@@ -53,6 +55,12 @@ export class AuthService {
 	// pedro-arruda-moreira: desktop mode
     private get desktop(): boolean {
         return this.ls.getItem('desktop') == 'true';
+    }
+    private get configCacheEnabled(): boolean {
+        return this.ls.getItem('config_cache') == 'true';
+    }
+    private get autoCreateVault(): boolean {
+        return this.ls.getItem('auto_create') == 'true';
     }
 
     public getPasswordFromDialog(promptText?: string): Promise<string> {
@@ -117,6 +125,9 @@ export class AuthService {
 	// pedro-arruda-moreira: desktop mode
     public reset() {
         this.masterPassword = '';
+        // pedro-arruda-moreira: config cache
+        this.configCache.remove(this.url);
+        this.url = '';
     }
 
     /**
@@ -139,11 +150,25 @@ export class AuthService {
         if(!control) {
             control = Vaultage.staticControl;
         }
-        return control.login(config.url, config.username, config.password, {
-            auth: config.basic
-        },
         // pedro-arruda-moreira: config cache
-        this.configCache);
+        try {
+            return control.login(
+                config.url,
+                config.username,
+                config.password,
+                {
+                    auth: config.basic
+                },
+                (this.configCacheEnabled ? this.configCache : undefined)
+            ).then(async (v): Promise<Vault> => {
+                if(v.getDBRevision() == 0 && this.autoCreateVault) {
+                    await v.save();
+                }
+                return v;
+            });
+        } finally {
+            this.url = config.url;
+        }
     }
 }
 
