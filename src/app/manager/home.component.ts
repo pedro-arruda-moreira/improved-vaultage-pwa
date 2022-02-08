@@ -126,6 +126,9 @@ export class HomeComponent implements OnDestroy, OnInit {
             await this.authService.confirmMasterPassword();
             const vault = this.authService.getVault();
             const newPass = await this.authService.getPasswordFromDialog("Now type the new password");
+            if(await this.authService.getPasswordFromDialog('Finally, confirm the new password') != newPass) {
+                throw new Error('Confirmation does not match. Try Again');
+            }
             await vault.updateMasterPassword(newPass);
             this.snackBar.open('Master password changed successfully.');
         } catch(e) {
