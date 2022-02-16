@@ -116,11 +116,11 @@ export class AuthService {
 
     public async changeMasterPassword() {
         await this.confirmMasterPassword();
-        const vault = this.getVault();
         const newPass = await this.getPasswordFromDialog('Now type the new password');
         if(await this.getPasswordFromDialog('Finally, confirm the new password') != newPass) {
             throw new Error('Confirmation does not match. Try Again');
         }
+        const vault = this.getVault();
         await vault.updateMasterPassword(newPass);
     }
 
