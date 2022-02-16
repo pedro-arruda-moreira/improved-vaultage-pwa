@@ -24,7 +24,7 @@
         </button>
     </div>
     <div *ngIf="viewMode === 'initial'" class="add-item-pill">
-        <button mat-flat-button color="warn" class="pill-button" (click)="changeMasterPassword()">
+        <button mat-flat-button color="warn" class="pill-button" (click)="changeMasterPassword()" test-id="change-master-password">
             <div class="btn-layout">
                 <mat-icon aria-hidden="false" aria-label="Add" inline>vpn_key</mat-icon>
                 <div>Change master password</div>

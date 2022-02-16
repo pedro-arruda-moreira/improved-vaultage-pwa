@@ -121,20 +121,13 @@ export class HomeComponent implements OnDestroy, OnInit {
         return url;
     }
 
-    public async changeMasterPassword() {
-        try {
-            await this.authService.confirmMasterPassword();
-            const vault = this.authService.getVault();
-            const newPass = await this.authService.getPasswordFromDialog("Now type the new password");
-            if(await this.authService.getPasswordFromDialog('Finally, confirm the new password') != newPass) {
-                throw new Error('Confirmation does not match. Try Again');
-            }
-            await vault.updateMasterPassword(newPass);
+    public changeMasterPassword() {
+        this.authService.changeMasterPassword().then(_ => {
             this.snackBar.open('Master password changed successfully.');
-        } catch(e) {
+        }).catch(e => {
             const error = e as Error;
             this.snackBar.open(error.message);
-        }
+        });
     }
     private handler: (e: HashChangeEvent) => void = (e) => {
         this.onHashChange(e);
