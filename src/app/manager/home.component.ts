@@ -122,8 +122,12 @@ export class HomeComponent implements OnDestroy, OnInit {
     }
 
     public changeMasterPassword() {
+        if(!this.window.confirm('Are you sure? This will also log you off.')) {
+            return;
+        }
         this.authService.changeMasterPassword().then(_ => {
-            this.snackBar.open('Master password changed successfully.');
+            this.snackBar.open('Master password changed successfully. Logging you off now.');
+            this.logOut();
         }).catch(e => {
             const error = e as Error;
             this.snackBar.open(error.message);

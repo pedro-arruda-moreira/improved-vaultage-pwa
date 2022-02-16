@@ -1,7 +1,7 @@
 import { ComponentFixture } from '@angular/core/testing';
 import { ParamMap } from '@angular/router';
 import { createMock, getMock, renderComponent } from 'ng-vacuum';
-import { instance, mockInstance, when, anyOf, anyFunction, mock } from 'omnimock';
+import { instance, mockInstance, when, anyOf, anyFunction, mock, anyString } from 'omnimock';
 import { Subject } from 'rxjs';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
@@ -195,14 +195,26 @@ describe('HomeComponent', () => {
         expect(spy).toHaveBeenCalledTimes(0);
     });
 
+    it('requests changes to master password - not confirming', async () => {
+        when(getMock(WINDOW).confirm(anyString())).return(false);
+
+        page.changeMasterPasswordButton.click();
+        expect(viewMode).toBe('initial');
+        expect(searchValue).toBe('');
+    });
+
     it('requests changes to master password - success', async () => {
+        when(getMock(WINDOW).confirm(anyString())).return(true);
         when(getMock(Vault).findEntries('')).return(fakeEntries());
         fixture.detectChanges();
         await fixture.whenStable();
 
         when(getMock(AuthService).changeMasterPassword).return(() => Promise.resolve()).once();
-        when(getMock(MatSnackBar).open('Master password changed successfully.')).return(
+        when(getMock(MatSnackBar).open('Master password changed successfully. Logging you off now.')).return(
             mockInstance<MatSnackBarRef<SimpleSnackBar>>('matSnackBarRef')).once();
+        when(getMock(PinLockService).reset()).return().once();
+        when(getMock(AuthService).logOut()).return().once();
+        when(getMock(AuthService).reset()).return().once();
 
         page.changeMasterPasswordButton.click();
         expect(viewMode).toBe('initial');
@@ -210,6 +222,7 @@ describe('HomeComponent', () => {
     });
 
     it('requests changes to master password - error', async () => {
+        when(getMock(WINDOW).confirm(anyString())).return(true);
         when(getMock(Vault).findEntries('')).return(fakeEntries());
         fixture.detectChanges();
         await fixture.whenStable();
