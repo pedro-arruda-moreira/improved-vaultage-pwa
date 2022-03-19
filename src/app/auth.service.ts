@@ -27,8 +27,6 @@ export class AuthService {
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
     // pedro-arruda-moreira: desktop mode
     private masterPassword: string = '';
-    // pedro-arruda-moreira: config cache
-    private url: string = '';
 
     constructor(
             private readonly pinLockService: PinLockService,
@@ -136,8 +134,7 @@ export class AuthService {
     public reset() {
         this.masterPassword = '';
         // pedro-arruda-moreira: config cache
-        this.configCache.remove(this.url);
-        this.url = '';
+        this.configCache.clear();
     }
 
     /**
@@ -161,24 +158,20 @@ export class AuthService {
             control = Vaultage.staticControl;
         }
         // pedro-arruda-moreira: config cache
-        try {
-            return control.login(
-                config.url,
-                config.username,
-                config.password,
-                {
-                    auth: config.basic
-                },
-                (this.configCacheEnabled ? this.configCache : undefined)
-            ).then(async (v): Promise<Vault> => {
-                if(v.getDBRevision() == 0 && this.autoCreateVault) {
-                    await v.save();
-                }
-                return v;
-            });
-        } finally {
-            this.url = config.url;
-        }
+        return control.login(
+            config.url,
+            config.username,
+            config.password,
+            {
+                auth: config.basic
+            },
+            (this.configCacheEnabled ? this.configCache : undefined)
+        ).then(async (v): Promise<Vault> => {
+            if(v.getDBRevision() == 0 && this.autoCreateVault) {
+                await v.save();
+            }
+            return v;
+        });
     }
 }
 

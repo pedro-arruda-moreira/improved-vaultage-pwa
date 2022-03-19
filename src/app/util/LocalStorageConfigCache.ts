@@ -3,6 +3,9 @@ import { IVaultageConfig } from 'vaultage-protocol';
 import { Injectable, Inject } from '@angular/core';
 import { LOCAL_STORAGE } from '../platform/providers';
 
+
+const PREFIX = 'config_cache_';
+
 @Injectable({
     providedIn:"any"
 })
@@ -12,7 +15,7 @@ export class LocalStorageConfigCache implements IConfigCache {
     ) {}
 
     private getLocalStorageKey(url: string) {
-        return `config_cache_${btoa(url.split('/').join('').trim())}`
+        return `${PREFIX}${btoa(url.split('/').join('').trim())}`
             .split('=').join('').trim();
     }
 
@@ -26,7 +29,11 @@ export class LocalStorageConfigCache implements IConfigCache {
         }
         return JSON.parse(strVal) as IVaultageConfig;
     }
-    remove(url: string) {
-        this.localStorage.removeItem(this.getLocalStorageKey(url));
+    clear() {
+        for(const key in this.localStorage) {
+            if(key.startsWith(PREFIX)) {
+                this.localStorage.removeItem(key);
+            }
+        }
     }
 }
