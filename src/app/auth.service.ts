@@ -27,8 +27,6 @@ export class AuthService {
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
     // pedro-arruda-moreira: desktop mode
     private masterPassword: string = '';
-    // pedro-arruda-moreira: config cache
-    private url: string = '';
 
     constructor(
             private readonly pinLockService: PinLockService,
@@ -62,6 +60,19 @@ export class AuthService {
     private get autoCreateVault(): boolean {
         return this.ls.getItem('auto_create') == 'true';
     }
+    // pedro-arruda-moreira: change master password
+    public getPasswordFromDialog(promptText?: string): Promise<string> {
+        const instance = this.dialog.open(
+            PasswordPromptComponent,
+            {
+                disableClose: true
+            }
+        ).componentInstance;
+        if(promptText) {
+            instance.text = promptText;
+        }
+        return instance.password;
+    }
 
     /**
      * Saves authentication settings
@@ -71,12 +82,7 @@ export class AuthService {
         if(this.desktop) {
             let masterPass = '';
             if(this.masterPassword == '') {
-                masterPass = await this.dialog.open(
-                    PasswordPromptComponent,
-                    {
-                        disableClose: true
-                    }
-                ).componentInstance.password;
+                masterPass = await this.getPasswordFromDialog();
             } else {
                 masterPass = this.masterPassword;
             }
@@ -89,6 +95,7 @@ export class AuthService {
             this.masterPassword = masterPass;
         } else {
             this.vaultSubject.next(await this.doLogin(data));
+            this.masterPassword = data.password;
         }
         if(this.desktop) {
             data.password = '';
@@ -96,6 +103,23 @@ export class AuthService {
         await this.pinLockService.setSecret(pin, JSON.stringify(data));
 
         await this.router.navigateByUrl(nextURL ?? '/manager', { replaceUrl: true });
+    }
+    // pedro-arruda-moreira: change master password
+    public async confirmMasterPassword() {
+        const typedPassword = await this.getPasswordFromDialog();
+        if(typedPassword != this.masterPassword) {
+            throw new Error('Password does not match. Try again.');
+        }
+    }
+    // pedro-arruda-moreira: change master password
+    public async changeMasterPassword() {
+        await this.confirmMasterPassword();
+        const newPass = await this.getPasswordFromDialog('Now type the new password');
+        if(await this.getPasswordFromDialog('Finally, confirm the new password') != newPass) {
+            throw new Error('Confirmation does not match. Try Again.');
+        }
+        const vault = this.getVault();
+        await vault.updateMasterPassword(newPass);
     }
 
     /**
@@ -110,8 +134,7 @@ export class AuthService {
     public reset() {
         this.masterPassword = '';
         // pedro-arruda-moreira: config cache
-        this.configCache.remove(this.url);
-        this.url = '';
+        this.configCache.clear();
     }
 
     /**
@@ -135,24 +158,20 @@ export class AuthService {
             control = Vaultage.staticControl;
         }
         // pedro-arruda-moreira: config cache
-        try {
-            return control.login(
-                config.url,
-                config.username,
-                config.password,
-                {
-                    auth: config.basic
-                },
-                (this.configCacheEnabled ? this.configCache : undefined)
-            ).then(async (v): Promise<Vault> => {
-                if(v.getDBRevision() == 0 && this.autoCreateVault) {
-                    await v.save();
-                }
-                return v;
-            });
-        } finally {
-            this.url = config.url;
-        }
+        return control.login(
+            config.url,
+            config.username,
+            config.password,
+            {
+                auth: config.basic
+            },
+            (this.configCacheEnabled ? this.configCache : undefined)
+        ).then(async (v): Promise<Vault> => {
+            if(v.getDBRevision() == 0 && this.autoCreateVault) {
+                await v.save();
+            }
+            return v;
+        });
     }
 }
 

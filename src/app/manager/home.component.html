@@ -18,7 +18,17 @@
     <div *ngIf="viewMode === 'initial'" class="add-item-pill">
         <button mat-flat-button color="primary" class="pill-button" routerLink="/manager/create">
             <div class="btn-layout">
-                <mat-icon aria-hidden="false" aria-label="Add" inline>add</mat-icon> <div>New password</div>
+                <mat-icon aria-hidden="false" aria-label="Add" inline>add</mat-icon>
+                <div>New password</div>
+            </div>
+        </button>
+    </div>
+    <!--// pedro-arruda-moreira: change master password-->
+    <div *ngIf="viewMode === 'initial'" class="add-item-pill">
+        <button mat-flat-button color="warn" class="pill-button" (click)="changeMasterPassword()" test-id="change-master-password">
+            <div class="btn-layout">
+                <mat-icon aria-hidden="false" aria-label="Add" inline>vpn_key</mat-icon>
+                <div>Change master password</div>
             </div>
         </button>
     </div>

@@ -1,7 +1,7 @@
 import { ComponentFixture } from '@angular/core/testing';
 import { ParamMap } from '@angular/router';
 import { createMock, getMock, renderComponent } from 'ng-vacuum';
-import { instance, mockInstance, when, anyOf, anyFunction } from 'omnimock';
+import { instance, mockInstance, when, anyOf, anyFunction, mock, anyString } from 'omnimock';
 import { Subject } from 'rxjs';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
@@ -15,6 +15,7 @@ import { PasswordListComponent } from './password-list.component';
 // pedro-arruda-moreira: changed client
 import { IVaultDBEntryImproved, Vault } from 'improved-vaultage-client';
 import { WINDOW } from '../platform/providers';
+import { MatSnackBar, SimpleSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
 describe('HomeComponent', () => {
 
@@ -193,6 +194,48 @@ describe('HomeComponent', () => {
 
         expect(spy).toHaveBeenCalledTimes(0);
     });
+    // pedro-arruda-moreira: change master password
+    it('requests changes to master password - not confirming', async () => {
+        when(getMock(WINDOW).confirm(anyString())).return(false);
+
+        page.changeMasterPasswordButton.click();
+        expect(viewMode).toBe('initial');
+        expect(searchValue).toBe('');
+    });
+    // pedro-arruda-moreira: change master password
+    it('requests changes to master password - success', async () => {
+        when(getMock(WINDOW).confirm(anyString())).return(true);
+        when(getMock(Vault).findEntries('')).return(fakeEntries());
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        when(getMock(AuthService).changeMasterPassword).return(() => Promise.resolve()).once();
+        when(getMock(MatSnackBar).open('Master password changed successfully. Logging you off now.')).return(
+            mockInstance<MatSnackBarRef<SimpleSnackBar>>('matSnackBarRef')).once();
+        when(getMock(PinLockService).reset()).return().once();
+        when(getMock(AuthService).logOut()).return().once();
+        when(getMock(AuthService).reset()).return().once();
+
+        page.changeMasterPasswordButton.click();
+        expect(viewMode).toBe('initial');
+        expect(searchValue).toBe('');
+    });
+    // pedro-arruda-moreira: change master password
+    it('requests changes to master password - error', async () => {
+        when(getMock(WINDOW).confirm(anyString())).return(true);
+        when(getMock(Vault).findEntries('')).return(fakeEntries());
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        when(getMock(AuthService).changeMasterPassword).return(() => Promise.reject(new Error('boo ya!'))).once();
+        when(getMock(MatSnackBar).open('boo ya!')).return(
+            mockInstance<MatSnackBarRef<SimpleSnackBar>>('matSnackBarRef')).once();
+
+        page.changeMasterPasswordButton.click();
+        await fixture.whenStable();
+        expect(viewMode).toBe('initial');
+        expect(searchValue).toBe('');
+    });
 
 });
 
@@ -214,6 +257,10 @@ class Page {
 
     get exitSearchModeButton(): HTMLAnchorElement {
         return this.rendering.find('[test-id="exit-search-mode"]').nativeElement;
+    }
+    // pedro-arruda-moreira: change master password
+    get changeMasterPasswordButton(): HTMLButtonElement {
+        return this.rendering.find('[test-id="change-master-password"]').nativeElement;
     }
 
     get passwordList(): PasswordListComponent {

@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { getMock, getService } from 'ng-vacuum';
 // pedro-arruda-moreira: desktop mode
-import { anyString, mockInstance, when, equals, anything, instance, mock } from 'omnimock';
+import { anyString, mockInstance, when, equals, anything, instance, mock, anyOf } from 'omnimock';
 // pedro-arruda-moreira: changed client
 import { Vault } from 'improved-vaultage-client';
 
@@ -174,5 +174,93 @@ describe('AuthService', () => {
             return Promise.resolve(true);
         }).once();
         await service.logIn(config, '1234', '/next');
+    });
+    // pedro-arruda-moreira: change master password
+    it('changeMasterPassword throw exceptions on validation errors - master pass confirmation wrong', async () => {
+        
+        // default master password for the service is '' if not authenticated
+        when(getMock(PasswordPromptComponent).password).return(
+            Promise.resolve('mypass123')).once();
+        when(getMock(MatDialog).open(anyOf(PasswordPromptComponent), anything())).return(
+            mockInstance<MatDialogRef<PasswordPromptComponent, any>>('MatDialogRef', {
+                componentInstance: instance(getMock(PasswordPromptComponent))
+            })).once();
+        try {
+            await service.changeMasterPassword();
+            fail('exception expected');
+        } catch(e) {
+            expect((e as Error).message).toBe('Password does not match. Try again.');
+        }
+    });
+    // pedro-arruda-moreira: change master password
+    it('changeMasterPassword throw exceptions on validation errors - new pass confirmation wrong', async () => {
+        
+        // default master password for the service is '' if not authenticated
+        let count = 0;
+        when(getMock(PasswordPromptComponent).password).call(() => {
+            switch(++count) {
+                case 1:
+                    return Promise.resolve('');
+                case 2:
+                    return Promise.resolve('new_pass');
+                default:
+                    return Promise.resolve('wrong_new_pass');
+            }
+        }).times(3);
+        when(getMock(MatDialog).open(anyOf(PasswordPromptComponent), anything())).return(
+            mockInstance<MatDialogRef<PasswordPromptComponent, any>>('MatDialogRef', {
+                componentInstance: instance(getMock(PasswordPromptComponent))
+            })).times(3);
+        try {
+            await service.changeMasterPassword();
+            fail('exception expected');
+        } catch(e) {
+            expect((e as Error).message).toBe('Confirmation does not match. Try Again.');
+        }
+    });
+    // pedro-arruda-moreira: change master password
+    it('changeMasterPassword changes master password', async () => {
+
+        // login expectations
+        
+        
+        // pedro-arruda-moreira: desktop mode
+        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
+        /*
+		 * pedro-arruda-moreira: adjusted unit tests.
+		 */
+        when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
+        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
+        { auth: { username: 'Quentin', password: 'Tarantino'}},
+        // pedro-arruda-moreira: config cache
+        instance(getMock(LocalStorageConfigCache))))
+            .resolve(fakeVault);
+        // pedro-arruda-moreira: desktop mode
+        when(getMock(PinLockService).setSecret('1234', anyString())).return(Promise.resolve()).once();
+        when(getMock(Router).navigateByUrl(anyString(), { replaceUrl: true })).call(url => {
+            expect(url).toBe('/next');
+            return Promise.resolve(true);
+        }).once();
+        
+        // change pass expectations
+
+        let count = 0;
+        when(fakeVaultMock.updateMasterPassword('new_pass')).return(Promise.resolve()).once();
+        when(getMock(PasswordPromptComponent).password).call(() => {
+            switch(++count) {
+                case 1:
+                    return Promise.resolve('Tr4v0lt4');
+                case 2:
+                    return Promise.resolve('new_pass');
+                default:
+                    return Promise.resolve('new_pass');
+            }
+        }).times(3);
+        when(getMock(MatDialog).open(anyOf(PasswordPromptComponent), anything())).return(
+            mockInstance<MatDialogRef<PasswordPromptComponent, any>>('MatDialogRef', {
+                componentInstance: instance(getMock(PasswordPromptComponent))
+            })).times(3);
+        await service.logIn(fakeLoginConfig(), '1234', '/next');
+        await service.changeMasterPassword();
     });
 });

@@ -5,6 +5,7 @@ import { AuthService } from '../auth.service';
 import { PinLockService } from '../pin-lock.service';
 import { HomeNavigationService } from './home-navigation.service';
 import { IPasswordListEntry } from './password-list.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { WINDOW } from '../platform/providers';
 
 @Component({
@@ -60,6 +61,8 @@ export class HomeComponent implements OnDestroy, OnInit {
             private readonly pinLockService: PinLockService,
             private readonly authService: AuthService,
             private readonly navigation: HomeNavigationService,
+            // pedro-arruda-moreira: change master password
+            private readonly snackBar: MatSnackBar,
             @Inject(WINDOW)
             private readonly window: Window) { }
 
@@ -117,6 +120,19 @@ export class HomeComponent implements OnDestroy, OnInit {
             return match[1];
         }
         return url;
+    }
+    // pedro-arruda-moreira: change master password
+    public changeMasterPassword() {
+        if(!this.window.confirm('Are you sure? This will also log you off.')) {
+            return;
+        }
+        this.authService.changeMasterPassword().then(_ => {
+            this.snackBar.open('Master password changed successfully. Logging you off now.');
+            this.logOut();
+        }).catch(e => {
+            const error = e as Error;
+            this.snackBar.open(error.message);
+        });
     }
     private handler: (e: HashChangeEvent) => void = (e) => {
         this.onHashChange(e);
