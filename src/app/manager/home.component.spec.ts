@@ -194,7 +194,7 @@ describe('HomeComponent', () => {
 
         expect(spy).toHaveBeenCalledTimes(0);
     });
-
+    // pedro-arruda-moreira: change master password
     it('requests changes to master password - not confirming', async () => {
         when(getMock(WINDOW).confirm(anyString())).return(false);
 
@@ -202,7 +202,7 @@ describe('HomeComponent', () => {
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
     });
-
+    // pedro-arruda-moreira: change master password
     it('requests changes to master password - success', async () => {
         when(getMock(WINDOW).confirm(anyString())).return(true);
         when(getMock(Vault).findEntries('')).return(fakeEntries());
@@ -220,7 +220,7 @@ describe('HomeComponent', () => {
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
     });
-
+    // pedro-arruda-moreira: change master password
     it('requests changes to master password - error', async () => {
         when(getMock(WINDOW).confirm(anyString())).return(true);
         when(getMock(Vault).findEntries('')).return(fakeEntries());
@@ -258,7 +258,7 @@ class Page {
     get exitSearchModeButton(): HTMLAnchorElement {
         return this.rendering.find('[test-id="exit-search-mode"]').nativeElement;
     }
-
+    // pedro-arruda-moreira: change master password
     get changeMasterPasswordButton(): HTMLButtonElement {
         return this.rendering.find('[test-id="change-master-password"]').nativeElement;
     }

@@ -175,7 +175,7 @@ describe('AuthService', () => {
         }).once();
         await service.logIn(config, '1234', '/next');
     });
-
+    // pedro-arruda-moreira: change master password
     it('changeMasterPassword throw exceptions on validation errors - master pass confirmation wrong', async () => {
         
         // default master password for the service is '' if not authenticated
@@ -192,7 +192,7 @@ describe('AuthService', () => {
             expect((e as Error).message).toBe('Password does not match. Try again.');
         }
     });
-
+    // pedro-arruda-moreira: change master password
     it('changeMasterPassword throw exceptions on validation errors - new pass confirmation wrong', async () => {
         
         // default master password for the service is '' if not authenticated
@@ -218,7 +218,7 @@ describe('AuthService', () => {
             expect((e as Error).message).toBe('Confirmation does not match. Try Again.');
         }
     });
-
+    // pedro-arruda-moreira: change master password
     it('changeMasterPassword changes master password', async () => {
 
         // login expectations

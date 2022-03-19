@@ -37,11 +37,13 @@ describe('PasswordGeneratorComponent', () => {
         expect(component.password).not.toEqual(oldPassword);
         expect(page.passwordField.value).not.toEqual(oldPassword);
     }));
-    it('generates a new password when changing type', fakeAsync(() => {
+    it('generates a new password when changing type', fakeAsync(async () => {
         const firtPass = changeType();
         const pass1 = changeType(page.passwordTypeAllChars);
         const pass2 = changeType(page.passwordTypeNumbers);
         const pass3 = changeType(page.passwordTypeMemorable);
+        fixture.detectChanges();
+        await fixture.whenStable();
         expect(firtPass).not.toEqual(pass1);
         expect(pass1).not.toEqual(pass2);
         expect(pass2).not.toEqual(pass3);
@@ -49,15 +51,18 @@ describe('PasswordGeneratorComponent', () => {
         expect(parseInt(pass1)).toBeNaN();
         expect(parseInt(pass3)).toBeNaN();
     }));
-    it('generates a new password when changing type - changing length', fakeAsync(() => {
+    it('generates a new password when changing type - changing length', fakeAsync(async () => {
         typeValue(page.passwordLengthField, '8');
         page.passwordLengthField.dispatchEvent(createNewEvent('keyup'));
         fixture.detectChanges();
+        await fixture.whenStable();
         flush();
         const firtPass = changeType(undefined, 8);
         const pass1 = changeType(page.passwordTypeAllChars, 8);
         const pass2 = changeType(page.passwordTypeNumbers, 8);
         const pass3 = changeType(page.passwordTypeMemorable, 8);
+        await fixture.whenStable();
+        fixture.detectChanges();
         expect(firtPass).not.toEqual(pass1);
         expect(pass1).not.toEqual(pass2);
         expect(pass2).not.toEqual(pass3);

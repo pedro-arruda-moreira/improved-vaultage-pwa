@@ -61,6 +61,7 @@ export class HomeComponent implements OnDestroy, OnInit {
             private readonly pinLockService: PinLockService,
             private readonly authService: AuthService,
             private readonly navigation: HomeNavigationService,
+            // pedro-arruda-moreira: change master password
             private readonly snackBar: MatSnackBar,
             @Inject(WINDOW)
             private readonly window: Window) { }
@@ -120,7 +121,7 @@ export class HomeComponent implements OnDestroy, OnInit {
         }
         return url;
     }
-
+    // pedro-arruda-moreira: change master password
     public changeMasterPassword() {
         if(!this.window.confirm('Are you sure? This will also log you off.')) {
             return;

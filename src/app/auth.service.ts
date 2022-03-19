@@ -62,7 +62,7 @@ export class AuthService {
     private get autoCreateVault(): boolean {
         return this.ls.getItem('auto_create') == 'true';
     }
-
+    // pedro-arruda-moreira: change master password
     public getPasswordFromDialog(promptText?: string): Promise<string> {
         const instance = this.dialog.open(
             PasswordPromptComponent,
@@ -106,14 +106,14 @@ export class AuthService {
 
         await this.router.navigateByUrl(nextURL ?? '/manager', { replaceUrl: true });
     }
-
+    // pedro-arruda-moreira: change master password
     public async confirmMasterPassword() {
         const typedPassword = await this.getPasswordFromDialog();
         if(typedPassword != this.masterPassword) {
             throw new Error('Password does not match. Try again.');
         }
     }
-
+    // pedro-arruda-moreira: change master password
     public async changeMasterPassword() {
         await this.confirmMasterPassword();
         const newPass = await this.getPasswordFromDialog('Now type the new password');
