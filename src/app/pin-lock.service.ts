@@ -13,7 +13,7 @@ export class PinLockService {
     constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage) {
         const cryptoImpl = ls.getItem('crypto_type');
         if(cryptoImpl == 'online') {
-            this.cryptoImpl = new OnlineCrypto();
+            this.cryptoImpl = new OnlineCrypto(this.ls.getItem('online_crypto_path') as string);
         } else {
             this.cryptoImpl = new OfflineCrypto();
         }

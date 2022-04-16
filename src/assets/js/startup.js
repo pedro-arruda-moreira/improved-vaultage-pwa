@@ -25,6 +25,8 @@ function define(ignored, sjcl) {
   detectFeature('config_cache', 'false');
   // auto create new vault
   detectFeature('auto_create', 'false');
+  // online crypto path
+  detectFeature('online_crypto_path', './api/crypto');
   // disable text selection
   window.document.addEventListener('selectstart', function(e) {
     function isAllowedTag(el) {

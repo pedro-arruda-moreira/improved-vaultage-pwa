@@ -9,6 +9,7 @@ const crypto =`{"iv":"63fznGsDKRJplIj3Y82geg==",
 "ct":"DXPhskQGZTvBO8XSyq6I"}` ;
 
 let theAjaxReturn = "";
+const cryptoPath = './my-custom-crypto-path';
 
 describe('OnlineCryptoTest', () => {
     let ajaxMock: Mock<XMLHttpRequest>;
@@ -23,6 +24,7 @@ describe('OnlineCryptoTest', () => {
         readyState = 0;
         ajaxMock = mock(XMLHttpRequest);
         service = new OnlineCrypto(
+            cryptoPath,
             () => instance(ajaxMock),
             () => theKey,
             () => theAjaxReturn,
@@ -42,7 +44,7 @@ describe('OnlineCryptoTest', () => {
             expect(obj.pin).toEqual(thePin);
             expect(obj.genKey).toEqual(theKey);
         }).once();
-        when(ajaxMock.open(same('POST'), same('./api/crypto'), same(true))).call((ign1, ign2, ign3) => {
+        when(ajaxMock.open(same('POST'), same(cryptoPath), same(true))).call((ign1, ign2, ign3) => {
             return;
         }).once();
         theAjaxReturn = theKey;
@@ -62,7 +64,7 @@ describe('OnlineCryptoTest', () => {
             expect(obj.genKey).toEqual(theKey);
         }).once();
         theAjaxReturn = '204';
-        when(ajaxMock.open(same('POST'), same('./api/crypto'), same(true))).call((ign1, ign2, ign3) => {
+        when(ajaxMock.open(same('POST'), same(cryptoPath), same(true))).call((ign1, ign2, ign3) => {
             return;
         }).once();
         const resultPromise = service.encrypt('my data', thePin);
@@ -77,7 +79,7 @@ describe('OnlineCryptoTest', () => {
             expect(json).toEqual(undefined);
         }).once();
         theAjaxReturn = theKey;
-        when(ajaxMock.open(same('GET'), same(`./api/crypto?pin=${thePin}`), same(true))).call((ign1, ign2, ign3) => {
+        when(ajaxMock.open(same('GET'), same(`${cryptoPath}?pin=${thePin}`), same(true))).call((ign1, ign2, ign3) => {
             return;
         }).once();
         const resultPromise = service.decrypt(crypto, thePin);
@@ -92,7 +94,7 @@ describe('OnlineCryptoTest', () => {
             expect(json).toEqual(undefined);
         }).once();
         theAjaxReturn = 'boo ya';
-        when(ajaxMock.open(same('GET'), same(`./api/crypto?pin=${thePin}`), same(true))).call((ign1, ign2, ign3) => {
+        when(ajaxMock.open(same('GET'), same(`${cryptoPath}?pin=${thePin}`), same(true))).call((ign1, ign2, ign3) => {
             return;
         }).once();
         const resultPromise = service.decrypt(crypto, thePin);

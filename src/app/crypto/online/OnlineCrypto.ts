@@ -14,6 +14,7 @@ type ResultExtractor = (ajax: XMLHttpRequest) => AjaxResult;
 export class OnlineCrypto implements CryptoImpl {
 
     constructor(
+        private apiPath: string,
         private ajaxBuilder: XMLHttpRequestBuilder = () => new XMLHttpRequest(),
         private randomizer: Randomizer = () => {
             let genKey = "" + Math.random();
@@ -57,7 +58,7 @@ export class OnlineCrypto implements CryptoImpl {
     async encrypt(data: string, pin: string): Promise<string> {
         const genKey = this.randomizer();
         try{
-            let code = await this.doHttpRequest('POST', './api/crypto',JSON.stringify({
+            let code = await this.doHttpRequest('POST', this.apiPath,JSON.stringify({
                 pin,
                 genKey
             }));
@@ -71,7 +72,7 @@ export class OnlineCrypto implements CryptoImpl {
     }
     async decrypt(data: string, pin: string): Promise<string> {
         try{
-            let genKey = await this.doHttpRequest('GET', `./api/crypto?pin=${pin}`);
+            let genKey = await this.doHttpRequest('GET', `${this.apiPath}?pin=${pin}`);
             return (window as any).sjcl.decrypt(genKey, data);
         } catch(e) {
             throw e;
