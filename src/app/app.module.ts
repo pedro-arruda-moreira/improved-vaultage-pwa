@@ -48,6 +48,7 @@ import { SetupService } from './setup/setup.service';
 // pedro-arruda-moreira: password generator
 import { PasswordGeneratorComponent } from './manager/form/password-generator/password.generator.component';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
+import { OfflineService } from './offline.service';
 
 @NgModule({
     declarations: [
@@ -91,6 +92,7 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
     ],
     providers: [
         {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+        OfflineService,
         AutoLogoutService,
         AutoRedirectService,
         AccessControlService,

@@ -15,6 +15,7 @@ import { Vaultage, VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
+import { OfflineService } from './offline.service';
 
 
 /**
@@ -27,6 +28,7 @@ export class AuthService {
     public readonly authStatusChange$: Observable<boolean> = this.vaultSubject.pipe(map(v => v != null));
     // pedro-arruda-moreira: desktop mode
     private masterPassword: string = '';
+    private _offlineService: OfflineService | null = null;
 
     constructor(
             private readonly pinLockService: PinLockService,
@@ -41,6 +43,10 @@ export class AuthService {
 
     public get isAuthenticated(): boolean {
         return this.vaultSubject.value != null;
+    }
+
+    public set offlineService(os: OfflineService) {
+        this._offlineService = os;
     }
 
     /**
@@ -59,6 +65,9 @@ export class AuthService {
     }
     private get autoCreateVault(): boolean {
         return this.ls.getItem('auto_create') == 'true';
+    }
+    private get offlineEnabled(): boolean {
+        return this.ls.getItem('offline_enabled') == 'true';
     }
     // pedro-arruda-moreira: change master password
     public getPasswordFromDialog(promptText?: string): Promise<string> {
@@ -165,7 +174,8 @@ export class AuthService {
             {
                 auth: config.basic
             },
-            (this.configCacheEnabled ? this.configCache : undefined)
+            (this.configCacheEnabled ? this.configCache : undefined),
+            (this.offlineEnabled ? (this._offlineService as OfflineService) : undefined)
         ).then(async (v): Promise<Vault> => {
             if(v.getDBRevision() == 0 && this.autoCreateVault) {
                 await v.save();

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { PinLockService } from './pin-lock.service';
 import { ErrorHandlingService } from './platform/error-handling.service';
+import { OfflineService } from './offline.service';
 
 @Injectable()
 export class RedirectService {
@@ -11,7 +12,12 @@ export class RedirectService {
             private readonly authService: AuthService,
             private readonly errorHandlingService: ErrorHandlingService,
             private readonly pinLockService: PinLockService,
-            private readonly router: Router) { }
+            private readonly router: Router,
+            offlineService: OfflineService) {
+                offlineService.authService = authService;
+                offlineService.redirectService = this;
+                authService.offlineService = offlineService;
+            }
 
     /**
      * Redirects to the appropriate page based on the current authentication state.
