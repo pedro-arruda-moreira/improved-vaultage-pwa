@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, NgZone } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 import { ErrorHandlingService } from '../platform/error-handling.service';
@@ -17,7 +17,9 @@ export class HomeNavigationService {
             @Inject(WINDOW) private readonly window: Window,
             private readonly router: Router,
             private readonly errorHandlingService: ErrorHandlingService,
-            private readonly route: ActivatedRoute) {
+            private readonly route: ActivatedRoute,
+            private readonly zone: NgZone
+) {
     }
 
     public get viewMode() {
@@ -52,8 +54,10 @@ export class HomeNavigationService {
 
     private navigate({replaceUrl, q}: { replaceUrl: boolean, q?: string }) {
         const extra: NavigationExtras = { replaceUrl, queryParams: { q } };
-        this.router.navigate(['/manager'], extra)
-                    .catch(err => this.errorHandlingService.onError(err));
+        this.zone.run(() => {
+            this.router.navigate(['/manager'], extra)
+                .catch(err => this.errorHandlingService.onError(err));
+        });
     }
 }
 
