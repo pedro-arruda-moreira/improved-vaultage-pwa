@@ -21,14 +21,19 @@ export class OfflineService implements IOfflineProvider {
         private readonly router: Router
     ) {
         this.online = this.window.navigator.onLine;
-        this.window.addEventListener('online', (_) => {
-            this.online = true;
-            this.relogin();
-        });
-        this.window.addEventListener('offline', (_) => {
-            this.online = false;
-            this.relogin();
-        });
+        if(this.offlineEnabled) {
+            this.window.addEventListener('online', (_) => {
+                this.online = true;
+                this.relogin();
+            });
+            this.window.addEventListener('offline', (_) => {
+                this.online = false;
+                this.relogin();
+            });
+        }
+    }
+    get offlineEnabled(): boolean {
+        return this.ls.getItem('offline_enabled') == 'true';
     }
     set authService(as: AuthService) {
         this._authService = as;

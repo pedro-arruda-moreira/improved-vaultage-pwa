@@ -3,11 +3,10 @@ import { InjectionToken } from '@angular/core';
  * pedro-arruda-moreira: for some reason, build was failing
  * because of this.
  */
-import * as vt from 'improved-vaultage-client';
+import { login } from 'improved-vaultage-client';
 
 export class Vaultage {
-    static staticControl = vt;
-    control = Vaultage.staticControl;
+    doLogin = login;
 }
 
 export const LOCAL_STORAGE = new InjectionToken<Storage>('LocalStorage');

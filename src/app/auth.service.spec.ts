@@ -51,7 +51,7 @@ describe('AuthService', () => {
 		 */
         
         when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
+        when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
             // pedro-arruda-moreira: config cache
             instance(getMock(LocalStorageConfigCache))))
                 .resolve(fakeVault)
@@ -87,7 +87,7 @@ describe('AuthService', () => {
             } as MatDialogRef<PasswordPromptComponent, any>).once();
         when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('false').times(2);
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('true');
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
+        when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
         undefined))
             .resolve(fakeVault);
@@ -127,7 +127,7 @@ describe('AuthService', () => {
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
+        when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
         instance(getMock(LocalStorageConfigCache))))
             .resolve(fakeVault);
@@ -162,7 +162,7 @@ describe('AuthService', () => {
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
         when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
+        when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
         instance(getMock(LocalStorageConfigCache))))
@@ -230,7 +230,7 @@ describe('AuthService', () => {
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
         when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
-        when(getMock(VAULTAGE).control.login('http://pulp.fiction', 'John', 'Tr4v0lt4',
+        when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
         instance(getMock(LocalStorageConfigCache))))
