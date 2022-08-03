@@ -3,6 +3,8 @@ import { LOCAL_STORAGE } from './platform/providers';
 import { OnlineCrypto } from './crypto/online/OnlineCrypto';
 import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
 import { CryptoImpl } from './crypto/internal/CryptoImpl';
+import { OfflineService } from './offline.service';
+import { LoginConfig } from './auth.service';
 
 export const STORAGE_KEY = 'vaultage_locked';
 
@@ -10,7 +12,8 @@ export const STORAGE_KEY = 'vaultage_locked';
 export class PinLockService {
     private cryptoImpl: CryptoImpl;
     // pedro-arruda-moreira: online pin lock crypto mode
-    constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage) {
+    constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage,
+                private readonly offlineService: OfflineService) {
         const cryptoImpl = ls.getItem('crypto_type');
         if(cryptoImpl == 'online') {
             this.cryptoImpl = new OnlineCrypto(this.ls.getItem('online_crypto_path') as string);
@@ -36,6 +39,14 @@ export class PinLockService {
     }
 	// pedro-arruda-moreira: desktop mode
     public async getSecret(userPin: string): Promise<string | undefined> {
+        if(await this.offlineService.isRunningOffline()) {
+            const data: LoginConfig = {
+                password: userPin,
+                url: 'offline://offline',
+                username: 'offline_user'
+            };
+            return JSON.stringify(data);
+        }
         const storage = this.getStorage();
 	    /*
 		 * pedro-arruda-moreira: local storage encryption

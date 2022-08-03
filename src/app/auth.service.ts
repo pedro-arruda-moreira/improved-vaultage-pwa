@@ -66,9 +66,6 @@ export class AuthService {
     private get autoCreateVault(): boolean {
         return this.ls.getItem('auto_create') == 'true';
     }
-    private get offlineEnabled(): boolean {
-        return this.ls.getItem('offline_enabled') == 'true';
-    }
     // pedro-arruda-moreira: change master password
     public getPasswordFromDialog(promptText?: string): Promise<string> {
         const instance = this.dialog.open(
@@ -87,29 +84,31 @@ export class AuthService {
      * Saves authentication settings
      */
     public async logIn(data: LoginConfig, pin: string, nextURL?: string) {
-    	// pedro-arruda-moreira: desktop mode
-        if(this.desktop) {
-            let masterPass = '';
-            if(this.masterPassword == '') {
-                masterPass = await this.getPasswordFromDialog();
+            // pedro-arruda-moreira: desktop mode
+            if(this.desktop) {
+                let masterPass = '';
+                if(this.masterPassword == '') {
+                    masterPass = await this.getPasswordFromDialog();
+                } else {
+                    masterPass = this.masterPassword;
+                }
+                this.vaultSubject.next(await this.doLogin({
+                    password: masterPass,
+                    url: data.url,
+                    username: data.username,
+                    basic: data.basic
+                }));
+                this.masterPassword = masterPass;
             } else {
-                masterPass = this.masterPassword;
+                this.vaultSubject.next(await this.doLogin(data));
+                this.masterPassword = data.password;
             }
-            this.vaultSubject.next(await this.doLogin({
-                password: masterPass,
-                url: data.url,
-                username: data.username,
-                basic: data.basic
-            }));
-            this.masterPassword = masterPass;
-        } else {
-            this.vaultSubject.next(await this.doLogin(data));
-            this.masterPassword = data.password;
-        }
-        if(this.desktop) {
-            data.password = '';
-        }
-        await this.pinLockService.setSecret(pin, JSON.stringify(data));
+            if(this.desktop) {
+                data.password = '';
+            }
+            if(!await (this._offlineService as OfflineService).isRunningOffline()) {
+                await this.pinLockService.setSecret(pin, JSON.stringify(data));
+            }
 
         await this.router.navigateByUrl(nextURL ?? '/manager', { replaceUrl: true });
     }
@@ -159,15 +158,9 @@ export class AuthService {
     }
 
     private doLogin(config: LoginConfig): Promise<Vault> {
-	    /*
-		 * pedro-arruda-moreira: for some reason, build was failing because of this.
-		 */
-        let control = this.vaultage.control;
-        if(!control) {
-            control = Vaultage.staticControl;
-        }
+        const assuredOfflineService = (this._offlineService as OfflineService);
         // pedro-arruda-moreira: config cache
-        return control.login(
+        return this.vaultage.doLogin(
             config.url,
             config.username,
             config.password,
@@ -175,7 +168,7 @@ export class AuthService {
                 auth: config.basic
             },
             (this.configCacheEnabled ? this.configCache : undefined),
-            (this.offlineEnabled ? (this._offlineService as OfflineService) : undefined)
+            (assuredOfflineService.offlineEnabled ? assuredOfflineService : undefined)
         ).then(async (v): Promise<Vault> => {
             if(v.getDBRevision() == 0 && this.autoCreateVault) {
                 await v.save();

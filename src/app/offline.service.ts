@@ -42,6 +42,9 @@ export class OfflineService implements IOfflineProvider {
         this._redirectService = rs;
     }
     isRunningOffline(): Promise<boolean> {
+        if (!this.offlineEnabled) {
+            return Promise.resolve(false);
+        }
         return Promise.resolve(!this.online);
     }
     getOfflineCipher(): Promise<string> {
