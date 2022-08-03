@@ -45,7 +45,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
          * pedro-arruda-moreira: for some reason, build was
          * failing because of this.
          */
-        { provide: VAULTAGE, useValue: Vaultage },
+        { provide: VAULTAGE, useValue: new Vaultage() },
         { provide: WINDOW, useValue: window }
     ],
 })
