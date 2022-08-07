@@ -1,6 +1,10 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
+process.on('infrastructure_error', (error) => {
+  console.error('infrastructure_error', error);
+});
+
 module.exports = function (config) {
   config.set({
     basePath: '',
