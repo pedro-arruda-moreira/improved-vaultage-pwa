@@ -12,6 +12,7 @@ import { VAULTAGE, LOCAL_STORAGE } from './platform/providers';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
+import { OfflineService } from './offline.service';
 
 describe('AuthService', () => {
 
@@ -20,6 +21,10 @@ describe('AuthService', () => {
 
     let fakeVaultMock = mock<Vault>('vault');
     let fakeVault = instance(fakeVaultMock);
+    let offlineServiceMock = mock<OfflineService>('offlineService');
+    let offlineService = instance(offlineServiceMock);
+    let runningOffline = false;
+    let offlineEnabled = false;
     function fakeLoginConfig(): LoginConfig {
         return {
             username: 'John',
@@ -35,16 +40,24 @@ describe('AuthService', () => {
     let changeEvents: boolean[];
 
     beforeEach(() => {
+        runningOffline = false;
+        offlineEnabled = false;
         fakeVaultMock = mock<Vault>('vault');
         fakeVault = instance(fakeVaultMock);
+        offlineServiceMock = mock<OfflineService>('offlineService');
+        offlineService = instance(offlineServiceMock);
         dbRevision = 4;
         changeEvents = [];
         service = getService(AuthService);
+        service.offlineService = offlineService;
         service.authStatusChange$.subscribe(change => changeEvents.push(change));
         when(fakeVaultMock.getDBRevision()).call(() => dbRevision);
+        when(offlineServiceMock.isRunningOffline()).call(() => Promise.resolve(runningOffline));
+        when(offlineServiceMock.offlineEnabled).call(() => offlineEnabled);
     });
 
     it('testCredentials logs in to test the credentials', async () => {
+        offlineEnabled = true;
         const config = fakeLoginConfig();
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
@@ -53,7 +66,7 @@ describe('AuthService', () => {
         when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
             // pedro-arruda-moreira: config cache
-            instance(getMock(LocalStorageConfigCache))))
+            instance(getMock(LocalStorageConfigCache)), offlineService))
                 .resolve(fakeVault)
                 .once();
         await service.testCredentials(config);
@@ -73,8 +86,9 @@ describe('AuthService', () => {
         expect(changeEvents.length).toBe(1);
         expect(changeEvents[0]).toBe(false);
     });
-	// pedro-arruda-moreira: desktop mode
-    it('logIn only asks for master password once per session - desktop (with auto_create on)', async () => {
+
+    async function doTestDesktop() {
+        
         const config = fakeLoginConfig();
         
         when(getMock(MatDialog).closeAll()).return().once();
@@ -89,14 +103,16 @@ describe('AuthService', () => {
         when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('true');
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
-        undefined))
+        undefined, (offlineEnabled ? offlineService : undefined)))
             .resolve(fakeVault);
-        when(getMock(PinLockService).setSecret('1234', anyString()))
-            .call((pin, secret) => {
-                expect(JSON.parse(secret)).toEqual(config);
-                return Promise.resolve();
-            })
-            .times(2);
+        if(!runningOffline) {
+            when(getMock(PinLockService).setSecret('1234', anyString()))
+                .call((_, secret) => {
+                    expect(JSON.parse(secret)).toEqual(config);
+                    return Promise.resolve();
+                })
+                .times(2);
+        }
         when(getMock(Router).navigateByUrl('/manager', { replaceUrl: true })).resolve(true).times(2);
         dbRevision = 0;
         when(getMock(LOCAL_STORAGE).getItem('auto_create')).return('true').once();
@@ -115,6 +131,16 @@ describe('AuthService', () => {
         expect(changeEvents.length).toBe(3);
         expect(changeEvents[2]).toBe(false);
         await service.logIn(config, '1234');
+    }
+	// pedro-arruda-moreira: desktop mode
+    it('logIn only asks for master password once per session - desktop (with auto_create on)', async () => {
+        await doTestDesktop();
+    });
+	// pedro-arruda-moreira: desktop mode
+    it('logIn only asks for master password once per session - desktop (with auto_create on and running offline)', async () => {
+        runningOffline = true;
+        offlineEnabled = true;
+        await doTestDesktop();
     });
 
     it('logIn logs in and redirects, logOut logs out', async () => {
@@ -129,7 +155,8 @@ describe('AuthService', () => {
 		 */
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
-        instance(getMock(LocalStorageConfigCache))))
+        instance(getMock(LocalStorageConfigCache)),
+        undefined))
             .resolve(fakeVault);
         when(getMock(PinLockService).setSecret('1234', anyString()))
             .call((pin, secret) => {
@@ -165,7 +192,8 @@ describe('AuthService', () => {
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
-        instance(getMock(LocalStorageConfigCache))))
+        instance(getMock(LocalStorageConfigCache)),
+        undefined))
             .resolve(fakeVault);
         // pedro-arruda-moreira: desktop mode
         when(getMock(PinLockService).setSecret('1234', anyString())).return(Promise.resolve()).once();
@@ -233,7 +261,8 @@ describe('AuthService', () => {
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
-        instance(getMock(LocalStorageConfigCache))))
+        instance(getMock(LocalStorageConfigCache)),
+        undefined))
             .resolve(fakeVault);
         // pedro-arruda-moreira: desktop mode
         when(getMock(PinLockService).setSecret('1234', anyString())).return(Promise.resolve()).once();
