@@ -5,7 +5,9 @@
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
-        "test": "ng test --code-coverage",
+        "build-prod": "ng build --configuration=production",
+        "test": "ng test",
+        "test-coverage": "ng test --code-coverage",
         "lint": "ng lint",
         "e2e": "ng e2e"
     },
@@ -48,6 +50,7 @@
         "karma-jasmine": "~2.0.1",
         "karma-jasmine-html-reporter": "1.4.2",
         "ng-vacuum": "0.0.0",
+        "node": "^14.20.0",
         "omnimock": "0.8.0",
         "protractor": "~5.4.3",
         "rxjs": "~6.5.4",
