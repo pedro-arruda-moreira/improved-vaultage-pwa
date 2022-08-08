@@ -4,7 +4,7 @@ import { LOCAL_STORAGE, WINDOW } from './platform/providers';
 import { AuthService } from './auth.service';
 import { RedirectService } from './redirect.service';
 import { Router } from '@angular/router';
-import { FEATURE_OFFLINE_ENABLED, FEATURE_OFFLINE_SALT } from './util/FeatureDetector';
+import { FEATURE_OFFLINE_ENABLED, FEATURE_OFFLINE_SALT } from 'src/misc/FeatureDetector';
 
 const OFFLINE_CIPHER_KEY = 'offline_cipher';
 

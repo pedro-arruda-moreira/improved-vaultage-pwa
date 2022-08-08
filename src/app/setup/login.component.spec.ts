@@ -16,7 +16,7 @@ import { BasePage } from '../test/base-page';
 import { typeValue } from '../test/test-utils';
 import { LoginComponent } from './login.component';
 import { SetupService } from './setup.service';
-import { FEATURE_SELF_CONTAINED, FEATURE_USE_BASIC } from '../util/FeatureDetector';
+import { FEATURE_SELF_CONTAINED, FEATURE_USE_BASIC } from 'src/misc/FeatureDetector';
 
 describe('LoginComponent', () => {
 

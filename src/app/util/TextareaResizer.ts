@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { WINDOW, LOCAL_STORAGE } from '../platform/providers';
-import { FEATURE_DESKTOP } from './FeatureDetector';
+import { FEATURE_DESKTOP } from 'src/misc/FeatureDetector';
 
 @Injectable({
     providedIn:"any"

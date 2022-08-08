@@ -3,7 +3,7 @@ import { anyString, Mock, reset, when, same } from 'omnimock';
 
 import { PinLockService, STORAGE_KEY } from './pin-lock.service';
 import { LOCAL_STORAGE } from './platform/providers';
-import { FEATURE_CRYPTO_TYPE } from './util/FeatureDetector';
+import { FEATURE_CRYPTO_TYPE } from 'src/misc/FeatureDetector';
 /*
  * pedro-arruda-moreira: local storage encryption
  */

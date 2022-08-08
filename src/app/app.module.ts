@@ -49,24 +49,7 @@ import { SetupService } from './setup/setup.service';
 import { PasswordGeneratorComponent } from './manager/form/password-generator/password.generator.component';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { OfflineService } from './offline.service';
-import { CryptoImpl } from './crypto/internal/CryptoImpl';
-import { OnlineCrypto } from './crypto/online/OnlineCrypto';
-import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
-import { start as detectFeatures, FEATURE_CRYPTO_TYPE, FEATURE_ONLINE_CRYPTO_PATH } from './util/FeatureDetector';
-import { start as limitTextSelection } from './util/TextSelectionController';
-
-detectFeatures();
-limitTextSelection();
-
-export const CRYPTO_IMPL = new InjectionToken<CryptoImpl>('CryptoImpl', {
-    factory: () => {
-        if(localStorage.getItem(FEATURE_CRYPTO_TYPE) == 'online') {
-            return new OnlineCrypto(localStorage.getItem(FEATURE_ONLINE_CRYPTO_PATH) as string);
-        } else {
-            return new OfflineCrypto();
-        }
-    }
-});
+import { CRYPTO_IMPL, cryptoImplFactory } from './root-providers';
 
 
 @NgModule({
@@ -111,6 +94,7 @@ export const CRYPTO_IMPL = new InjectionToken<CryptoImpl>('CryptoImpl', {
     ],
     providers: [
         {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+        {provide: CRYPTO_IMPL, useFactory: cryptoImplFactory},
         OfflineService,
         AutoLogoutService,
         AutoRedirectService,

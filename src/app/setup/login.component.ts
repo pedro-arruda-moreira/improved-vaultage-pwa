@@ -3,7 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { LoginConfig } from '../auth.service';
 import { LOCAL_STORAGE } from '../platform/providers';
 import { SetupService } from './setup.service';
-import { FEATURE_SELF_CONTAINED, FEATURE_USE_BASIC } from '../util/FeatureDetector';
+import { FEATURE_SELF_CONTAINED, FEATURE_USE_BASIC } from 'src/misc/FeatureDetector';
 
 export type PageState = 'init' | 'login';
 

@@ -1,11 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE } from './platform/providers';
-import { OnlineCrypto } from './crypto/online/OnlineCrypto';
-import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
 import { CryptoImpl } from './crypto/internal/CryptoImpl';
 import { OfflineService } from './offline.service';
 import { LoginConfig } from './auth.service';
-import { CRYPTO_IMPL } from './app.module';
+import { CRYPTO_IMPL } from './root-providers';
 
 export const STORAGE_KEY = 'vaultage_locked';
 

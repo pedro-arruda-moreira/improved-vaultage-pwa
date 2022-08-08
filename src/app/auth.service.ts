@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
 import { OfflineService } from './offline.service';
-import { FEATURE_DESKTOP, FEATURE_CONFIG_CACHE, FEATURE_AUTO_CREATE } from './util/FeatureDetector';
+import { FEATURE_DESKTOP, FEATURE_CONFIG_CACHE, FEATURE_AUTO_CREATE } from 'src/misc/FeatureDetector';
 
 
 /**
