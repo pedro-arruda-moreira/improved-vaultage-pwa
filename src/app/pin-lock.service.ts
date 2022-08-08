@@ -5,22 +5,16 @@ import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
 import { CryptoImpl } from './crypto/internal/CryptoImpl';
 import { OfflineService } from './offline.service';
 import { LoginConfig } from './auth.service';
+import { CRYPTO_IMPL } from './app.module';
 
 export const STORAGE_KEY = 'vaultage_locked';
 
 @Injectable()
 export class PinLockService {
-    private cryptoImpl: CryptoImpl;
     // pedro-arruda-moreira: online pin lock crypto mode
     constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage,
-                private readonly offlineService: OfflineService) {
-        const cryptoImpl = ls.getItem('crypto_type');
-        if(cryptoImpl == 'online') {
-            this.cryptoImpl = new OnlineCrypto(this.ls.getItem('online_crypto_path') as string);
-        } else {
-            this.cryptoImpl = new OfflineCrypto();
-        }
-    }
+                @Inject(CRYPTO_IMPL) private readonly cryptoImpl: CryptoImpl,
+                private readonly offlineService: OfflineService) { }
 
     public get hasSecret(): boolean {
         return this.getStorage() != null;

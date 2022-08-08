@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, InjectionToken } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 // pedro-arruda-moreira: desktop mode
@@ -49,6 +49,25 @@ import { SetupService } from './setup/setup.service';
 import { PasswordGeneratorComponent } from './manager/form/password-generator/password.generator.component';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { OfflineService } from './offline.service';
+import { CryptoImpl } from './crypto/internal/CryptoImpl';
+import { OnlineCrypto } from './crypto/online/OnlineCrypto';
+import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
+import { start as detectFeatures } from './util/FeatureDetector';
+import { start as limitTextSelection } from './util/TextSelectionController';
+
+detectFeatures();
+limitTextSelection();
+
+export const CRYPTO_IMPL = new InjectionToken<CryptoImpl>('CryptoImpl', {
+    factory: () => {
+        if(localStorage.getItem('crypto_type') == 'online') {
+            return new OnlineCrypto(localStorage.getItem('online_crypto_path') as string);
+        } else {
+            return new OfflineCrypto();
+        }
+    }
+});
+
 
 @NgModule({
     declarations: [
