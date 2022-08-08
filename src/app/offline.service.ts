@@ -4,9 +4,9 @@ import { LOCAL_STORAGE, WINDOW } from './platform/providers';
 import { AuthService } from './auth.service';
 import { RedirectService } from './redirect.service';
 import { Router } from '@angular/router';
+import { FEATURE_OFFLINE_ENABLED, FEATURE_OFFLINE_SALT } from './util/FeatureDetector';
 
 const OFFLINE_CIPHER_KEY = 'offline_cipher';
-const OFFLINE_SALT_KEY = 'offline_salt';
 
 @Injectable()
 export class OfflineService implements IOfflineProvider {
@@ -33,7 +33,7 @@ export class OfflineService implements IOfflineProvider {
         }
     }
     get offlineEnabled(): boolean {
-        return this.ls.getItem('offline_enabled') == 'true';
+        return this.ls.getItem(FEATURE_OFFLINE_ENABLED) == 'true';
     }
     set authService(as: AuthService) {
         this._authService = as;
@@ -51,7 +51,7 @@ export class OfflineService implements IOfflineProvider {
         return Promise.resolve(this.ls.getItem(OFFLINE_CIPHER_KEY) as string);
     }
     offlineSalt(): Promise<string> {
-        return Promise.resolve(this.ls.getItem(OFFLINE_SALT_KEY) as string);
+        return Promise.resolve(this.ls.getItem(FEATURE_OFFLINE_SALT) as string);
     }
     saveOfflineCipher(cipher: string): Promise<void> {
         this.ls.setItem(OFFLINE_CIPHER_KEY, cipher);

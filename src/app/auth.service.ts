@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
 import { OfflineService } from './offline.service';
+import { FEATURE_DESKTOP, FEATURE_CONFIG_CACHE, FEATURE_AUTO_CREATE } from './util/FeatureDetector';
 
 
 /**
@@ -58,13 +59,13 @@ export class AuthService {
     }
 	// pedro-arruda-moreira: desktop mode
     private get desktop(): boolean {
-        return this.ls.getItem('desktop') == 'true';
+        return this.ls.getItem(FEATURE_DESKTOP) == 'true';
     }
     private get configCacheEnabled(): boolean {
-        return this.ls.getItem('config_cache') == 'true';
+        return this.ls.getItem(FEATURE_CONFIG_CACHE) == 'true';
     }
     private get autoCreateVault(): boolean {
-        return this.ls.getItem('auto_create') == 'true';
+        return this.ls.getItem(FEATURE_AUTO_CREATE) == 'true';
     }
     // pedro-arruda-moreira: change master password
     public getPasswordFromDialog(promptText?: string): Promise<string> {

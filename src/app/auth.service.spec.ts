@@ -13,6 +13,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
 import { OfflineService } from './offline.service';
+import { FEATURE_DESKTOP, FEATURE_CONFIG_CACHE, FEATURE_AUTO_CREATE } from './util/FeatureDetector';
 
 describe('AuthService', () => {
 
@@ -63,7 +64,7 @@ describe('AuthService', () => {
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
         
-        when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
+        when(getMock(LOCAL_STORAGE).getItem(FEATURE_CONFIG_CACHE)).return('true').once();
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
             // pedro-arruda-moreira: config cache
             instance(getMock(LocalStorageConfigCache)), offlineService))
@@ -99,8 +100,8 @@ describe('AuthService', () => {
             {
                 componentInstance: (mockPasswordPrompt as unknown) as PasswordPromptComponent
             } as MatDialogRef<PasswordPromptComponent, any>).once();
-        when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('false').times(2);
-        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('true');
+        when(getMock(LOCAL_STORAGE).getItem(FEATURE_CONFIG_CACHE)).return('false').times(2);
+        when(getMock(LOCAL_STORAGE).getItem(equals(FEATURE_DESKTOP))).return('true');
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4', { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
         undefined, (offlineEnabled ? offlineService : undefined)))
@@ -115,7 +116,7 @@ describe('AuthService', () => {
         }
         when(getMock(Router).navigateByUrl('/manager', { replaceUrl: true })).resolve(true).times(2);
         dbRevision = 0;
-        when(getMock(LOCAL_STORAGE).getItem('auto_create')).return('true').once();
+        when(getMock(LOCAL_STORAGE).getItem(FEATURE_AUTO_CREATE)).return('true').once();
         when(fakeVaultMock.save()).return(Promise.resolve()).once();
         await service.logIn(config, '1234');
         dbRevision = 1;
@@ -148,8 +149,8 @@ describe('AuthService', () => {
         
         // pedro-arruda-moreira: desktop mode
         when(getMock(MatDialog).closeAll()).return().once();
-        when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
-        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false').times(2);
+        when(getMock(LOCAL_STORAGE).getItem(FEATURE_CONFIG_CACHE)).return('true').once();
+        when(getMock(LOCAL_STORAGE).getItem(equals(FEATURE_DESKTOP))).return('false').times(2);
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
@@ -184,11 +185,11 @@ describe('AuthService', () => {
         const config = fakeLoginConfig();
         
         // pedro-arruda-moreira: desktop mode
-        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
+        when(getMock(LOCAL_STORAGE).getItem(equals(FEATURE_DESKTOP))).return('false');
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
-        when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
+        when(getMock(LOCAL_STORAGE).getItem(FEATURE_CONFIG_CACHE)).return('true').once();
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache
@@ -253,11 +254,11 @@ describe('AuthService', () => {
         
         
         // pedro-arruda-moreira: desktop mode
-        when(getMock(LOCAL_STORAGE).getItem(equals('desktop'))).return('false');
+        when(getMock(LOCAL_STORAGE).getItem(equals(FEATURE_DESKTOP))).return('false');
         /*
 		 * pedro-arruda-moreira: adjusted unit tests.
 		 */
-        when(getMock(LOCAL_STORAGE).getItem('config_cache')).return('true').once();
+        when(getMock(LOCAL_STORAGE).getItem(FEATURE_CONFIG_CACHE)).return('true').once();
         when(getMock(VAULTAGE).doLogin('http://pulp.fiction', 'John', 'Tr4v0lt4',
         { auth: { username: 'Quentin', password: 'Tarantino'}},
         // pedro-arruda-moreira: config cache

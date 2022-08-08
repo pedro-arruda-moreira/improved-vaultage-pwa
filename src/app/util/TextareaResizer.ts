@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { WINDOW, LOCAL_STORAGE } from '../platform/providers';
+import { FEATURE_DESKTOP } from './FeatureDetector';
 
 @Injectable({
     providedIn:"any"
@@ -21,7 +22,7 @@ export class TextareaResizer {
                 return;
             }
             let heightReserve = parseInt(heightReserveAttr);
-            if(this.localStorage.getItem('desktop') != 'true') {
+            if(this.localStorage.getItem(FEATURE_DESKTOP) != 'true') {
                 heightReserve += 120;
             }
             let textAreaHeight = this.window.innerHeight - heightReserve;

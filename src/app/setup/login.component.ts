@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { LoginConfig } from '../auth.service';
 import { LOCAL_STORAGE } from '../platform/providers';
 import { SetupService } from './setup.service';
+import { FEATURE_SELF_CONTAINED, FEATURE_USE_BASIC } from '../util/FeatureDetector';
 
 export type PageState = 'init' | 'login';
 
@@ -104,14 +105,14 @@ export class LoginComponent implements OnInit {
 	 * force basic mode
 	 */
     private configureSelfContained() {
-        if(this.ls.getItem('self_contained') == 'true') {
+        if(this.ls.getItem(FEATURE_SELF_CONTAINED) == 'true') {
             this.hostLocked = true;
             this.url = document.location.origin + '/';
         }
     }
 
     private configureBasic() {
-        const useBasicVal = this.ls.getItem('use_basic');
+        const useBasicVal = this.ls.getItem(FEATURE_USE_BASIC);
         if(useBasicVal == 'null') {
             return;
         }

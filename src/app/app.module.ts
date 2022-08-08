@@ -52,7 +52,7 @@ import { OfflineService } from './offline.service';
 import { CryptoImpl } from './crypto/internal/CryptoImpl';
 import { OnlineCrypto } from './crypto/online/OnlineCrypto';
 import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
-import { start as detectFeatures } from './util/FeatureDetector';
+import { start as detectFeatures, FEATURE_CRYPTO_TYPE, FEATURE_ONLINE_CRYPTO_PATH } from './util/FeatureDetector';
 import { start as limitTextSelection } from './util/TextSelectionController';
 
 detectFeatures();
@@ -60,8 +60,8 @@ limitTextSelection();
 
 export const CRYPTO_IMPL = new InjectionToken<CryptoImpl>('CryptoImpl', {
     factory: () => {
-        if(localStorage.getItem('crypto_type') == 'online') {
-            return new OnlineCrypto(localStorage.getItem('online_crypto_path') as string);
+        if(localStorage.getItem(FEATURE_CRYPTO_TYPE) == 'online') {
+            return new OnlineCrypto(localStorage.getItem(FEATURE_ONLINE_CRYPTO_PATH) as string);
         } else {
             return new OfflineCrypto();
         }

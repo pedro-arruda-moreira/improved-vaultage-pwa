@@ -3,6 +3,7 @@ import { anyString, Mock, reset, when, same } from 'omnimock';
 
 import { PinLockService, STORAGE_KEY } from './pin-lock.service';
 import { LOCAL_STORAGE } from './platform/providers';
+import { FEATURE_CRYPTO_TYPE } from './util/FeatureDetector';
 /*
  * pedro-arruda-moreira: local storage encryption
  */
@@ -27,7 +28,7 @@ describe('PinLockServiceTest', () => {
     beforeEach(() => {
         lsMock = getMock(LOCAL_STORAGE);
         //pedro-arruda-moreira: local storage encryption
-        when(lsMock.getItem(same('crypto_type'))).return('offline');
+        when(lsMock.getItem(same(FEATURE_CRYPTO_TYPE))).return('offline');
         service = getService(PinLockService);
     });
 	// pedro-arruda-moreira: desktop mode
