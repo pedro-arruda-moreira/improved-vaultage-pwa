@@ -1,7 +1,7 @@
 import { fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { getMock, createMock } from 'ng-vacuum';
-import { anyString, anything, when, mockInstance, mock, instance, Mock } from 'omnimock';
+import { anyString, anything, when, instance, Mock } from 'omnimock';
 
 import { AuthService } from './auth.service';
 import { PinLockService } from './pin-lock.service';
