@@ -14,13 +14,13 @@ describe('SetupComponent', () => {
     let page: Page;
     let step: SetupStep;
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         // Expect initialization of login service in onInit
         when(getMock(SetupService).doLogin()).return().once();
         when(getMock(SetupService).step).useGetter(() => step);
         step = 'login';
         page = new Page(await renderComponent(SetupComponent, AppModule));
-    });
+    }));
 
     it('shows the login page on login step', fakeAsync(() => {
         expect(page.isLoginShown).toBe(true);

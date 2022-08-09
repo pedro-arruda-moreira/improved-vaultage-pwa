@@ -12,11 +12,11 @@ describe('PinSetupComponent', () => {
     let page: Page;
     let fixture: ComponentFixture<PinSetupComponent>;
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         const rendering = await renderComponent(PinSetupComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
-    });
+    }));
 
     it('lets user set a new pin', fakeAsync(() => {
         expect(page.pinCode.title).toBe('Choose a new pin');

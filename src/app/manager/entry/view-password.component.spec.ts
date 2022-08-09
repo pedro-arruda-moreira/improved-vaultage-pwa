@@ -22,7 +22,7 @@ describe('ViewPasswordComponent', () => {
     let routeDataSubject: Subject<{ entry?: PasswordEntry }>;
     let fixture: ComponentFixture<ViewPasswordComponent>;
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         routeDataSubject = new Subject();
         mockEntry = {
             id: '1',
@@ -43,7 +43,7 @@ describe('ViewPasswordComponent', () => {
         const rendering = await renderComponent(ViewPasswordComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
-    });
+    }));
 
     it('shows a password entry', () => {
         expect(page.username).toBe('Alan');

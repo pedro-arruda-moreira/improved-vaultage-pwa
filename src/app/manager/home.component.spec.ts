@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync } from '@angular/core/testing';
 import { ParamMap } from '@angular/router';
 import { createMock, getMock, renderComponent } from 'ng-vacuum';
 import { instance, mockInstance, when, anyOf, anyFunction, mock, anyString } from 'omnimock';
@@ -48,7 +48,7 @@ describe('HomeComponent', () => {
     }
 
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         selectStartHandler = null;
         queryParamsMap = new Subject();
         when(getMock(AuthService).getVault()).return(instance(getMock(Vault)));
@@ -72,7 +72,7 @@ describe('HomeComponent', () => {
         const rendering = await renderComponent(HomeComponent, AppModule);
         page = new Page(rendering);
         fixture = rendering.fixture;
-    });
+    }));
 
     it('shows the home page', () => {
         page.expectInitialMode();
@@ -241,7 +241,7 @@ describe('HomeComponent', () => {
 
 class Page {
 
-    constructor(private readonly rendering: Rendering<HomeComponent, never>) { }
+    constructor(private readonly rendering: Rendering<HomeComponent, Partial<HomeComponent>>) { }
 
     get input(): HTMLInputElement {
         return this.rendering.find('[test-id="search-input"]').nativeElement;

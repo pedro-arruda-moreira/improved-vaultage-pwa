@@ -12,17 +12,25 @@ import { ErrorHandlingService } from '../platform/error-handling.service';
 import { PinCodeComponent } from '../platform/pin-code/pin-code.component';
 import { RedirectService } from '../redirect.service';
 import { UnlockScreenComponent } from './unlock-screen.component';
+import { OfflineService } from '../offline.service';
 
 describe('UnlockScreenComponent', () => {
 
     let page: Page;
+    let isOffline = false;
 
-    beforeEach(async () => {
+    async function doRender() {
         const rendering = await renderComponent(UnlockScreenComponent, AppModule);
         page = new Page(rendering);
-    });
+    }
 
-    it('alternative action is log out and redirect', () => {
+    beforeEach(fakeAsync(async () => {
+        isOffline = false;
+        when(getMock(OfflineService).isRunningOffline()).call(() => Promise.resolve(isOffline)).once();
+    }));
+
+    it('alternative action is log out and redirect', fakeAsync(async () => {
+        await doRender();
         when(getMock(PinLockService).reset()).return().once();
         /*
          * pedro-arruda-moreira: desktop mode.
@@ -32,9 +40,10 @@ describe('UnlockScreenComponent', () => {
         when(getMock(ActivatedRoute).snapshot.url).useValue([new UrlSegment('foo', {}), new UrlSegment('bar', {})]).once();
         page.pinCode.altAction.next();
         expect().nothing();
-    });
+    }));
 
-    it('logs in on submit', fakeAsync(() => {
+    it('logs in on submit', fakeAsync(async () => {
+        await doRender();
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
         /*
@@ -49,7 +58,27 @@ describe('UnlockScreenComponent', () => {
         expect().nothing();
     }));
 
-    it('logs in on submit (no next url)', fakeAsync(() => {
+    it('logs in on submit - offline mode', fakeAsync(async () => {
+        isOffline = true;
+        when(getMock(AuthService).getPasswordFromDialog('Offline mode. Please enter Master Password:')).return(
+            Promise.resolve('1234')
+        ).once();
+        when(getMock(BusyStateService).setBusy(true)).return().once();
+        when(getMock(PinLockService).hasSecret).useValue(true).once();
+        /*
+         * pedro-arruda-moreira: desktop mode.
+         */
+        when(getMock(PinLockService).getSecret('1234')).return(Promise.resolve('"secret"')).once();
+        when(getMock(ActivatedRoute).snapshot.queryParamMap.get('next')).return('next_url').once();
+        when(getMock(AuthService).logIn('secret' as any, '1234', 'next_url')).resolve().once();
+        when(getMock(BusyStateService).setBusy(false)).return().once();
+        await doRender();
+        flush();
+        expect().nothing();
+    }));
+
+    it('logs in on submit (no next url)', fakeAsync(async () => {
+        await doRender();
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
         /*
@@ -64,7 +93,8 @@ describe('UnlockScreenComponent', () => {
         expect().nothing();
     }));
 
-    it('fails on invalid pin', fakeAsync(() => {
+    it('fails on invalid pin', fakeAsync(async () => {
+        await doRender();
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(true).once();
         /*
@@ -80,7 +110,8 @@ describe('UnlockScreenComponent', () => {
         expect().nothing();
     }));
 
-    it('redirects when no pin set', fakeAsync(() => {
+    it('redirects when no pin set', fakeAsync(async () => {
+        await doRender();
         when(getMock(ErrorHandlingService).onError(anything())).return().never(); // Expect no error
         when(getMock(BusyStateService).setBusy(true)).return().once();
         when(getMock(PinLockService).hasSecret).useValue(false).once();
@@ -94,7 +125,7 @@ describe('UnlockScreenComponent', () => {
 });
 
 class Page {
-    constructor(private readonly rendering: Rendering<UnlockScreenComponent, never>) { }
+    constructor(private readonly rendering: Rendering<UnlockScreenComponent, Partial<UnlockScreenComponent>>) { }
 
     public get pinCode(): PinCodeComponent {
         return this.rendering.find('app-pin-code').componentInstance;

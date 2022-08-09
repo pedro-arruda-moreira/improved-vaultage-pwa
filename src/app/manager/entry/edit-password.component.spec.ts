@@ -25,7 +25,7 @@ describe('EditPasswordComponent', () => {
     let routeDataSubject: Subject<{ entry?: PasswordEntry }>;
     let fixture: ComponentFixture<EditPasswordComponent>;
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         routeDataSubject = new Subject();
         mockEntry = {
             id: '1',
@@ -44,7 +44,7 @@ describe('EditPasswordComponent', () => {
         const rendering = await renderComponent(EditPasswordComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
-    });
+    }));
 
     it('let user update an entry', fakeAsync(() => {
         // Do not expect the snackbar to open
