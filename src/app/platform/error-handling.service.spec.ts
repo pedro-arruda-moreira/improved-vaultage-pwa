@@ -13,7 +13,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('logs errors to the console', () => {
-        when(getMock(WINDOW).console.error('The error')).return().once();
+        when((getMock(WINDOW) as any).console.error('The error')).return(null).once();
         const { onError } = service;
         // Checks instance binding
         onError('The error');
