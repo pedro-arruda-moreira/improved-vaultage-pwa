@@ -1,7 +1,7 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { getMock, renderComponent } from 'ng-vacuum';
-import { anything, when } from 'omnimock';
+import { anyFunction, anyString, anything, instance, Mock, when } from 'omnimock';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
 import { AppModule } from '../app.module';
@@ -12,12 +12,19 @@ import { ErrorHandlingService } from '../platform/error-handling.service';
 import { PinCodeComponent } from '../platform/pin-code/pin-code.component';
 import { RedirectService } from '../redirect.service';
 import { UnlockScreenComponent } from './unlock-screen.component';
-import { OfflineService } from '../offline.service';
+import { WINDOW } from '../platform/providers';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('UnlockScreenComponent', () => {
 
     let page: Page;
     let isOffline = false;
+    let navigatorMock: Mock<Navigator>;
+    let offlineToggleCallback: EventListener;
+    let expectedTimesForNavigador: number;
+    let receivedTimesForNavigador: number;
+    let expectedTimesForNavigadorOnline: number;
+    let receivedTimesForNavigadorOnline: number;
 
     async function doRender() {
         const rendering = await renderComponent(UnlockScreenComponent, AppModule);
@@ -25,9 +32,30 @@ describe('UnlockScreenComponent', () => {
     }
 
     beforeEach(fakeAsync(async () => {
+        expectedTimesForNavigador = 1;
+        receivedTimesForNavigador = 0;
+        expectedTimesForNavigadorOnline = 1;
+        receivedTimesForNavigadorOnline = 0;
+        offlineToggleCallback = () => {};
+        navigatorMock = getMock(Navigator);
         isOffline = false;
-        when(getMock(OfflineService).isRunningOffline()).call(() => Promise.resolve(isOffline)).once();
+        when(navigatorMock.onLine).call(() => {
+            receivedTimesForNavigadorOnline++;
+            return !isOffline
+        }).anyTimes();
+        when(getMock(WINDOW).navigator).call(() => {
+            receivedTimesForNavigador++;
+            return instance(navigatorMock)
+        }).anyTimes();
+        when(getMock(WINDOW).addEventListener(anyString(), anyFunction())).call((_, f) => {
+            offlineToggleCallback = f as EventListener;
+        }).times(2);
     }));
+
+    afterEach(() => {
+        expect(receivedTimesForNavigador).toBe(expectedTimesForNavigador);
+        expect(receivedTimesForNavigadorOnline).toBe(expectedTimesForNavigadorOnline);
+    });
 
     it('alternative action is log out and redirect', fakeAsync(async () => {
         await doRender();
@@ -59,7 +87,10 @@ describe('UnlockScreenComponent', () => {
     }));
 
     it('logs in on submit - offline mode', fakeAsync(async () => {
+        expectedTimesForNavigador = 2;
+        expectedTimesForNavigadorOnline = 2;
         isOffline = true;
+        when(getMock(MatDialog).closeAll()).return().once();
         when(getMock(AuthService).getPasswordFromDialog('Offline mode. Please enter Master Password:')).return(
             Promise.resolve('1234')
         ).once();
@@ -73,6 +104,12 @@ describe('UnlockScreenComponent', () => {
         when(getMock(AuthService).logIn('secret' as any, '1234', 'next_url')).resolve().once();
         when(getMock(BusyStateService).setBusy(false)).return().once();
         await doRender();
+        flush();
+        isOffline = false;
+        flush();
+        offlineToggleCallback(
+            null as unknown as Event
+        );
         flush();
         expect().nothing();
     }));

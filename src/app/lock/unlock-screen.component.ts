@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, Inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../auth.service';
@@ -6,7 +6,8 @@ import { PinLockService } from '../pin-lock.service';
 import { BusyStateService } from '../platform/busy-state.service';
 import { ErrorHandlingService } from '../platform/error-handling.service';
 import { RedirectService } from '../redirect.service';
-import { OfflineService } from '../offline.service';
+import { WINDOW } from '../platform/providers';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-unlock-screen',
@@ -18,11 +19,16 @@ import { OfflineService } from '../offline.service';
             (altAction)="onLogOut()">
         </app-pin-code>`
 })
-export class UnlockScreenComponent implements OnInit {
+export class UnlockScreenComponent implements OnInit, OnDestroy {
 
     public offline: boolean = true;
 
     public error: string | null = null;
+
+    private callback = () => {
+        this.offline = !this.window.navigator.onLine;
+        this.doCheckOfflineStatus(true);
+    }
 
     constructor(
             private readonly route: ActivatedRoute,
@@ -32,7 +38,12 @@ export class UnlockScreenComponent implements OnInit {
             private readonly redirectService: RedirectService,
             private readonly authService: AuthService,
             private readonly cdr: ChangeDetectorRef,
-            private readonly offlineService: OfflineService) { }
+            @Inject(WINDOW) private readonly window: Window,
+            private readonly modal: MatDialog) {
+                this.offline = !this.window.navigator.onLine;
+                this.window.addEventListener('online', this.callback);
+                this.window.addEventListener('offline', this.callback);
+            }
 
     public onSubmit(pin: string) {
         this.busy.setBusy(true);
@@ -44,17 +55,27 @@ export class UnlockScreenComponent implements OnInit {
             });
     }
 
-    public ngOnInit(): void {
-        this.offlineService.isRunningOffline().then(v => {
-            this.offline = v;
+    private doCheckOfflineStatus(changed: boolean = false) {
+        if(changed) {
+            this.modal.closeAll();
             this.cdr.detectChanges();
-            if(this.offline) {
-                this.authService.getPasswordFromDialog('Offline mode. Please enter Master Password:').then(p => {
-                    this.onSubmit(p);
-                });
-            }
-        });
+        }
+        if(this.offline) {
+            this.authService.getPasswordFromDialog('Offline mode. Please enter Master Password:').then(p => {
+                this.onSubmit(p);
+            });
+        }
     }
+
+    public ngOnInit(): void {
+        this.doCheckOfflineStatus();
+    }
+
+    public ngOnDestroy(): void {
+        this.window.removeEventListener('online', this.callback);
+        this.window.removeEventListener('offline', this.callback);
+    }
+
     public onLogOut() {
         this.pinLockService.reset();
         /*
