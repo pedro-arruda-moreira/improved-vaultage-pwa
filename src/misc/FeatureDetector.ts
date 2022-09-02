@@ -20,17 +20,16 @@ export const FEATURE_OFFLINE_SALT = 'offline_salt';
 export function start() {
     const params = new URLSearchParams(window.location.search);
     function detectFeature(name: string, defaultValue: string): string {
+        const obtainedFromParam = params.get(name);
         const obtainedFromLS = localStorage.getItem(name);
-        if (obtainedFromLS == null) {
-            const obtained = params.get(name);
-            if (obtained) {
-                localStorage.setItem(name, obtained);
-                return obtained;
-            }
-            localStorage.setItem(name, defaultValue);
-            return defaultValue;
+        if (obtainedFromParam) {
+            localStorage.setItem(name, obtainedFromParam);
+            return obtainedFromParam;
+        } else if(obtainedFromLS) {
+            return obtainedFromLS;
         }
-        return obtainedFromLS;
+        localStorage.setItem(name, defaultValue);
+        return defaultValue;
     }
     // self hosted mode
     detectFeature(FEATURE_SELF_CONTAINED, 'false');
