@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, InjectionToken } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 // pedro-arruda-moreira: desktop mode
@@ -48,6 +48,9 @@ import { SetupService } from './setup/setup.service';
 // pedro-arruda-moreira: password generator
 import { PasswordGeneratorComponent } from './manager/form/password-generator/password.generator.component';
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
+import { OfflineService } from './offline.service';
+import { CRYPTO_IMPL, cryptoImplFactory } from './root-providers';
+
 
 @NgModule({
     declarations: [
@@ -91,6 +94,8 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
     ],
     providers: [
         {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+        {provide: CRYPTO_IMPL, useFactory: cryptoImplFactory},
+        OfflineService,
         AutoLogoutService,
         AutoRedirectService,
         AccessControlService,

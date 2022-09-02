@@ -79,13 +79,15 @@ describe('PasswordGeneratorComponent', () => {
     }));
     it('rejects the generated password when clicking cancel', fakeAsync(async () => {
         const promise = component.generatedPassword;
+        let failed = false;
         try {
             clickAndWait(page.cancelBtn);
             await promise;
-            fail('reject expected');
+            failed = true;
         } catch(e) {
             // success
         }
+        expect(failed).toBe(false);
     }));
     function changeType(btn?: HTMLElement, expectedSize = 12) {
         if(btn) {

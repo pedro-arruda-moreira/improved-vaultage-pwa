@@ -1,23 +1,18 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE } from './platform/providers';
-import { OnlineCrypto } from './crypto/online/OnlineCrypto';
-import { OfflineCrypto } from './crypto/offline/OfflineCrypto';
 import { CryptoImpl } from './crypto/internal/CryptoImpl';
+import { OfflineService } from './offline.service';
+import { LoginConfig } from './auth.service';
+import { CRYPTO_IMPL } from './root-providers';
 
 export const STORAGE_KEY = 'vaultage_locked';
 
 @Injectable()
 export class PinLockService {
-    private cryptoImpl: CryptoImpl;
     // pedro-arruda-moreira: online pin lock crypto mode
-    constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage) {
-        const cryptoImpl = ls.getItem('crypto_type');
-        if(cryptoImpl == 'online') {
-            this.cryptoImpl = new OnlineCrypto();
-        } else {
-            this.cryptoImpl = new OfflineCrypto();
-        }
-    }
+    constructor(@Inject(LOCAL_STORAGE) private readonly ls: Storage,
+                @Inject(CRYPTO_IMPL) private readonly cryptoImpl: CryptoImpl,
+                private readonly offlineService: OfflineService) { }
 
     public get hasSecret(): boolean {
         return this.getStorage() != null;
@@ -36,6 +31,14 @@ export class PinLockService {
     }
 	// pedro-arruda-moreira: desktop mode
     public async getSecret(userPin: string): Promise<string | undefined> {
+        if(await this.offlineService.isRunningOffline()) {
+            const data: LoginConfig = {
+                password: userPin,
+                url: 'offline://offline',
+                username: 'offline_user'
+            };
+            return JSON.stringify(data);
+        }
         const storage = this.getStorage();
 	    /*
 		 * pedro-arruda-moreira: local storage encryption

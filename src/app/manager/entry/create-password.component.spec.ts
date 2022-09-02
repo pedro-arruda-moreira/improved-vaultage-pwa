@@ -19,10 +19,10 @@ describe('CreatePasswordComponent', () => {
 
     let page: Page;
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         const rendering = await renderComponent(CreatePasswordComponent, AppModule);
         page = new Page(rendering);
-    });
+    }));
 
     it('let user create an entry', fakeAsync(() => {
         // Do not expect the snackbar to open

@@ -16,6 +16,7 @@ import { BasePage } from '../test/base-page';
 import { typeValue } from '../test/test-utils';
 import { LoginComponent } from './login.component';
 import { SetupService } from './setup.service';
+import { FEATURE_SELF_CONTAINED, FEATURE_USE_BASIC } from 'src/misc/FeatureDetector';
 
 describe('LoginComponent', () => {
 
@@ -179,12 +180,12 @@ async function createPage(storage?: any, self_contained?: string, use_basic?: st
     when(getMock(LOCAL_STORAGE).getItem(anyString())).call((id) => {
         if (id == 'creds') {
             return (JSON.stringify(storage))
-        } else if (id == 'self_contained') {
+        } else if (id == FEATURE_SELF_CONTAINED) {
             if (!self_contained) {
                 return 'false';
             }
             return self_contained;
-        } else if (id == 'use_basic') {
+        } else if (id == FEATURE_USE_BASIC) {
             if (!use_basic) {
                 return 'null';
             }

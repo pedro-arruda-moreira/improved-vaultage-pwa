@@ -1,12 +1,13 @@
 import { fakeAsync } from '@angular/core/testing';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { getMock, getService } from 'ng-vacuum';
-import { reset, when } from 'omnimock';
+import { getMock } from 'ng-vacuum';
+import { reset, when, anyFunction, instance } from 'omnimock';
 import { Subject } from 'rxjs';
 
 import { ErrorHandlingService } from '../platform/error-handling.service';
 import { WINDOW } from '../platform/providers';
 import { HomeNavigationService } from './home-navigation.service';
+import { NgZone } from '@angular/core';
 
 describe('HomeNavigationService', () => {
 
@@ -21,7 +22,16 @@ describe('HomeNavigationService', () => {
         queryParamsMap = new Subject();
         when(getMock(ActivatedRoute).snapshot.queryParamMap.get('q')).call(() => q);
         when(getMock(ActivatedRoute).snapshot.queryParamMap.has('q')).call(() => q != null);
-        service = getService(HomeNavigationService);
+        when(getMock(NgZone).run(anyFunction())).call((f) => {
+            f();
+        });
+        service = new HomeNavigationService(
+            instance(getMock(WINDOW)),
+            instance(getMock(Router)),
+            instance(getMock(ErrorHandlingService)),
+            instance(getMock(ActivatedRoute)),
+            instance(getMock(NgZone))
+        );
     });
 
     it('responds to route changes', () => {

@@ -14,13 +14,13 @@ describe('BusyStateComponent', () => {
     let fixture: ComponentFixture<BusyStateComponent>;
     let isBusy: boolean;
 
-    beforeEach(async () => {
+    beforeEach(fakeAsync(async () => {
         isBusy = false;
         when(getMock(BusyStateService).isBusy).useGetter(() => isBusy);
         const rendering = await renderComponent(BusyStateComponent, PlatformModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
-    });
+    }));
 
     it('shows a spinner when busy', fakeAsync(() => {
         isBusy = true;
