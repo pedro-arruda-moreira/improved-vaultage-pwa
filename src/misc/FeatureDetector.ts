@@ -15,6 +15,7 @@ export const FEATURE_AUTO_CREATE = 'auto_create';
 export const FEATURE_ONLINE_CRYPTO_PATH = 'online_crypto_path';
 export const FEATURE_OFFLINE_ENABLED = 'offline_enabled';
 export const FEATURE_OFFLINE_SALT = 'offline_salt';
+export const EXTRA_LINKS = 'extra_links';
 
 
 export function start() {
@@ -50,4 +51,5 @@ export function start() {
         // offline salt
         detectFeature(FEATURE_OFFLINE_SALT, createSalt());
     }
+    detectFeature(EXTRA_LINKS, '');
 }

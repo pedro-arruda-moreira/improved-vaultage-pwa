@@ -1,7 +1,9 @@
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { version as packageVersion } from '../../../../package.json';
+import { LOCAL_STORAGE } from '../providers.js';
+import { EXTRA_LINKS } from '../../../misc/FeatureDetector';
 
 @Component({
     selector: 'app-pin-code',
@@ -70,6 +72,18 @@ export class PinCodeComponent {
 
     public digits: number[] = [];
     public visibleDigit = -1;
+
+    
+    constructor(
+        @Inject(LOCAL_STORAGE) private readonly ls: Storage) {  }
+
+    public get extraLinks(): string {
+        const extraLinksValue = this.ls.getItem(EXTRA_LINKS);
+        if(extraLinksValue && extraLinksValue != '') {
+            return atob(extraLinksValue);
+        }
+        return '';
+    }
 
     public get canAccept() {
         return this.digits.length >= this.minDigits;

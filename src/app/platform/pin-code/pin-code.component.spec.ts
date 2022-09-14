@@ -1,10 +1,13 @@
 import { ComponentFixture, fakeAsync, flush } from '@angular/core/testing';
-import { getShallow } from 'ng-vacuum';
+import { getShallow, getMock } from 'ng-vacuum';
 import { first } from 'rxjs/operators';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
 import { PlatformModule } from '../platform.module';
 import { PinCodeComponent } from './pin-code.component';
+import { LOCAL_STORAGE } from '../providers';
+import { when, anyString } from 'omnimock';
+import { EXTRA_LINKS } from 'src/misc/FeatureDetector';
 
 describe('PinCodeComponent', () => {
 
@@ -17,6 +20,13 @@ describe('PinCodeComponent', () => {
     };
 
     beforeEach(async () => {
+        when(getMock(LOCAL_STORAGE).getItem(anyString())).call((id) => {
+            if (id == EXTRA_LINKS) {
+                return '';
+            } else {
+                throw new Error('not expected: ' + id);
+            }
+        }).once();
         const renderer = await getShallow(PinCodeComponent, PlatformModule).render({
             bind: {
                 altActionName: 'test'

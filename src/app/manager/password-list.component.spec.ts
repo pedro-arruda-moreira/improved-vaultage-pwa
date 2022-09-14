@@ -1,5 +1,4 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { fakeAsync } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { getMock, getShallow } from 'ng-vacuum';
@@ -8,7 +7,6 @@ import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 
 import { AppModule } from '../app.module';
 import { ErrorHandlingService } from '../platform/error-handling.service';
-import { WINDOW, LOCAL_STORAGE } from '../platform/providers';
 import { IPasswordListEntry, PasswordListComponent } from './password-list.component';
 
 /**

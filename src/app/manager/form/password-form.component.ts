@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, Output, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, Inject, OnInit } from '@angular/core';
 
 import { PasswordEntry } from '../domain/PasswordEntry';
 /*
  * pedro-arruda-moreira: password generator/desktop mode.
  */
-import { WINDOW, LOCAL_STORAGE } from 'src/app/platform/providers';
+import { WINDOW } from 'src/app/platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordGeneratorComponent } from './password-generator/password.generator.component';
 import { TextareaResizer } from 'src/app/util/TextareaResizer';

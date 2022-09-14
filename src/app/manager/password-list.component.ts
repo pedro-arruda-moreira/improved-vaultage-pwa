@@ -24,8 +24,7 @@ export class PasswordListComponent {
         private readonly snackBar: MatSnackBar,
         private readonly clipboard: Clipboard,
         private readonly route: ActivatedRoute,
-        private readonly router: Router,
-        @Inject(LOCAL_STORAGE) private readonly ls: Storage) { }
+        private readonly router: Router) { }
 
     public onItemClick(itemId: string) {
         this.router.navigate(['view/', itemId], { relativeTo: this.route })
