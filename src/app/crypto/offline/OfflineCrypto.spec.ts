@@ -19,7 +19,6 @@ describe('OfflineCrypto', () => {
     };
     const pin = '1234';
     const crypto = new OfflineCrypto();
-    (window as any).sjcl = require('src/assets/js/sjcl.js');
 
     it('decrypts correctly', async () => {
         expect(JSON.parse(await crypto.decrypt(CT, pin))).toEqual({
