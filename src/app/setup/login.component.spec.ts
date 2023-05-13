@@ -113,8 +113,8 @@ describe('LoginComponent', () => {
             password: 'Willis',
             url: 'http://diehardfan',
             basic: {
-                username: "",
-                password: ""
+                username: '',
+                password: ''
             }
         })).return().once();
         page.loginButton.click();

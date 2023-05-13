@@ -40,7 +40,7 @@ describe('ViewPasswordComponent', () => {
 
         // pedro-arruda-moreira: textarea auto sizing.
         when(getMock(TextareaResizer).doResizeTextareas()).return().once();
-        const rendering = await renderComponent(ViewPasswordComponent, AppModule);
+        const rendering = renderComponent(ViewPasswordComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
     }));

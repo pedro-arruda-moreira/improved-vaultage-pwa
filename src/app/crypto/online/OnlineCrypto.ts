@@ -18,7 +18,7 @@ export class OnlineCrypto implements CryptoImpl {
         private apiPath: string,
         private ajaxBuilder: XMLHttpRequestBuilder = () => new XMLHttpRequest(),
         private randomizer: Randomizer = () => {
-            let genKey = "" + Math.random();
+            let genKey = '' + Math.random();
             for(let i = 0; i < 10; i++) {
                 genKey += Math.random();
             }
@@ -63,8 +63,8 @@ export class OnlineCrypto implements CryptoImpl {
                 pin,
                 genKey
             }));
-            if(code === "204") {
-                return "";
+            if(code === '204') {
+                return '';
             }
             return sjcl_encrypt(genKey, data, DEFAULT_SJCL_PARAMS);
         } catch(e) {

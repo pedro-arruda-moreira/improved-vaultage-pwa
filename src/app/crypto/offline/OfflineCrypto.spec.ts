@@ -1,4 +1,4 @@
-import { OfflineCrypto } from "./OfflineCrypto";
+import { OfflineCrypto } from './OfflineCrypto';
 
 /*
 decrypted mock data:
@@ -14,16 +14,16 @@ const CT = `{ "iv": "QBGp5xXcIzdSMqykVub9wg==", "v": 1, "iter": 10000, "ks": 128
 
 describe('OfflineCrypto', () => {
     const data = {
-        "pin": "1234",
-        "data": "53cr37"
+        pin: '1234',
+        data: '53cr37'
     };
     const pin = '1234';
     const crypto = new OfflineCrypto();
 
     it('decrypts correctly', async () => {
         expect(JSON.parse(await crypto.decrypt(CT, pin))).toEqual({
-            "pin": "1234",
-            "data": "53cr37"
+            pin: '1234',
+            data: '53cr37'
         });
     });
     it('encrypts and then decrypts correctly', async () => {

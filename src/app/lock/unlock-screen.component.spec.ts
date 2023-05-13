@@ -27,7 +27,7 @@ describe('UnlockScreenComponent', () => {
     let receivedTimesForNavigadorOnline: number;
 
     async function doRender() {
-        const rendering = await renderComponent(UnlockScreenComponent, AppModule);
+        const rendering = renderComponent(UnlockScreenComponent, AppModule);
         page = new Page(rendering);
     }
 

@@ -7,6 +7,6 @@ export interface CryptoImpl {
 
 export const DEFAULT_SJCL_PARAMS: ISJCLParams = {
     iter: 131244,
-    mode: "gcm",
+    mode: 'gcm',
     ks: 256
 }

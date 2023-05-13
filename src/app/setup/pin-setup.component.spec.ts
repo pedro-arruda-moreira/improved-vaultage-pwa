@@ -13,7 +13,7 @@ describe('PinSetupComponent', () => {
     let fixture: ComponentFixture<PinSetupComponent>;
 
     beforeEach(fakeAsync(async () => {
-        const rendering = await renderComponent(PinSetupComponent, AppModule);
+        const rendering = renderComponent(PinSetupComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
     }));

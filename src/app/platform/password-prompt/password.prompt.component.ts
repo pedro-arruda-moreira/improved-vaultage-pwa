@@ -13,7 +13,7 @@ export class PasswordPromptComponent {
 
   public promiser = new Promiser<string>();
 
-  public text: string = "Please confirm your master password";
+  public text: string = 'Please confirm your master password';
 
   constructor(private readonly dialog: MatDialog) {}
 

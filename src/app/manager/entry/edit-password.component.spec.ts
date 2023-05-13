@@ -41,7 +41,7 @@ describe('EditPasswordComponent', () => {
         });
         when(getMock(ActivatedRoute).snapshot.data.entry).return({...mockEntry}).once();
 
-        const rendering = await renderComponent(EditPasswordComponent, AppModule);
+        const rendering = renderComponent(EditPasswordComponent, AppModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
     }));

@@ -82,7 +82,7 @@ export class EditPasswordComponent implements OnInit {
         const vault = this.authService.getVault();
         vault.removeEntry(entry.id);
         await vault.save();
-        this.snackBar.open("Entry deleted successfully.");
+        this.snackBar.open('Entry deleted successfully.');
         this.onExit();
     }
 

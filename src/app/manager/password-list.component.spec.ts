@@ -47,8 +47,8 @@ describe('PasswordListComponent', () => {
     it('shows the list of passwords', async () => {
         const entries = page.getEntries();
         expect(entries.length).toBe(2);
-        expect(entries[0].text).toContain("GitHub");
-        expect(entries[1].text).toContain("FB");
+        expect(entries[0].text).toContain('GitHub');
+        expect(entries[1].text).toContain('FB');
     });
 
     it('navigates on click', async() => {

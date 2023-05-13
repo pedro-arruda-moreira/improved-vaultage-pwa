@@ -2,14 +2,14 @@ import { anyString, Mock, when, same, mock, instance } from 'omnimock';
 import { OnlineCrypto } from './OnlineCrypto';
 import { DEFAULT_SJCL_PARAMS } from '../internal/CryptoImpl';
 
-const theKey = "mykey1234";
-const thePin = "1234";
+const theKey = 'mykey1234';
+const thePin = '1234';
 const crypto =`{"iv":"63fznGsDKRJplIj3Y82geg==",
 "v":1,"iter":10000,"ks":128,"ts":64,"mode":"ccm",
 "adata":"","cipher":"aes","salt":"Al7lyhdSOT0=",
 "ct":"DXPhskQGZTvBO8XSyq6I"}` ;
 
-let theAjaxReturn = "";
+let theAjaxReturn = '';
 const cryptoPath = './my-custom-crypto-path';
 
 describe('OnlineCryptoTest', () => {

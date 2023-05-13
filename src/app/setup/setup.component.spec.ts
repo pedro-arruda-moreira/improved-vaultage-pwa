@@ -19,7 +19,7 @@ describe('SetupComponent', () => {
         when(getMock(SetupService).doLogin()).return().once();
         when(getMock(SetupService).step).useGetter(() => step);
         step = 'login';
-        page = new Page(await renderComponent(SetupComponent, AppModule));
+        page = new Page(renderComponent(SetupComponent, AppModule));
     }));
 
     it('shows the login page on login step', fakeAsync(() => {

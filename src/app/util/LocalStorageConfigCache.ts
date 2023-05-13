@@ -7,7 +7,7 @@ import { LOCAL_STORAGE } from '../platform/providers';
 const PREFIX = 'config_cache_';
 
 @Injectable({
-    providedIn:"any"
+    providedIn: 'any'
 })
 export class LocalStorageConfigCache implements IConfigCache {
     constructor(
