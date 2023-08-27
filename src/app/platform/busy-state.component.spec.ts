@@ -17,7 +17,7 @@ describe('BusyStateComponent', () => {
     beforeEach(fakeAsync(async () => {
         isBusy = false;
         when(getMock(BusyStateService).isBusy).useGetter(() => isBusy);
-        const rendering = await renderComponent(BusyStateComponent, PlatformModule);
+        const rendering = renderComponent(BusyStateComponent, PlatformModule);
         fixture = rendering.fixture;
         page = new Page(rendering);
     }));

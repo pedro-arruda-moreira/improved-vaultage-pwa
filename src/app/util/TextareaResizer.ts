@@ -3,7 +3,7 @@ import { WINDOW, LOCAL_STORAGE } from '../platform/providers';
 import { FEATURE_DESKTOP } from 'src/misc/FeatureDetector';
 
 @Injectable({
-    providedIn:"any"
+    providedIn: 'any'
 })
 export class TextareaResizer {
     constructor(

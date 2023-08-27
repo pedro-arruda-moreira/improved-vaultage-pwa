@@ -9,6 +9,11 @@
         "secure": false,
         "logLevel": "debug"
     },
+    "/john/*": {
+        "target": "http://localhost:3000",
+        "secure": false,
+        "logLevel": "debug"
+    },
     "/api/crypto": {
         "target": "http://localhost:8080/pwa",
         "secure": false,

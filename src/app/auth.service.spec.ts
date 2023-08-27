@@ -18,7 +18,7 @@ import { FEATURE_CONFIG_CACHE, FEATURE_DESKTOP, FEATURE_AUTO_CREATE } from 'src/
 describe('AuthService', () => {
 
     let service: AuthService;
-    let dbRevision: number = 4;
+    let dbRevision = 4;
 
     let fakeVaultMock = mock<Vault>('vault');
     let fakeVault = instance(fakeVaultMock);

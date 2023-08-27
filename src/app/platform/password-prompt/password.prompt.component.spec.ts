@@ -1,4 +1,4 @@
-import { getShallow, getMock } from "ng-vacuum";
+import { getShallow, getMock } from 'ng-vacuum';
 import { Rendering } from 'shallow-render/dist/lib/models/rendering';
 import { PasswordPromptComponent } from './password.prompt.component';
 import { ComponentFixture, fakeAsync, flush } from '@angular/core/testing';

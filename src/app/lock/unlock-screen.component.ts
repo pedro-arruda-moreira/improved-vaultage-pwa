@@ -63,6 +63,8 @@ export class UnlockScreenComponent implements OnInit, OnDestroy {
         if(this.offline) {
             this.authService.getPasswordFromDialog('Offline mode. Please enter Master Password:').then(p => {
                 this.onSubmit(p);
+            }).catch(e => {
+                alert('Error while loading offline mode.');
             });
         }
     }

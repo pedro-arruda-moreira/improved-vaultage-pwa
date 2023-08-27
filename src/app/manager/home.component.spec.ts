@@ -56,7 +56,7 @@ describe('HomeComponent', () => {
             selectStartHandler = f;
         }).once();
         when(getMock(WINDOW).removeEventListener('hashchange', anyFunction())).call((_, f) => {
-            expect(f).toBe(selectStartHandler!);
+            expect(f).toBe((selectStartHandler as EventListenerOrEventListenerObject));
         }).atMostOnce();
 
         createMock(HomeNavigationService, {
@@ -69,7 +69,7 @@ describe('HomeComponent', () => {
         viewMode = 'initial';
         searchValue = '';
 
-        const rendering = await renderComponent(HomeComponent, AppModule);
+        const rendering = renderComponent(HomeComponent, AppModule);
         page = new Page(rendering);
         fixture = rendering.fixture;
     }));
@@ -169,7 +169,7 @@ describe('HomeComponent', () => {
         const spy = spyOn(page.input, 'blur');
         page.exitSearchModeButton.click();
         ((selectStartHandler) as any)(mockInstance<HashChangeEvent>('eventMock', {
-            newURL: "http://test/#/manager",
+            newURL: 'http://test/#/manager',
         }));
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
@@ -187,7 +187,7 @@ describe('HomeComponent', () => {
         const spy = spyOn(page.input, 'blur');
         page.exitSearchModeButton.click();
         ((selectStartHandler) as any)(mockInstance<HashChangeEvent>('eventMock', {
-            newURL: "http://test/#/nopenope",
+            newURL: 'http://test/#/nopenope',
         }));
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');

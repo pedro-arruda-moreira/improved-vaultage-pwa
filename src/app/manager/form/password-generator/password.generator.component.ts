@@ -50,8 +50,8 @@ export class PasswordGeneratorComponent implements OnInit {
 }
 
 export enum PasswordType {
-  STANDARD = "1",
-  MEMORABLE = "2",
-  ALL_CHARS = "3",
-  NUMBERS_ONLY = "4"
+  STANDARD = '1',
+  MEMORABLE = '2',
+  ALL_CHARS = '3',
+  NUMBERS_ONLY = '4'
 }

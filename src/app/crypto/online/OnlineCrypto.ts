@@ -1,5 +1,6 @@
-import { CryptoImpl } from '../internal/CryptoImpl';
+import { CryptoImpl, DEFAULT_SJCL_PARAMS } from '../internal/CryptoImpl';
 import { Promiser } from 'src/app/util/Promiser';
+import { encrypt, decrypt } from 'improved-vaultage-client';
 
 type XMLHttpRequestBuilder = () => XMLHttpRequest;
 type Randomizer = () => string;
@@ -17,7 +18,7 @@ export class OnlineCrypto implements CryptoImpl {
         private apiPath: string,
         private ajaxBuilder: XMLHttpRequestBuilder = () => new XMLHttpRequest(),
         private randomizer: Randomizer = () => {
-            let genKey = "" + Math.random();
+            let genKey = '' + Math.random();
             for(let i = 0; i < 10; i++) {
                 genKey += Math.random();
             }
@@ -62,10 +63,10 @@ export class OnlineCrypto implements CryptoImpl {
                 pin,
                 genKey
             }));
-            if(code === "204") {
-                return "";
+            if(code === '204') {
+                return '';
             }
-            return (window as any).sjcl.encrypt(genKey, data);
+            return await encrypt(genKey, data, DEFAULT_SJCL_PARAMS);
         } catch(e) {
             throw e;
         }
@@ -73,7 +74,7 @@ export class OnlineCrypto implements CryptoImpl {
     async decrypt(data: string, pin: string): Promise<string> {
         try{
             let genKey = await this.doHttpRequest('GET', `${this.apiPath}?pin=${pin}`);
-            return (window as any).sjcl.decrypt(genKey, data);
+            return await decrypt(genKey, data);
         } catch(e) {
             throw e;
         }

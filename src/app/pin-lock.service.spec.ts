@@ -13,8 +13,8 @@ import { OfflineService } from './offline.service';
 
 describe('PinLockServiceTest', () => {
     const correctPin = '1234';
-    const data = JSON.stringify({pin: parseInt(correctPin), data: "53cr37"});
-    const CT = "this is encrypted.";
+    const data = JSON.stringify({pin: parseInt(correctPin), data: '53cr37'});
+    const CT = 'this is encrypted.';
     let isRunningOffline = false;
     let lsMock: Mock<Storage>;
     let service: PinLockService;

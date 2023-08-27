@@ -20,7 +20,7 @@ describe('CreatePasswordComponent', () => {
     let page: Page;
 
     beforeEach(fakeAsync(async () => {
-        const rendering = await renderComponent(CreatePasswordComponent, AppModule);
+        const rendering = renderComponent(CreatePasswordComponent, AppModule);
         page = new Page(rendering);
     }));
 
