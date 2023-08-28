@@ -1,6 +1,6 @@
 {
     "name": "improved-vaultage-pwa",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
@@ -42,7 +42,7 @@
         "@types/jasmine": "2.8.7",
         "@types/node": "^12.11.1",
         "codelyzer": "^5.1.2",
-        "improved-vaultage-client": "2.0.0",
+        "improved-vaultage-client": "2.0.1",
         "jasmine-core": "~3.5.0",
         "jasmine-spec-reporter": "~4.2.1",
         "karma": "~4.3.0",
