@@ -3,17 +3,11 @@ import { InjectionToken } from '@angular/core';
  * pedro-arruda-moreira: for some reason, build was failing
  * because of this.
  */
-import { login, IHttpParams, IConfigCache, IOfflineProvider, Vault } from 'improved-vaultage-client';
-import { DEFAULT_SJCL_PARAMS } from '../crypto/internal/CryptoImpl';
+import { login, Vault, ILoginOptions } from 'improved-vaultage-client';
 
 export class Vaultage {
-    public doLogin(serverURL: string,
-                   username: string,
-                   masterPassword: string,
-                   httpParams?: IHttpParams | undefined,
-                   configCache?: IConfigCache | undefined,
-                   offlineProvider?: IOfflineProvider | undefined): Promise<Vault> {
-        return login(serverURL, username, masterPassword, httpParams, configCache, offlineProvider, DEFAULT_SJCL_PARAMS);
+    public doLogin(options: ILoginOptions): Promise<Vault> {
+        return login(options);
     }
 }
 

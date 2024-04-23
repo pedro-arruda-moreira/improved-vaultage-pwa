@@ -17,6 +17,7 @@ import { PasswordPromptComponent } from './platform/password-prompt/password.pro
 import { LocalStorageConfigCache } from './util/LocalStorageConfigCache';
 import { OfflineService } from './offline.service';
 import { FEATURE_DESKTOP, FEATURE_CONFIG_CACHE, FEATURE_AUTO_CREATE } from 'src/misc/FeatureDetector';
+import { DEFAULT_SJCL_PARAMS } from './crypto/internal/CryptoImpl';
 
 
 /**
@@ -161,16 +162,17 @@ export class AuthService {
     private doLogin(config: LoginConfig): Promise<Vault> {
         const assuredOfflineService = (this._offlineService as OfflineService);
         // pedro-arruda-moreira: config cache
-        return this.vaultage.doLogin(
-            config.url,
-            config.username,
-            config.password,
-            {
+        return this.vaultage.doLogin({
+            serverURL: config.url,
+            username: config.username,
+            masterPassword: config.password,
+            httpParams: {
                 auth: config.basic
             },
-            (this.configCacheEnabled ? this.configCache : undefined),
-            (assuredOfflineService.offlineEnabled ? assuredOfflineService : undefined)
-        ).then(async (v): Promise<Vault> => {
+            configCache: (this.configCacheEnabled ? this.configCache : undefined),
+            offlineProvider: (assuredOfflineService.offlineEnabled ? assuredOfflineService : undefined),
+            cryptoParams: DEFAULT_SJCL_PARAMS
+        }).then(async (v): Promise<Vault> => {
             if(v.getDBRevision() == 0 && this.autoCreateVault) {
                 await v.save();
             }
