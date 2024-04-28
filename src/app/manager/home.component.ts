@@ -7,6 +7,8 @@ import { HomeNavigationService } from './home-navigation.service';
 import { IPasswordListEntry } from './password-list.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { WINDOW } from '../platform/providers';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmPromptComponent } from '../platform/confirm-dialog/confirm.prompt.component';
 
 @Component({
     selector: 'app-home',
@@ -64,7 +66,8 @@ export class HomeComponent implements OnDestroy, OnInit {
             // pedro-arruda-moreira: change master password
             private readonly snackBar: MatSnackBar,
             @Inject(WINDOW)
-            private readonly window: Window) { }
+            private readonly window: Window,
+            private readonly dialog: MatDialog) { }
 
     public get listItems(): IPasswordListEntry[] {
         const vault = this.authService.getVault();
@@ -123,16 +126,28 @@ export class HomeComponent implements OnDestroy, OnInit {
     }
     // pedro-arruda-moreira: change master password
     public changeMasterPassword() {
-        if(!this.window.confirm('Are you sure? This will also log you off.')) {
-            return;
-        }
-        this.authService.changeMasterPassword().then(_ => {
-            this.snackBar.open('Master password changed successfully. Logging you off now.');
-            this.logOut();
+        const instance = this.dialog.open(ConfirmPromptComponent,
+            {
+                disableClose: true
+            }
+        ).componentInstance;
+        instance.text = 'Are you sure? This will also log you off.';
+        instance.result.then(proceed => {
+
+            if(!proceed) {
+                return;
+            }
+            this.authService.changeMasterPassword().then(_ => {
+                this.snackBar.open('Master password changed successfully. Logging you off now.');
+                this.logOut();
+            }).catch(e => {
+                const error = e as Error;
+                this.snackBar.open(error.message);
+            });
         }).catch(e => {
             const error = e as Error;
             this.snackBar.open(error.message);
-        });
+        });;
     }
     private handler: (e: HashChangeEvent) => void = (e) => {
         this.onHashChange(e);

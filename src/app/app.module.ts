@@ -50,6 +50,7 @@ import { PasswordGeneratorComponent } from './manager/form/password-generator/pa
 import { PasswordPromptComponent } from './platform/password-prompt/password.prompt.component';
 import { OfflineService } from './offline.service';
 import { CRYPTO_IMPL, cryptoImplFactory } from './root-providers';
+import { ConfirmPromptComponent } from './platform/confirm-dialog/confirm.prompt.component';
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import { CRYPTO_IMPL, cryptoImplFactory } from './root-providers';
         ViewPasswordComponent,
 		// pedro-arruda-moreira: password generator
         PasswordGeneratorComponent,
-        PasswordPromptComponent
+        PasswordPromptComponent,
+        ConfirmPromptComponent
     ],
     imports: [
         AppRoutingModule,
@@ -113,7 +115,8 @@ import { CRYPTO_IMPL, cryptoImplFactory } from './root-providers';
     // pedro-arruda-moreira: desktop mode
     entryComponents: [
         PasswordPromptComponent,
-        PasswordGeneratorComponent
+        PasswordGeneratorComponent,
+        ConfirmPromptComponent
     ]
 })
 export class AppModule { }

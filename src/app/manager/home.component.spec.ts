@@ -16,11 +16,12 @@ import { PasswordListComponent } from './password-list.component';
 import { IVaultDBEntryImproved, Vault } from 'improved-vaultage-client';
 import { WINDOW } from '../platform/providers';
 import { MatSnackBar, SimpleSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { ConfirmPromptComponent } from '../platform/confirm-dialog/confirm.prompt.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 describe('HomeComponent', () => {
 
     let fixture: ComponentFixture<HomeComponent>;
-    let queryParamsMap: Subject<ParamMap>;
     let page: Page;
     let viewMode: HomeViewMode;
     let searchValue: string;
@@ -50,7 +51,6 @@ describe('HomeComponent', () => {
 
     beforeEach(fakeAsync(async () => {
         selectStartHandler = null;
-        queryParamsMap = new Subject();
         when(getMock(AuthService).getVault()).return(instance(getMock(Vault)));
         when(getMock(WINDOW).addEventListener('hashchange', anyFunction())).call((_, f) => {
             selectStartHandler = f;
@@ -196,7 +196,14 @@ describe('HomeComponent', () => {
     });
     // pedro-arruda-moreira: change master password
     it('requests changes to master password - not confirming', async () => {
-        when(getMock(WINDOW).confirm(anyString())).return(false);
+        const mockConfirmPrompt = {
+            result: Promise.resolve(false)
+        } as ConfirmPromptComponent;
+        when(getMock(MatDialog).open(ConfirmPromptComponent, {
+            disableClose: true
+        })).return({
+            componentInstance: mockConfirmPrompt
+        } as MatDialogRef<ConfirmPromptComponent, any>);
 
         page.changeMasterPasswordButton.click();
         expect(viewMode).toBe('initial');
@@ -204,7 +211,14 @@ describe('HomeComponent', () => {
     });
     // pedro-arruda-moreira: change master password
     it('requests changes to master password - success', async () => {
-        when(getMock(WINDOW).confirm(anyString())).return(true);
+        const mockConfirmPrompt = {
+            result: Promise.resolve(true)
+        } as ConfirmPromptComponent;
+        when(getMock(MatDialog).open(ConfirmPromptComponent, {
+            disableClose: true
+        })).return({
+            componentInstance: mockConfirmPrompt
+        } as MatDialogRef<ConfirmPromptComponent, any>);
         when(getMock(Vault).findEntries('')).return(fakeEntries());
         fixture.detectChanges();
         await fixture.whenStable();
@@ -217,12 +231,21 @@ describe('HomeComponent', () => {
         when(getMock(AuthService).reset()).return().once();
 
         page.changeMasterPasswordButton.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
     });
     // pedro-arruda-moreira: change master password
     it('requests changes to master password - error', async () => {
-        when(getMock(WINDOW).confirm(anyString())).return(true);
+        const mockConfirmPrompt = {
+            result: Promise.resolve(true)
+        } as ConfirmPromptComponent;
+        when(getMock(MatDialog).open(ConfirmPromptComponent, {
+            disableClose: true
+        })).return({
+            componentInstance: mockConfirmPrompt
+        } as MatDialogRef<ConfirmPromptComponent, any>);
         when(getMock(Vault).findEntries('')).return(fakeEntries());
         fixture.detectChanges();
         await fixture.whenStable();
@@ -232,6 +255,7 @@ describe('HomeComponent', () => {
             mockInstance<MatSnackBarRef<SimpleSnackBar>>('matSnackBarRef')).once();
 
         page.changeMasterPasswordButton.click();
+        fixture.detectChanges();
         await fixture.whenStable();
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
