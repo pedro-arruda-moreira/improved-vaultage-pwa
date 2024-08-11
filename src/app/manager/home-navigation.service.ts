@@ -4,7 +4,7 @@ import { SESSION_STORAGE, WINDOW } from '../platform/providers';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { ErrorHandlingService } from '../platform/error-handling.service';
 
-const QUERY_KEY = "QUERY";
+export const QUERY_KEY = "QUERY";
 
 /**
  * The state of the home page is controlled by the URL parameters.
@@ -14,7 +14,6 @@ const QUERY_KEY = "QUERY";
 export class HomeNavigationService {
 
     constructor(
-        @Inject(WINDOW) private readonly window: Window,
         @Inject(SESSION_STORAGE) private readonly sessionStorage: Storage,
         private readonly router: Router,
         private readonly errorHandlingService: ErrorHandlingService,
@@ -79,7 +78,12 @@ export class HomeNavigationService {
     }
 
     private navigate({ replaceUrl, q }: { replaceUrl: boolean, q?: string }) {
-        const extra: NavigationExtras = { replaceUrl, queryParams: { q } };
+        let extra: NavigationExtras;
+        if(q) {
+            extra = { replaceUrl, queryParams: { q } };
+        } else {
+            extra = { replaceUrl };
+        }
         this.zone.run(() => {
             this.router.navigate(['/manager'], extra)
                 .catch(err => this.errorHandlingService.onError(err));

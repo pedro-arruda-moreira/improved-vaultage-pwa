@@ -14,7 +14,6 @@ import { HomeComponent } from './home.component';
 import { PasswordListComponent } from './password-list.component';
 // pedro-arruda-moreira: changed client
 import { IVaultDBEntryImproved, Vault } from 'improved-vaultage-client';
-import { WINDOW } from '../platform/providers';
 import { MatSnackBar, SimpleSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { ConfirmPromptComponent } from '../platform/confirm-dialog/confirm.prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -25,7 +24,6 @@ describe('HomeComponent', () => {
     let page: Page;
     let viewMode: HomeViewMode;
     let searchValue: string;
-    let selectStartHandler: EventListenerOrEventListenerObject | null = null;
 	// pedro-arruda-moreira: changed client
     function fakeEntries(): IVaultDBEntryImproved[] {
         return [
@@ -50,14 +48,7 @@ describe('HomeComponent', () => {
 
 
     beforeEach(fakeAsync(async () => {
-        selectStartHandler = null;
         when(getMock(AuthService).getVault()).return(instance(getMock(Vault)));
-        when(getMock(WINDOW).addEventListener('hashchange', anyFunction())).call((_, f) => {
-            selectStartHandler = f;
-        }).once();
-        when(getMock(WINDOW).removeEventListener('hashchange', anyFunction())).call((_, f) => {
-            expect(f).toBe((selectStartHandler as EventListenerOrEventListenerObject));
-        }).atMostOnce();
 
         createMock(HomeNavigationService, {
             get viewMode() { return viewMode; },
@@ -80,7 +71,7 @@ describe('HomeComponent', () => {
 
     it('responds to focus (note: this test spec requires test browser to have focus)', async () => {
         when(getMock(Vault).findEntries('')).return(fakeEntries());
-        page.input.focus();
+        page.input.click();
         fixture.detectChanges();
         await fixture.whenStable();
         expect(viewMode).toBe('search');
@@ -168,16 +159,13 @@ describe('HomeComponent', () => {
 
         const spy = spyOn(page.input, 'blur');
         page.exitSearchModeButton.click();
-        ((selectStartHandler) as any)(mockInstance<HashChangeEvent>('eventMock', {
-            newURL: 'http://test/#/manager',
-        }));
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
 
         expect(spy).toHaveBeenCalled();
     });
 
-    it('does not blur search on hash change to #/nopenope', async () => {
+    it('blurs search on back button', async () => {
         viewMode = 'search';
         when(getMock(Vault).findEntries('')).return(fakeEntries());
         fixture.detectChanges();
@@ -186,13 +174,10 @@ describe('HomeComponent', () => {
 
         const spy = spyOn(page.input, 'blur');
         page.exitSearchModeButton.click();
-        ((selectStartHandler) as any)(mockInstance<HashChangeEvent>('eventMock', {
-            newURL: 'http://test/#/nopenope',
-        }));
         expect(viewMode).toBe('initial');
         expect(searchValue).toBe('');
 
-        expect(spy).toHaveBeenCalledTimes(0);
+        expect(spy).toHaveBeenCalledTimes(1);
     });
     // pedro-arruda-moreira: change master password
     it('requests changes to master password - not confirming', async () => {

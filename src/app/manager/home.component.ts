@@ -6,7 +6,6 @@ import { PinLockService } from '../pin-lock.service';
 import { HomeNavigationService } from './home-navigation.service';
 import { IPasswordListEntry } from './password-list.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { WINDOW } from '../platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmPromptComponent } from '../platform/confirm-dialog/confirm.prompt.component';
 

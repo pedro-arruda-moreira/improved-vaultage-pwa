@@ -1,32 +1,34 @@
 import { fakeAsync } from '@angular/core/testing';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { getMock } from 'ng-vacuum';
-import { reset, when, anyFunction, instance } from 'omnimock';
-import { Subject } from 'rxjs';
+import { reset, when, anyFunction, instance, anyString } from 'omnimock';
 
 import { ErrorHandlingService } from '../platform/error-handling.service';
-import { WINDOW } from '../platform/providers';
-import { HomeNavigationService } from './home-navigation.service';
+import { SESSION_STORAGE } from '../platform/providers';
+import { HomeNavigationService, QUERY_KEY } from './home-navigation.service';
 import { NgZone } from '@angular/core';
 
 describe('HomeNavigationService', () => {
 
     let service: HomeNavigationService;
 
-    let queryParamsMap: Subject<ParamMap>;
-
     let q: string | null;
 
     beforeEach(() => {
         q = null;
-        queryParamsMap = new Subject();
-        when(getMock(ActivatedRoute).snapshot.queryParamMap.get('q')).call(() => q);
+        when(getMock(SESSION_STORAGE).getItem(QUERY_KEY)).call(() => q);
+        when(getMock(SESSION_STORAGE).removeItem(QUERY_KEY)).call(() => {
+            q = null;
+        });
+        when(getMock(SESSION_STORAGE).setItem(QUERY_KEY, anyString())).call((_, query) => {
+            q = query;
+        });
         when(getMock(ActivatedRoute).snapshot.queryParamMap.has('q')).call(() => q != null);
         when(getMock(NgZone).run(anyFunction())).call((f) => {
             f();
         });
         service = new HomeNavigationService(
-            instance(getMock(WINDOW)),
+            instance(getMock(SESSION_STORAGE)),
             instance(getMock(Router)),
             instance(getMock(ErrorHandlingService)),
             instance(getMock(ActivatedRoute)),
@@ -53,14 +55,14 @@ describe('HomeNavigationService', () => {
     });
 
     it('navigates when search value changes', () => {
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: 'the fox'}}))
+        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: '1'}}))
             .resolve(true).once();
         service.searchValue = 'the fox';
         expect().nothing();
     });
 
     it('handles navigation error when search value changes', fakeAsync(() => {
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: 'the fox'}}))
+        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: '1'}}))
             .reject('uh oh').once();
         when(getMock(ErrorHandlingService).onError('uh oh')).return().once();
         service.searchValue = 'the fox';
@@ -74,29 +76,16 @@ describe('HomeNavigationService', () => {
 
     it('navigates to base url when setting initial mode from search mode', () => {
         q = 'some search';
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: undefined } }))
+        when(getMock(Router).navigate(['/manager'], { replaceUrl: true }))
             .resolve(true).once();
         service.viewMode = 'initial';
         expect().nothing();
     });
 
     it('adds query param when going to search mode', () => {
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: false, queryParams: { q: '' } }))
+        when(getMock(Router).navigate(['/manager'], { replaceUrl: false, queryParams: { q: '1' } }))
             .resolve(true).once();
         service.viewMode = 'search';
-        expect().nothing();
-    });
-
-    it('Uses history navigation when going back to initial after visiting search', () => {
-        const router = getMock(Router);
-        when(router.navigate(['/manager'], { replaceUrl: false, queryParams: { q: '' } }))
-            .resolve(true).once();
-        service.viewMode = 'search';
-
-        q = '';
-        reset(router);
-        when(getMock(WINDOW).history.back()).return().once();
-        service.viewMode = 'initial';
         expect().nothing();
     });
 });
