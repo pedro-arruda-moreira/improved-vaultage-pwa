@@ -14,7 +14,7 @@ import { PinCodeComponent } from './pin-code/pin-code.component';
  * pedro-arruda-moreira: for some reason, build was failing because of this.
  * online pin lock crypto mode
  */
-import { LOCAL_STORAGE, Vaultage, VAULTAGE, WINDOW } from './providers';
+import { LOCAL_STORAGE, Vaultage, VAULTAGE, WINDOW, SESSION_STORAGE } from './providers';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
 
@@ -41,6 +41,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
         BusyStateService,
         ErrorHandlingService,
         { provide: LOCAL_STORAGE, useValue: localStorage },
+        { provide: SESSION_STORAGE, useValue: sessionStorage },
         /*
          * pedro-arruda-moreira: for some reason, build was
          * failing because of this.

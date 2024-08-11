@@ -8,7 +8,7 @@
             <!-- pedro-arruda-moreira: autocomplete off. -->
             <input test-id="search-input"
                 #search matInput placeholder="Search passwords"
-                (focusin)="doFocusIn()" [(ngModel)]="searchValue"
+                (click)="doFocusIn()" [(ngModel)]="searchValue"
                 autocomplete="off" />
             <mat-icon *ngIf="viewMode !== 'search'" class="affix" aria-hidden="false" aria-label="Search" inline>search</mat-icon>
             <mat-icon test-id="clear-search-action" *ngIf="viewMode === 'search'" class="affix interactive" aria-hidden="false" aria-label="Clear" inline (click)="clearInput()">clear</mat-icon>

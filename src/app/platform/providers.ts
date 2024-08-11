@@ -11,6 +11,7 @@ export class Vaultage {
     }
 }
 
+export const SESSION_STORAGE = new InjectionToken<Storage>('SessionStorage');
 export const LOCAL_STORAGE = new InjectionToken<Storage>('LocalStorage');
 export const VAULTAGE = new InjectionToken<Vaultage>('Vaultage');
 export const WINDOW = new InjectionToken<Window>('Window');

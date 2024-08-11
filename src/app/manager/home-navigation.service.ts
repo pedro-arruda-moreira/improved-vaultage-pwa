@@ -1,8 +1,10 @@
-import { Inject, Injectable, NgZone } from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { Inject, Injectable, NgZone, ElementRef } from '@angular/core';
 
+import { SESSION_STORAGE, WINDOW } from '../platform/providers';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { ErrorHandlingService } from '../platform/error-handling.service';
-import { WINDOW } from '../platform/providers';
+
+const QUERY_KEY = "QUERY";
 
 /**
  * The state of the home page is controlled by the URL parameters.
@@ -11,48 +13,72 @@ import { WINDOW } from '../platform/providers';
 @Injectable()
 export class HomeNavigationService {
 
-    private hasVisitedInitState: boolean = false;
-
     constructor(
-            @Inject(WINDOW) private readonly window: Window,
-            private readonly router: Router,
-            private readonly errorHandlingService: ErrorHandlingService,
-            private readonly route: ActivatedRoute,
-            private readonly zone: NgZone
-) {
+        @Inject(WINDOW) private readonly window: Window,
+        @Inject(SESSION_STORAGE) private readonly sessionStorage: Storage,
+        private readonly router: Router,
+        private readonly errorHandlingService: ErrorHandlingService,
+        private readonly route: ActivatedRoute,
+        private readonly zone: NgZone
+    ) {
     }
 
-    public get viewMode() {
-        return this.route.snapshot.queryParamMap.has('q') ? 'search' : 'initial';
+    private _input?: () => ElementRef<HTMLInputElement> | undefined;
+
+    public set input(input: () => (ElementRef<HTMLInputElement> | undefined)) {
+        this._input = input;
+    }
+
+    public get viewMode(): HomeViewMode {
+        const viewMode = this.route.snapshot.queryParamMap.has('q') ? 'search' : 'initial';
+        if(viewMode === 'initial') {
+            this.searchValue = '';
+        }
+        return viewMode;
+    }
+
+    private clearSearchField() {
+        if (!this._input) {
+            return;
+        }
+        const theInput = this._input();
+        if (!theInput) {
+            return;
+        }
+        theInput.nativeElement.blur();
     }
 
     public set viewMode(mode: HomeViewMode) {
         // Navigate in a way which makes sense of the back button
         if (mode !== this.viewMode) {
             if (mode === 'initial') {
-                if (this.hasVisitedInitState) {
-                    this.window.history.back();
-                } else {
-                    this.navigate({ replaceUrl: true });
-                }
+                this.searchValue = '';
+                this.navigate({ replaceUrl: true });
+                this.clearSearchField();
             } else {
-                this.hasVisitedInitState = true;
-                this.navigate({ replaceUrl: false, q: this.searchValue });
+                this.navigate({
+                    replaceUrl: false,
+                    q: '1'
+                });
             }
         }
     }
 
     public get searchValue(): string {
-        return this.route.snapshot.queryParamMap.get('q') ?? '';
+        return this.sessionStorage.getItem(QUERY_KEY) || '';
     }
 
     public set searchValue(v: string) {
         if (v !== this.searchValue) {
-            this.navigate({ replaceUrl: true, q: v });
+            if (v === '') {
+                this.sessionStorage.removeItem(QUERY_KEY);
+                return;
+            }
+            this.sessionStorage.setItem(QUERY_KEY, v);
         }
     }
 
-    private navigate({replaceUrl, q}: { replaceUrl: boolean, q?: string }) {
+    private navigate({ replaceUrl, q }: { replaceUrl: boolean, q?: string }) {
         const extra: NavigationExtras = { replaceUrl, queryParams: { q } };
         this.zone.run(() => {
             this.router.navigate(['/manager'], extra)

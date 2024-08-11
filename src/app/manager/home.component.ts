@@ -54,7 +54,7 @@ import { ConfirmPromptComponent } from '../platform/confirm-dialog/confirm.promp
         ]),
     ]
 })
-export class HomeComponent implements OnDestroy, OnInit {
+export class HomeComponent {
 
     @ViewChild('search') searchElement?: ElementRef<HTMLInputElement>;
 
@@ -65,9 +65,9 @@ export class HomeComponent implements OnDestroy, OnInit {
             private readonly navigation: HomeNavigationService,
             // pedro-arruda-moreira: change master password
             private readonly snackBar: MatSnackBar,
-            @Inject(WINDOW)
-            private readonly window: Window,
-            private readonly dialog: MatDialog) { }
+            private readonly dialog: MatDialog) {
+                navigation.input = () => this.searchElement
+            }
 
     public get listItems(): IPasswordListEntry[] {
         const vault = this.authService.getVault();
@@ -104,6 +104,8 @@ export class HomeComponent implements OnDestroy, OnInit {
     }
 
     public exitSearchMode() {
+        // tslint:disable-next-line: no-non-null-assertion
+        this.searchElement!.nativeElement.blur();
         this.navigation.viewMode = 'initial';
         this.searchValue = '';
     }
@@ -148,21 +150,5 @@ export class HomeComponent implements OnDestroy, OnInit {
             const error = e as Error;
             this.snackBar.open(error.message);
         });;
-    }
-    private handler: (e: HashChangeEvent) => void = (e) => {
-        this.onHashChange(e);
-    };
-    ngOnDestroy(): void {
-        this.window.removeEventListener('hashchange', this.handler)
-    }
-    ngOnInit(): void {
-        this.window.addEventListener('hashchange', this.handler);
-    }
-    onHashChange(e: HashChangeEvent) {
-        const hashValue = e.newURL.split('#')[1];
-        if(hashValue == '/manager') {
-            this.searchElement?.nativeElement.blur();
-            this.exitSearchMode();
-        }
     }
 }
