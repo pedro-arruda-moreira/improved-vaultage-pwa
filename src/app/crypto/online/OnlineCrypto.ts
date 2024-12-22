@@ -18,9 +18,9 @@ export class OnlineCrypto implements CryptoImpl {
         private apiPath: string,
         private ajaxBuilder: XMLHttpRequestBuilder = () => new XMLHttpRequest(),
         private randomizer: Randomizer = () => {
-            let genKey = '' + Math.random();
-            for(let i = 0; i < 10; i++) {
-                genKey += Math.random();
+            let genKey = '';
+            for(let i = 0; i <= 10; i++) {
+                genKey += Math.random().toString(36).substring(2, 15);
             }
             return genKey;
         },
