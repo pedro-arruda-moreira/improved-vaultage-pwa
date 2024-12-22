@@ -1,29 +1,68 @@
-import { Component, EventEmitter, Input, Output, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, Inject, OnInit, OnDestroy } from '@angular/core';
 
 import { PasswordEntry } from '../domain/PasswordEntry';
 /*
  * pedro-arruda-moreira: password generator/desktop mode.
  */
-import { WINDOW, LOCAL_STORAGE } from 'src/app/platform/providers';
+import { WINDOW, SESSION_STORAGE } from 'src/app/platform/providers';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordGeneratorComponent } from './password-generator/password.generator.component';
 import { TextareaResizer } from 'src/app/util/TextareaResizer';
+import { encrypt, decrypt, NoOPLog } from 'improved-vaultage-client';
 
+function generateRandomString() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+const ENCRYPTION_KEY_STORAGE_KEY = 'DRAFT_ENCRYPTION_KEY';
+const DRAFT_STORAGE_KEY = 'DRAFT';
+
+function checkSessionEncryptionKey(storage: Storage) {
+    if (!storage.getItem(ENCRYPTION_KEY_STORAGE_KEY)) {
+        storage.setItem(ENCRYPTION_KEY_STORAGE_KEY, generateRandomString());
+    }
+}
 
 @Component({
     selector: 'app-password-form',
     templateUrl: 'password-form.component.html',
-    styleUrls: [ 'password-form.component.scss' ]
+    styleUrls: ['password-form.component.scss']
 })
 // pedro-arruda-moreira: textarea auto sizing.
-export class PasswordFormComponent implements OnInit {
+export class PasswordFormComponent implements OnInit, OnDestroy {
+    ngOnDestroy(): void {
+        checkSessionEncryptionKey(this.sessionStorage);
+        if (this.id !== '' || this.doNotSaveDraft) {
+            return;
+        }
+        const entryJson = JSON.stringify({
+            login: this.username,
+            password: this.password,
+            // pedro-arruda-moreira: changed client/secure notes
+            itemUrl: this.url,
+            title: this.title,
+            secureNoteText: this.secureNotes
+        });
+        const theKey = this.sessionStorage.getItem(ENCRYPTION_KEY_STORAGE_KEY);
+        if (!theKey) {
+            throw new Error("Session encryption key not found");
+        }
+        encrypt(theKey, entryJson, NoOPLog.INSTANCE).then((entrySjcl) => {
+            this.sessionStorage.setItem(DRAFT_STORAGE_KEY, entrySjcl);
+        });
+    }
 
     // pedro-arruda-moreira: textarea auto sizing.
-    constructor(@Inject(WINDOW) private readonly window: Window, 
-    private readonly dialog: MatDialog,
-    private readonly resizer: TextareaResizer) {}
+    constructor(
+        @Inject(WINDOW) private readonly window: Window,
+        @Inject(SESSION_STORAGE) readonly sessionStorage: Storage,
+        private readonly dialog: MatDialog,
+        private readonly resizer: TextareaResizer
+    ) { }
 
     private id: string = '';
+
+    private doNotSaveDraft = false;
 
     public username: string = '';
 
@@ -32,7 +71,7 @@ export class PasswordFormComponent implements OnInit {
     public url: string = '';
 
     public title: string = '';
-	// pedro-arruda-moreira: secure notes
+    // pedro-arruda-moreira: secure notes
     public secureNotes: string = '';
 
     public passwordInputType: PasswordInputType = 'password';
@@ -56,6 +95,10 @@ export class PasswordFormComponent implements OnInit {
     public showDelete: boolean = false;
 
     public onSubmit() {
+        if(this.id === '') {
+            this.sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+            this.doNotSaveDraft = true;
+        }
         this.confirm.emit({
             id: this.id,
             login: this.username,
@@ -67,7 +110,7 @@ export class PasswordFormComponent implements OnInit {
         });
     }
     public onDelete() {
-        if(this.window.confirm('Are you sure you want to delete this entry?')) {
+        if (this.window.confirm('Are you sure you want to delete this entry?')) {
             this.confirm.emit({
                 id: this.id,
                 login: this.username,
@@ -96,6 +139,27 @@ export class PasswordFormComponent implements OnInit {
     // pedro-arruda-moreira: textarea auto sizing.
     ngOnInit() {
         this.resizer.doResizeTextareas();
+        checkSessionEncryptionKey(this.sessionStorage);
+
+        if (this.id !== '') {
+            return;
+        }
+        const entryText = this.sessionStorage.getItem(DRAFT_STORAGE_KEY);
+        if (!entryText) {
+            return;
+        }
+        const theKey = this.sessionStorage.getItem(ENCRYPTION_KEY_STORAGE_KEY);
+        if (!theKey) {
+            throw new Error("Session encryption key not found");
+        }
+        decrypt(theKey, entryText, NoOPLog.INSTANCE).then((entryJson) => {
+            const entry = JSON.parse(entryJson) as PasswordEntry;
+            this.username = entry.login;
+            this.password = entry.password;
+            this.url = entry.itemUrl;
+            this.title = entry.title;
+            this.secureNotes = entry.secureNoteText
+        });
     }
 }
 

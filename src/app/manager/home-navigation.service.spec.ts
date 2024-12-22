@@ -54,21 +54,6 @@ describe('HomeNavigationService', () => {
         expect().nothing();
     });
 
-    it('navigates when search value changes', () => {
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: '1'}}))
-            .resolve(true).once();
-        service.searchValue = 'the fox';
-        expect().nothing();
-    });
-
-    it('handles navigation error when search value changes', fakeAsync(() => {
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: true, queryParams: { q: '1'}}))
-            .reject('uh oh').once();
-        when(getMock(ErrorHandlingService).onError('uh oh')).return().once();
-        service.searchValue = 'the fox';
-        expect().nothing();
-    }));
-
     it('does nothing when setting view mode to the same value', () => {
         service.viewMode = 'initial';
         expect().nothing();

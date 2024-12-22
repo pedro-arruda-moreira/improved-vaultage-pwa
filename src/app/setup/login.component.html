@@ -10,7 +10,9 @@
         </mat-form-field>
         <mat-form-field appearance="standard" class="reveal-field">
             <mat-label>Password</mat-label>
-            <input test-id="login-password" [(ngModel)]="password" matInput type="password">
+            <input test-id="login-password" [(ngModel)]="password" matInput [type]="passwordInputType">
+            <mat-icon test-id="entry-form-toggle-password" matSuffix (click)="togglePasswordVisibility()"
+                class="icon-toggle-visibility">visibility</mat-icon>
         </mat-form-field>
         <mat-form-field appearance="standard" class="reveal-field">
             <mat-label>Host</mat-label>

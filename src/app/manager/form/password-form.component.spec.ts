@@ -8,8 +8,9 @@ import { AppModule } from '../../app.module';
 import { PasswordEntry } from '../domain/PasswordEntry';
 import { PasswordFormComponent } from './password-form.component';
 // pedro-arruda-moreira: textarea auto sizing.
-import { when } from 'omnimock';
+import { when, anyString } from 'omnimock';
 import { TextareaResizer } from 'src/app/util/TextareaResizer';
+import { SESSION_STORAGE } from 'src/app/platform/providers';
 
 describe('PasswordFormComponent', () => {
 
@@ -20,8 +21,19 @@ describe('PasswordFormComponent', () => {
     let fixture: ComponentFixture<PasswordFormComponent>;
     let confirm: Promise<PasswordEntry>;
 
+    const storedValues: Record<string, string> = {};
+
     beforeEach(async () => {
         // pedro-arruda-moreira: textarea auto sizing.
+        when(getMock(SESSION_STORAGE).setItem(anyString(), anyString())).call((k, v) => {
+            storedValues[k] = v;
+        }).anyTimes();
+        when(getMock(SESSION_STORAGE).getItem(anyString())).call((k) => {
+            return storedValues[k];
+        }).anyTimes();
+        when(getMock(SESSION_STORAGE).removeItem(anyString())).call((k) => {
+            delete storedValues[k];
+        }).anyTimes();
         when(getMock(TextareaResizer).doResizeTextareas()).return().once();
         const rendering = await getShallow(PasswordFormComponent, AppModule)
             .render({

@@ -97,6 +97,8 @@ export class LoginComponent implements OnInit {
 	 */
     public basicLocked: boolean = false;
 
+    public passwordInputType: PasswordInputType = 'password';
+
     constructor(
         @Inject(LOCAL_STORAGE) private readonly ls: Storage,
         private readonly setupService: SetupService) {}
@@ -146,6 +148,10 @@ export class LoginComponent implements OnInit {
         this.setupService.notifyCredentials(creds);
     }
 
+    public togglePasswordVisibility() {
+        this.passwordInputType = this.passwordInputType === 'text' ? 'password' : 'text';
+    }
+
     private makeLoginConfig(): LoginConfig {
         return {
             username: this.username,
@@ -158,3 +164,5 @@ export class LoginComponent implements OnInit {
         };
     }
 }
+
+type PasswordInputType = 'text' | 'password';

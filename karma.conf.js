@@ -21,7 +21,7 @@ module.exports = function (config) {
     },
     coverageIstanbulReporter: {
       dir: require('path').join(__dirname, './coverage/vaultage-pwa'),
-      reports: ['html', 'lcovonly', 'text-summary'],
+      reports: ['html', /*'lcovonly',*/ 'text-summary'],
       fixWebpackSourcePaths: true,
       thresholds: {
         statements: 100,
