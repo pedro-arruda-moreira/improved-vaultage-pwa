@@ -60,12 +60,12 @@ describe('PinCodeComponent', () => {
         expect(page.digitsOnScreen).toBe('••••6');
         expect(page.acceptButtonDisabled).toBe(false);
 
-        page.acceptButton.click();
-        flush();
+        clickAndWait(page.acceptButton);
+
         expect(await confirmation).toBe('12456');
     }));
 
-    it('shows an alternative action when needed', async () => {
+    it('shows an alternative action when needed', fakeAsync(async () => {
         bindings.altActionName = undefined;
         fixture.detectChanges();
         expect(page.isAlternativeActionShown).toBe(false);
@@ -73,11 +73,12 @@ describe('PinCodeComponent', () => {
         fixture.detectChanges();
         expect(page.isAlternativeActionShown).toBe(true);
 
-        page.alternativeAction.click();
+        clickAndWait(page.alternativeAction);
         expect(await altAction).toBeUndefined();
-    });
+    }));
 
     function clickAndWait(btn: HTMLElement) {
+        btn.dispatchEvent(new CustomEvent("pointerdown"));
         btn.click();
         fixture.detectChanges();
         flush();

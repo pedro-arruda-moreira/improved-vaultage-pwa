@@ -148,6 +148,6 @@ export class HomeComponent {
         }).catch(e => {
             const error = e as Error;
             this.snackBar.open(error.message);
-        });;
+        });
     }
 }

@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { PasswordGeneratorComponent } from './password-generator/password.generator.component';
 import { TextareaResizer } from 'src/app/util/TextareaResizer';
 import { encrypt, decrypt, NoOPLog } from 'improved-vaultage-client';
+import { ConfirmPromptComponent } from 'src/app/platform/confirm-dialog/confirm.prompt.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 function generateRandomString() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -57,7 +59,8 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
         @Inject(WINDOW) private readonly window: Window,
         @Inject(SESSION_STORAGE) readonly sessionStorage: Storage,
         private readonly dialog: MatDialog,
-        private readonly resizer: TextareaResizer
+        private readonly resizer: TextareaResizer,
+        private readonly snackBar: MatSnackBar,
     ) { }
 
     private id: string = '';
@@ -110,7 +113,17 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
         });
     }
     public onDelete() {
-        if (this.window.confirm('Are you sure you want to delete this entry?')) {
+        const instance = this.dialog.open(ConfirmPromptComponent,
+            {
+                disableClose: true
+            }
+        ).componentInstance;
+        instance.text = 'Are you sure you want to delete this entry?';
+        instance.result.then(proceed => {
+
+            if(!proceed) {
+                return;
+            }
             this.confirm.emit({
                 id: this.id,
                 login: this.username,
@@ -121,7 +134,10 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
                 secureNoteText: this.secureNotes,
                 isDelete: true
             });
-        }
+        }).catch(e => {
+            const error = e as Error;
+            this.snackBar.open(error.message);
+        });
     }
 
     public togglePasswordVisibility() {

@@ -68,6 +68,9 @@ h1 {
         width: 10vh;
         height: 10vh;
         border-radius: 6vh;
+        &:disabled {
+            pointer-events: none;
+        }
     }
 }
 
