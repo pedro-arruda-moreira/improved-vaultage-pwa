@@ -9,8 +9,8 @@
         "test": "ng test",
         "test-coverage": "ng test --code-coverage",
         "lint": "ng lint",
-        "e2e": "ng e2e",
-        "version-check": "ng --version && tsc --version && node --version"
+        "version-check": "ng --version && tsc --version && node --version",
+        "agent-test": "ng test --watch=false --browsers ChromeHeadless"
     },
     "private": false,
     "main": "./dist/vaultage-pwa/index.js",

@@ -1,6 +1,7 @@
-import { instance, Mock, mock as omnimockMock } from "omnimock";
-import { AnyType, MockProvider, Type } from "ng-mocks";
-import { ValueProvider } from "@angular/core";
+import { instance, Mock, mock as omnimockMock, verify } from "omnimock";
+import { MockProvider, MockReset, Type as NgMocksType } from "ng-mocks";
+import { InjectionToken, Type, ValueProvider } from "@angular/core";
+import { ConstructorType } from "omnimock/dist/base-types";
 
 /*
  * pedro-arruda-moreira: support for custom attributes
@@ -8,8 +9,8 @@ import { ValueProvider } from "@angular/core";
  */
 export function createNewEvent(eventName: string, bubbles = false, cancelable = false, customAttributes?: any) {
     const evt = document.createEvent('CustomEvent');
-    if(customAttributes) {
-        for(const attr in customAttributes) {
+    if (customAttributes) {
+        for (const attr in customAttributes) {
             ((evt as any)[attr] = customAttributes[attr])
         }
     }
@@ -22,24 +23,48 @@ export function typeValue(input: HTMLInputElement, value: string) {
     input.dispatchEvent(createNewEvent('input'));
 }
 
-
-interface NgMockCompat {
-    ngMetadataName: any;
-    ngOnDestroy(): void;
-}
-
-export function omnimockToNgMock<T>(omnimock: Mock<T>, type: Type<T>): ValueProvider {
+export function omnimockToNgMock<T>(omnimock: Mock<T>, type: NgMocksType<T> | InjectionToken<T>): ValueProvider {
     return MockProvider(
         type,
-        instance(omnimock),
+        instance(omnimock) as Partial<T>,
         'useValue'
     );
 }
 
-export function mock<T>(name: string): Mock<T> {
-    return omnimockMock<NgMockCompat & T>(name, {
-        ngMetadataName: undefined,
-        ngOnDestroy: () => {}
-    } as Partial<NgMockCompat & T>);
+let createdMocks: Record<string, Mock<any>> = {};
+
+export function cleanup() {
+    MockReset();
+    createdMocks = {};
 }
 
+
+export function mock<T>(id: InjectionToken<T> | string, type: ConstructorType<T>): Mock<T> {
+    const name = typeof id === 'string' ? id : id.toString();
+    if (createdMocks[name]) {
+        return createdMocks[name] as Mock<T>;
+    }
+    const newMock = omnimockMock<T>(type, {
+        reference: undefined,
+        __anonymousType: undefined,
+        overriddenName: undefined,
+        name: undefined,
+        toString: () => name,
+        ngOnDestroy: () => undefined
+    } as unknown as Partial<T>);
+    createdMocks[name] = newMock;
+    return newMock;
+}
+
+export function verifyAllMocks() {
+    expect(callsAreCorrect).not.toThrow();
+}
+
+function callsAreCorrect() {
+    for (const name in createdMocks) {
+        const mock = createdMocks[name];
+        if (mock) {
+            verify(mock);
+        }
+    }
+}
