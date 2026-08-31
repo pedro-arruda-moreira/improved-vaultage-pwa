@@ -50,7 +50,8 @@ export function mock<T>(id: InjectionToken<T> | string, type: ConstructorType<T>
         overriddenName: undefined,
         name: undefined,
         toString: () => name,
-        ngOnDestroy: () => undefined
+        ngOnDestroy: () => undefined,
+        jasmineToString: () => `<${name} mock>`
     } as unknown as Partial<T>);
     createdMocks[name] = newMock;
     return newMock;
