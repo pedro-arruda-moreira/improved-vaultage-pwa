@@ -1,13 +1,15 @@
-import { getService } from 'ng-vacuum';
 import { BusyStateService } from './busy-state.service';
+import { cleanup } from '../test/test-utils';
 
 describe('BusyStateService', () => {
 
     let service: BusyStateService;
 
     beforeEach(() => {
-        service = getService(BusyStateService);
+        service = new BusyStateService();
     });
+
+    afterEach(cleanup);
 
     it('stores a simple boolean value', () => {
         expect(service.isBusy).toBe(false);
@@ -17,4 +19,3 @@ describe('BusyStateService', () => {
         expect(service.isBusy).toBe(false);
     });
 });
-

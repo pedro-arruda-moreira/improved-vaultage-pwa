@@ -1,46 +1,57 @@
 import { DOCUMENT } from '@angular/common';
-import { getMock, getService } from 'ng-vacuum';
-import { anyFunction, anyString, Mock, reset, verify, when } from 'omnimock';
+import { anyFunction, anyString, instance, Mock, reset, verify, when } from 'omnimock';
 
 import { AuthService } from './auth.service';
 import { AutoLogoutService } from './auto-logout.service';
+import { cleanup, mock, verifyAllMocks } from './test/test-utils';
 
 describe('AutoLogoutService', () => {
 
     let mockDocument: Mock<Document>;
     let service: AutoLogoutService;
+    let mockAuthService: Mock<AuthService>;
 
     let callback: () => void;
 
     beforeEach(() => {
-        mockDocument = getMock(DOCUMENT);
-        service = getService(AutoLogoutService);
+        mockDocument = mock(DOCUMENT, Document);
+        mockAuthService = mock('AuthService', AuthService);
 
         when(mockDocument.addEventListener(anyString(), anyFunction())).call((evt, cb) => {
             expect(evt).toBe('visibilitychange');
             expect(typeof cb).toBe('function');
             callback = cb as () => void;
         }).once();
+
+        service = new AutoLogoutService(
+            instance(mockDocument) as Document,
+            instance(mockAuthService) as AuthService
+        );
+
         service.init();
         verify(mockDocument);
         expect(callback).not.toBeUndefined();
     });
 
+    afterEach(cleanup);
+
     it('logs out on hidden', () => {
-        const mockAuthService = getMock(AuthService);
         when(mockDocument.hidden).useValue(true);
         when(mockAuthService.logOut()).return(undefined).once();
         callback();
+        verifyAllMocks();
     });
 
     it('ignores when not hidden', () => {
         when(mockDocument.hidden).useValue(false);
-        when(getMock(AuthService).logOut()).return(undefined).never();
+        when(mockAuthService.logOut()).return(undefined).never();
         callback();
+        verifyAllMocks();
     });
 
     it('does not re-subscribe', () => {
         reset(mockDocument);
         service.init();
+        verifyAllMocks();
     });
 });

@@ -1,40 +1,53 @@
 import { fakeAsync } from '@angular/core/testing';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { getMock } from 'ng-vacuum';
-import { reset, when, anyFunction, instance, anyString } from 'omnimock';
+import { ActivatedRoute, Router } from '@angular/router';
+import { anyFunction, anyString, instance, Mock, when } from 'omnimock';
+import { NgZone } from '@angular/core';
 
 import { ErrorHandlingService } from '../platform/error-handling.service';
 import { SESSION_STORAGE } from '../platform/providers';
 import { HomeNavigationService, QUERY_KEY } from './home-navigation.service';
-import { NgZone } from '@angular/core';
+import { cleanup, mock, verifyAllMocks } from '../test/test-utils';
 
 describe('HomeNavigationService', () => {
 
     let service: HomeNavigationService;
+    let mockSessionStorage: Mock<Storage>;
+    let mockRouter: Mock<Router>;
+    let mockActivatedRoute: Mock<ActivatedRoute>;
+    let mockNgZone: Mock<NgZone>;
 
     let q: string | null;
 
     beforeEach(() => {
         q = null;
-        when(getMock(SESSION_STORAGE).getItem(QUERY_KEY)).call(() => q);
-        when(getMock(SESSION_STORAGE).removeItem(QUERY_KEY)).call(() => {
+        mockSessionStorage = mock(SESSION_STORAGE, Storage);
+        mockRouter = mock('Router', Router);
+        const errorHandlingService = mock('ErrorHandlingService', ErrorHandlingService);
+        mockActivatedRoute = mock('ActivatedRoute', ActivatedRoute);
+        mockNgZone = mock('NgZone', NgZone);
+
+        when(mockSessionStorage.getItem(QUERY_KEY)).call(() => q);
+        when(mockSessionStorage.removeItem(QUERY_KEY)).call(() => {
             q = null;
         });
-        when(getMock(SESSION_STORAGE).setItem(QUERY_KEY, anyString())).call((_, query) => {
+        when(mockSessionStorage.setItem(QUERY_KEY, anyString())).call((_: string, query: string) => {
             q = query;
         });
-        when(getMock(ActivatedRoute).snapshot.queryParamMap.has('q')).call(() => q != null);
-        when(getMock(NgZone).run(anyFunction())).call((f) => {
+        when(mockActivatedRoute.snapshot.queryParamMap.has('q')).call(() => q != null);
+        when(mockNgZone.run(anyFunction())).call((f: Function) => {
             f();
         });
+
         service = new HomeNavigationService(
-            instance(getMock(SESSION_STORAGE)),
-            instance(getMock(Router)),
-            instance(getMock(ErrorHandlingService)),
-            instance(getMock(ActivatedRoute)),
-            instance(getMock(NgZone))
+            instance(mockSessionStorage),
+            instance(mockRouter),
+            instance(errorHandlingService),
+            instance(mockActivatedRoute),
+            instance(mockNgZone)
         );
     });
+
+    afterEach(cleanup);
 
     it('responds to route changes', () => {
         q = 'some-query';
@@ -46,31 +59,36 @@ describe('HomeNavigationService', () => {
         q = '';
         expect(service.searchValue).toBe('');
         expect(service.viewMode).toBe('search');
+        verifyAllMocks();
     });
 
-    it('does nothing when setting search value to the same value', async () => {
+    it('does nothing when setting search value to the same value', fakeAsync(() => {
         q = 'the quick brown fox';
         service.searchValue = 'the quick brown fox';
         expect().nothing();
-    });
+        verifyAllMocks();
+    }));
 
     it('does nothing when setting view mode to the same value', () => {
         service.viewMode = 'initial';
         expect().nothing();
+        verifyAllMocks();
     });
 
     it('navigates to base url when setting initial mode from search mode', () => {
         q = 'some search';
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: true }))
-            .resolve(true).once();
+        when(mockRouter.navigate(['/manager'], { replaceUrl: true }))
+            .return(Promise.resolve(true)).once();
         service.viewMode = 'initial';
         expect().nothing();
+        verifyAllMocks();
     });
 
     it('adds query param when going to search mode', () => {
-        when(getMock(Router).navigate(['/manager'], { replaceUrl: false, queryParams: { q: '1' } }))
-            .resolve(true).once();
+        when(mockRouter.navigate(['/manager'], { replaceUrl: false, queryParams: { q: '1' } }))
+            .return(Promise.resolve(true)).once();
         service.viewMode = 'search';
         expect().nothing();
+        verifyAllMocks();
     });
 });

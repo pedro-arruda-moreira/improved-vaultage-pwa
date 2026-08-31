@@ -1,20 +1,37 @@
-import { getMock, renderComponent } from 'ng-vacuum';
 import { when } from 'omnimock';
+import { fakeAsync, tick } from '@angular/core/testing';
+import { MockBuilder, MockRender } from 'ng-mocks';
 
 import { AppComponent } from './app.component';
 import { AppModule } from './app.module';
 import { AutoLogoutService } from './auto-logout.service';
 import { AutoRedirectService } from './auto-redirect.service';
-import { fakeAsync } from '@angular/core/testing';
+import { cleanup, mock, omnimockToNgMock, verifyAllMocks } from './test/test-utils';
 
 describe('AppComponent', () => {
 
-    it('should initialize automation services', fakeAsync(async () => {
-        when(getMock(AutoLogoutService).init()).return().once();
-        when(getMock(AutoRedirectService).init()).return().once();
+    beforeEach(() => {
+        const autoLogoutService = mock('AutoLogoutService', AutoLogoutService);
+        const autoRedirectService = mock('AutoRedirectService', AutoRedirectService);
 
-        const { element } = renderComponent(AppComponent, AppModule);
-        const app = element.componentInstance as AppComponent;
-        expect(app).toBeTruthy();
+        return MockBuilder(AppComponent, AppModule)
+            .provide(omnimockToNgMock(autoLogoutService, AutoLogoutService))
+            .provide(omnimockToNgMock(autoRedirectService, AutoRedirectService));
+    });
+
+    afterEach(cleanup);
+
+    it('should initialize automation services', fakeAsync(async () => {
+        const autoLogoutService = mock('AutoLogoutService', AutoLogoutService);
+        const autoRedirectService = mock('AutoRedirectService', AutoRedirectService);
+
+        when(autoLogoutService.init()).return().once();
+        when(autoRedirectService.init()).return().once();
+
+        const fixture = MockRender(AppComponent);
+        tick();
+        fixture.detectChanges();
+        tick();
+        verifyAllMocks();
     }));
 });
