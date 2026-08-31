@@ -1,119 +1,141 @@
-import { ComponentFixture, fakeAsync, flush } from '@angular/core/testing';
-import { getShallow } from 'ng-vacuum';
+import { ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { first } from 'rxjs/operators';
-import { Rendering } from 'shallow-render/dist/lib/models/rendering';
+import { MockBuilder, MockedComponentFixture, MockRender, MockRenderComponentBindings } from 'ng-mocks';
 
 import { PlatformModule } from '../platform.module';
 import { PinCodeComponent } from './pin-code.component';
+import { cleanup } from 'src/app/test/test-utils';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('PinCodeComponent', () => {
 
     let page: Page;
-    let fixture: ComponentFixture<PinCodeComponent>;
+    let fixture: MockedComponentFixture<PinCodeComponent, MockRenderComponentBindings<PinCodeComponent>>;
     let confirmation: Promise<string>;
     let altAction: Promise<void>;
-    let bindings: {
-        altActionName?: string;
-    };
 
     beforeEach(async () => {
-        const renderer = await getShallow(PinCodeComponent, PlatformModule).render({
-            bind: {
-                altActionName: 'test'
-            }
-        });
-        bindings = renderer.bindings;
-        fixture = renderer.fixture;
-        confirmation = renderer.outputs.confirm.pipe(first()).toPromise();
-        altAction = renderer.outputs.altAction.pipe(first()).toPromise();
-        page = new Page(renderer);
+        return MockBuilder(PinCodeComponent, PlatformModule)
+            .replace(BrowserAnimationsModule, NoopAnimationsModule);
     });
 
+    afterEach(cleanup);
+
+    async function doRender() {
+        fixture = MockRender(PinCodeComponent);
+        fixture.autoDetectChanges(true);
+        fixture.componentInstance.altActionName = 'test';
+        fixture.componentInstance.minDigits = 4;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        confirmation = fixture.componentInstance.confirm.pipe(first()).toPromise();
+        altAction = fixture.componentInstance.altAction.pipe(first()).toPromise();
+        page = new Page(fixture);
+    }
+
+
     it('can type a combination', fakeAsync(async () => {
+        await doRender();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        tick();
         expect(page.acceptButtonDisabled).toBe(true);
 
-        clickAndWait(page.getKeyNum(1));
+        await clickAndWait(page.getKeyNum(1), fixture);
         expect(page.digitsOnScreen).toBe('1');
+        tick();
         expect(page.acceptButtonDisabled).toBe(true);
 
-        clickAndWait(page.getKeyNum(2));
+        await clickAndWait(page.getKeyNum(2), fixture);
         expect(page.digitsOnScreen).toBe('•2');
+        tick();
         expect(page.acceptButtonDisabled).toBe(true);
 
-        clickAndWait(page.getKeyNum(3));
+        await clickAndWait(page.getKeyNum(3), fixture);
         expect(page.digitsOnScreen).toBe('••3');
+        tick();
         expect(page.acceptButtonDisabled).toBe(true);
 
-        clickAndWait(page.backspaceButton);
+        await clickAndWait(page.backspaceButton, fixture);
         expect(page.digitsOnScreen).toBe('••');
+        tick();
         expect(page.acceptButtonDisabled).toBe(true);
 
-        clickAndWait(page.getKeyNum(4));
+        await clickAndWait(page.getKeyNum(4), fixture);
         expect(page.digitsOnScreen).toBe('••4');
+        tick();
         expect(page.acceptButtonDisabled).toBe(true);
 
-        clickAndWait(page.getKeyNum(5));
+        await clickAndWait(page.getKeyNum(5), fixture);
         expect(page.digitsOnScreen).toBe('•••5');
+        tick();
         expect(page.acceptButtonDisabled).toBe(false);
 
-        clickAndWait(page.getKeyNum(6));
+        await clickAndWait(page.getKeyNum(6), fixture);
         expect(page.digitsOnScreen).toBe('••••6');
+        tick();
         expect(page.acceptButtonDisabled).toBe(false);
 
-        clickAndWait(page.acceptButton);
+        await clickAndWait(page.acceptButton, fixture);
 
         expect(await confirmation).toBe('12456');
     }));
 
     it('shows an alternative action when needed', fakeAsync(async () => {
-        bindings.altActionName = undefined;
+        await doRender();
+        fixture.componentInstance.altActionName = undefined;
         fixture.detectChanges();
+        tick();
+        await fixture.whenStable();
         expect(page.isAlternativeActionShown).toBe(false);
-        bindings.altActionName = 'test';
+        fixture.componentInstance.altActionName = 'test';
         fixture.detectChanges();
+        tick();
+        await fixture.whenStable();
         expect(page.isAlternativeActionShown).toBe(true);
 
-        clickAndWait(page.alternativeAction);
+        await clickAndWait(page.alternativeAction, fixture);
         expect(await altAction).toBeUndefined();
     }));
 
-    function clickAndWait(btn: HTMLElement) {
+    async function clickAndWait(btn: HTMLElement, fixture: MockedComponentFixture<PinCodeComponent, MockRenderComponentBindings<PinCodeComponent>>) {
         btn.dispatchEvent(new CustomEvent("pointerdown"));
         btn.click();
         fixture.detectChanges();
-        flush();
+        await fixture.whenStable();
+        tick();
     }
 });
 
 class Page {
 
-    constructor(private readonly renderer: Rendering<PinCodeComponent, any>) { }
+    constructor(private readonly fixture: MockedComponentFixture<PinCodeComponent, MockRenderComponentBindings<PinCodeComponent>>) { }
 
     public getKeyNum(num: number): HTMLButtonElement {
-        return this.renderer.find(`[test-id=keypad-${num}`).nativeElement;
+        return this.fixture.nativeElement.querySelector(`[test-id=keypad-${num}`);
     }
 
     public get acceptButton(): HTMLButtonElement {
-        return this.renderer.find('[test-id=keypad-accept]').nativeElement;
+        return this.fixture.nativeElement.querySelector('[test-id=keypad-accept]');
     }
 
     public get acceptButtonDisabled() {
-        return this.renderer.find('[test-id=keypad-accept]').attributes['ng-reflect-disabled'] === 'true';
+        return (this.acceptButton.getAttribute('ng-reflect-disabled') ?? 'false') == 'true';
     }
 
     public get backspaceButton(): HTMLButtonElement {
-        return this.renderer.find('[test-id=keypad-backspace]').nativeElement;
+        return this.fixture.nativeElement.querySelector('[test-id=keypad-backspace]');
     }
 
     public get digitsOnScreen() {
-        return this.renderer.find('[test-id=keypad-screen]').nativeElement.innerText.replace(/\s/g, '');
+        return this.fixture.nativeElement.querySelector('[test-id=keypad-screen]').innerText.replace(/\s/g, '');
     }
 
     public get isAlternativeActionShown() {
-        return this.renderer.find('[test-id=keypad-alt]').length > 0;
+        return this.fixture.nativeElement.querySelector('[test-id=keypad-alt]') !== null;
     }
 
     public get alternativeAction(): HTMLElement {
-        return this.renderer.find('[test-id=keypad-alt]').nativeElement;
+        return this.fixture.nativeElement.querySelector('[test-id=keypad-alt]');
     }
 }
